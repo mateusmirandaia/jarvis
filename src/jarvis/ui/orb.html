@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Jarvis</title>
+<style>
+  :root {
+    --fundo: #030605;
+    --petroleo: #0E5E5A;
+    --limao: #C6F000;
+    --texto: #9FB3AF;
+  }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden;
+    background: var(--fundo); color: var(--texto);
+    font-family: "Cascadia Mono", "Consolas", "JetBrains Mono", monospace;
+    user-select: none;
+  }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .topo {
+    position: absolute; top: 18px; left: 0; right: 0; text-align: center;
+    letter-spacing: 0.6em; font-size: 13px; color: var(--petroleo);
+  }
+  .status {
+    position: absolute; bottom: 70px; left: 0; right: 0; text-align: center;
+    font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase;
+    transition: color 0.4s;
+  }
+  .legenda {
+    position: absolute; bottom: 18px; left: 24px; right: 24px; text-align: center;
+    font-size: 12px; line-height: 1.4; min-height: 34px; opacity: 0;
+    transition: opacity 0.6s;
+  }
+  .legenda.visivel { opacity: 0.85; }
+  .legenda b { color: var(--limao); font-weight: normal; }
+</style>
+</head>
+<body>
+<canvas id="orb"></canvas>
+<div class="topo">J A R V I S</div>
+<div class="status" id="status">iniciando</div>
+<div class="legenda" id="legenda"></div>
+
+<script>
+"use strict";
+// Orb original do projeto: esfera de particulas desenhada em Canvas 2D, sem bibliotecas.
+// O Python chama window.jarvis.setState(...), setLevel(...) e addLine(...).
+
+const canvas = document.getElementById("orb");
+const ctx = canvas.getContext("2d");
+const statusEl = document.getElementById("status");
+const legendaEl = document.getElementById("legenda");
+
+const PETROLEO = [14, 94, 90];
+const LIMAO = [198, 240, 0];
+const ALERTA = [226, 72, 59];
+
+// Parametros visuais por estado: velocidade de giro, brilho, cor e textos.
+const ESTADOS = {
+  idle:      { giro: 0.15, brilho: 0.25, mistura: 0.0, cor: PETROLEO, texto: "em espera" },
+  listening: { giro: 0.25, brilho: 0.45, mistura: 0.25, cor: PETROLEO, texto: "ouvindo" },
+  thinking:  { giro: 1.10, brilho: 0.55, mistura: 0.55, cor: PETROLEO, texto: "pensando" },
+  speaking:  { giro: 0.45, brilho: 0.90, mistura: 1.0, cor: LIMAO, texto: "falando" },
+  offline:   { giro: 0.05, brilho: 0.20, mistura: 0.0, cor: ALERTA, texto: "sem conexao" },
+};
+
+let estado = "idle";
+let alvoNivel = 0;   // volume pedido pelo Python
+let nivel = 0;       // volume suavizado usado no desenho
+let rotacao = 0;
+let giroAtual = ESTADOS.idle.giro;
+let brilhoAtual = ESTADOS.idle.brilho;
+let misturaAtual = 0;
+let timerLegenda = null;
+
+// Pontos distribuidos de forma uniforme numa esfera (espiral de Fibonacci).
+const N = 900;
+const pontos = [];
+const angDourado = Math.PI * (3 - Math.sqrt(5));
+for (let i = 0; i < N; i++) {
+  const y = 1 - (i / (N - 1)) * 2;
+  const r = Math.sqrt(1 - y * y);
+  const t = angDourado * i;
+  pontos.push({ x: Math.cos(t) * r, y, z: Math.sin(t) * r, fase: Math.random() * Math.PI * 2 });
+}
+
+function redimensionar() {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.floor(canvas.clientWidth * dpr);
+  canvas.height = Math.floor(canvas.clientHeight * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener("resize", redimensionar);
+redimensionar();
+
+const misturar = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+const suavizar = (atual, alvo, fator) => atual + (alvo - atual) * fator;
+
+function desenhar(tempo) {
+  const t = tempo / 1000;
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  const cx = w / 2, cy = h / 2 - 20;
+  const cfg = ESTADOS[estado] || ESTADOS.idle;
+
+  // Volume: sobe rapido (ataque) e desce devagar (soltura), como um medidor de audio.
+  nivel = suavizar(nivel, alvoNivel, alvoNivel > nivel ? 0.35 : 0.08);
+  giroAtual = suavizar(giroAtual, cfg.giro, 0.05);
+  brilhoAtual = suavizar(brilhoAtual, cfg.brilho, 0.05);
+  misturaAtual = suavizar(misturaAtual, cfg.mistura, 0.05);
+  rotacao += giroAtual * 0.016;
+
+  const respiracao = Math.sin(t * 1.6) * 0.02;
+  const raio = Math.min(w, h) * 0.27 * (1 + respiracao + nivel * 0.28);
+  const corBase = estado === "offline" ? ALERTA : misturar(PETROLEO, LIMAO, misturaAtual);
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Brilho atras da esfera.
+  const halo = ctx.createRadialGradient(cx, cy, raio * 0.2, cx, cy, raio * 2.1);
+  const alfaHalo = 0.10 + brilhoAtual * 0.18 + nivel * 0.35;
+  halo.addColorStop(0, `rgba(${corBase.join(",")},${alfaHalo})`);
+  halo.addColorStop(1, "rgba(3,6,5,0)");
+  ctx.fillStyle = halo;
+  ctx.fillRect(0, 0, w, h);
+
+  // Particulas: gira, aplica ondulacao (pensando/falando) e projeta em perspectiva.
+  const cosR = Math.cos(rotacao), sinR = Math.sin(rotacao);
+  const incl = 0.35, cosI = Math.cos(incl), sinI = Math.sin(incl);
+  const onda = (estado === "thinking" ? 0.08 : 0) + nivel * 0.18;
+
+  for (const p of pontos) {
+    const deslocamento = 1 + Math.sin(t * 3 + p.fase + p.y * 4) * onda;
+    let x = p.x * deslocamento, y = p.y * deslocamento, z = p.z * deslocamento;
+    const x1 = x * cosR - z * sinR;
+    const z1 = x * sinR + z * cosR;
+    const y1 = y * cosI - z1 * sinI;
+    const z2 = y * sinI + z1 * cosI;
+    const perspectiva = 2.6 / (2.6 + z2);
+    const px = cx + x1 * raio * perspectiva;
+    const py = cy + y1 * raio * perspectiva;
+    const profundidade = (1 - z2) / 2;             // 0 = fundo, 1 = frente
+    const alfa = 0.15 + profundidade * (0.55 + brilhoAtual * 0.4);
+    const tamanho = (0.6 + profundidade * 1.4) * (1 + nivel * 0.6);
+    const cor = profundidade > 0.7 && estado !== "offline"
+      ? misturar(corBase, LIMAO, 0.35 + nivel * 0.5)
+      : corBase;
+    ctx.fillStyle = `rgba(${cor.join(",")},${alfa.toFixed(3)})`;
+    ctx.beginPath();
+    ctx.arc(px, py, tamanho, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Anel fino ao redor, que acende quando ele fala.
+  ctx.strokeStyle = `rgba(${LIMAO.join(",")},${(0.05 + nivel * 0.5).toFixed(3)})`;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(cx, cy, raio * 1.25, 0, Math.PI * 2);
+  ctx.stroke();
+
+  requestAnimationFrame(desenhar);
+}
+requestAnimationFrame(desenhar);
+
+function escapar(texto) {
+  const div = document.createElement("div");
+  div.textContent = texto;
+  return div.innerHTML;
+}
+
+window.jarvis = {
+  setState(novo) {
+    if (!ESTADOS[novo]) return;
+    estado = novo;
+    statusEl.textContent = ESTADOS[novo].texto;
+    statusEl.style.color = novo === "speaking" ? "var(--limao)"
+      : novo === "offline" ? "#E2483B" : "var(--texto)";
+  },
+  setLevel(valor) {
+    const v = Number(valor);
+    alvoNivel = Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0;
+  },
+  addLine(quem, texto) {
+    const rotulo = quem === "jarvis" ? "Jarvis" : quem === "voce" ? "Voce" : "Aviso";
+    legendaEl.innerHTML = `<b>${rotulo}:</b> ${escapar(texto)}`;
+    legendaEl.classList.add("visivel");
+    clearTimeout(timerLegenda);
+    timerLegenda = setTimeout(() => legendaEl.classList.remove("visivel"), 7000);
+  },
+};
+window.jarvis.setState("idle");
+</script>
+</body>
+</html>

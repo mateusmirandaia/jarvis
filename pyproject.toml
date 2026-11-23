@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jarvis-sem-hype"
+version = "0.5.0"
+description = "Jarvis: assistente de voz em portugues com Gemini Live e uma lista fechada de acoes seguras no Windows."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Mateus Miranda" }]
+keywords = ["jarvis", "gemini", "assistente de voz", "ia"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: Microsoft :: Windows",
+    "Natural Language :: Portuguese (Brazilian)",
+]
+dependencies = [
+    "google-genai>=2.30",
+    "python-dotenv",
+    "pyaudio",
+    "send2trash",
+    "httpx",
+    "pywebview>=5; sys_platform == 'win32'",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+
+[project.scripts]
+jarvis = "jarvis.__main__:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+jarvis = ["ui/orb.html", "ui/jarvis.ico"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

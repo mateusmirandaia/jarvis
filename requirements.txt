@@ -1,0 +1,10 @@
+# Dependencias do Jarvis (mesmas do pyproject.toml).
+# Recomendado: python -m pip install -e .   (instala o comando "jarvis")
+# Alternativa:  python -m pip install -r requirements.txt
+#   (nesse caso, no PowerShell:  $env:PYTHONPATH = "src"; python -m jarvis)
+google-genai>=2.30
+python-dotenv
+pyaudio
+send2trash
+httpx
+pywebview>=5; sys_platform == 'win32'

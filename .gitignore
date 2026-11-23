@@ -1,0 +1,48 @@
+# --- Segredos (NUNCA vao para o GitHub) ---
+.env
+.env.*
+!.env.example
+
+# --- Ambientes virtuais ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# --- Empacotamento / build ---
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+pip-wheel-metadata/
+
+# --- Testes, lint e cobertura ---
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# --- Logs e gravacoes ---
+logs/
+*.log
+*.wav
+*.mp3
+
+# --- Editores e sistema ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
