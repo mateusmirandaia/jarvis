@@ -123,7 +123,7 @@ def _run_orb(settings: Settings, registry: ToolRegistry) -> None:
     if not acquire_single_instance("Local\\JarvisSemHype.Orb"):
         _tell_user("O Jarvis ja esta aberto, senhor.")
         return
-    window = OrbWindow()
+    window = OrbWindow(settings)  # visual inicial: JARVIS_VISUAL ou a preferencia salva
     assistant = LiveAssistant(settings, registry, observer=window)
 
     def worker() -> None:

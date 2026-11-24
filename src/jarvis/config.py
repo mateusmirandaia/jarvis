@@ -82,6 +82,8 @@ class Settings:
     silence_ms: int = 500
     # Com fone de ouvido, o microfone fica aberto enquanto ele fala: da para interromper.
     headphones: bool = False
+    # Visual da janela do orb forcado pelo .env (ex.: "reator"); vazio = usa a preferencia salva.
+    visual: str = ""
     tool_timeout_s: float = 20.0
     delete_timeout_s: float = 120.0
     project_root: Path = PROJECT_ROOT
@@ -116,6 +118,7 @@ class Settings:
             elevenlabs_model=_env("ELEVENLABS_MODEL", cls.elevenlabs_model),
             silence_ms=_int_env("JARVIS_SILENCIO_MS", cls.silence_ms, minimum=200, maximum=2000),
             headphones=_env("JARVIS_FONE", "nao").lower() in _YES,
+            visual=_env("JARVIS_VISUAL", "").lower().replace(" ", ""),
         )
 
     @property

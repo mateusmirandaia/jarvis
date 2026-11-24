@@ -301,22 +301,32 @@ class LiveAssistant:
             logger.exception("nao consegui devolver o resultado da acao")
 
     async def _execute(self, name: str, args: dict[str, Any]) -> str:
-        """Executa uma acao da lista fechada numa thread, com tempo maximo. Nunca trava."""
+        """Executa uma acao da lista fechada numa thread, com tempo maximo. Nunca trava.
+
+        Depois de cada execucao avisa o observador (``on_tool``): ``ok`` e False quando a
+        acao nao e permitida, estoura o tempo, levanta erro ou devolve um "ERRO:".
+        """
         func = self.registry.get(name)
         if func is None:
             logger.warning("acao nao permitida pedida pelo modelo: %s", name)
+            self._notify_tool(name, ok=False)
             return "Acao nao permitida."
         try:
-            return await asyncio.wait_for(
+            result = await asyncio.wait_for(
                 asyncio.to_thread(func, **args),
                 timeout=self.registry.timeout_for(name, self.settings),
             )
         except TimeoutError:
             logger.error("acao %s passou do tempo maximo", name)
+            self._notify_tool(name, ok=False)
             return friendly_message(TimeoutError())
         except Exception as error:  # noqa: BLE001 - erro vira frase simples para a IA
             logger.exception("acao %s falhou", name)
+            self._notify_tool(name, ok=False)
             return friendly_message(error)
+        # O safe_tool transforma excecao das ferramentas em texto "ERRO: ...".
+        self._notify_tool(name, ok=not str(result).startswith("ERRO:"))
+        return result
 
     # ------------------------------------------------------------------- terminal
     @staticmethod
@@ -333,6 +343,26 @@ class LiveAssistant:
         self._answer_logged = True
         delay = time.monotonic() - self._heard_at
         logger.info("atraso ate a resposta: %.2f s (voz: %s)", delay, self.voice_label)
+        self._notify_optional("on_latency", delay)
+
+    # ------------------------------------------------------------------ observador
+    def _notify_tool(self, name: str, ok: bool) -> None:
+        """Avisa o observador que uma acao terminou (com ou sem sucesso)."""
+        self._notify_optional("on_tool", name, ok)
+
+    def _notify_optional(self, method: str, *args: Any) -> None:
+        """Chama um metodo opcional do observador sem nunca derrubar o assistente.
+
+        Observadores antigos podem nao ter ``on_tool``/``on_latency``: nesse caso nada
+        acontece. Se o observador levantar erro, ele so vai para o log.
+        """
+        callback = getattr(self.observer, method, None)
+        if callback is None:
+            return
+        try:
+            callback(*args)
+        except Exception:  # noqa: BLE001 - a interface nunca pode derrubar o assistente
+            logger.debug("observador falhou em %s", method, exc_info=True)
 
     def _notify_turn(self, user_text: str, jarvis_text: str) -> None:
         """Envia as falas do turno ao observador (ex.: legenda no orb)."""

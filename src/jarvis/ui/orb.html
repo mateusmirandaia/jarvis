@@ -2,192 +2,1545 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jarvis</title>
 <style>
-  :root {
-    --fundo: #030605;
-    --petroleo: #0E5E5A;
-    --limao: #C6F000;
-    --texto: #9FB3AF;
+  /* Paletas: o JavaScript aplica data-paleta no body conforme o visual atual. */
+  body, body[data-paleta="petroleo"] {
+    --fundo: #030605; --superficie: #0A1413; --linha: #16302D; --texto: #9FB3AF;
+    --texto2: #7FA09A; --primaria: #2FB5A8; --escura: #0E5E5A; --destaque: #C6F000;
+    --erro: #E2483B; --vidro: rgba(10, 20, 19, 0.62); --vidro-forte: rgba(3, 6, 5, 0.94);
   }
+  body[data-paleta="aurora"] {
+    --fundo: #05070F; --superficie: #0B1124; --linha: #1A2444; --texto: #E6F1FF;
+    --texto2: #8FA3BF; --primaria: #38E1FF; --escura: #8B7CFF; --destaque: #FFB23F;
+    --erro: #FF5C7A; --vidro: rgba(11, 17, 36, 0.62); --vidro-forte: rgba(5, 7, 15, 0.94);
+  }
+  body[data-paleta="aura"] {
+    --fundo: #02040B; --superficie: #07102A; --linha: #1B3A7A; --texto: #D6ECFF;
+    --texto2: #7DB8FF; --primaria: #2F7BFF; --escura: #1B3A7A; --destaque: #FFD25A;
+    --erro: #FF5C7A; --vidro: rgba(7, 16, 42, 0.55); --vidro-forte: rgba(2, 4, 11, 0.94);
+  }
+  body {
+    --col: 280px;
+    --f-titulo: "Bahnschrift", "Segoe UI", sans-serif;
+    --f-dados: "Cascadia Mono", "Consolas", monospace;
+    --estado: var(--texto2);
+  }
+  @media (max-width: 1099px) { body { --col: 240px; } }
+
   html, body {
     margin: 0; height: 100%; overflow: hidden;
     background: var(--fundo); color: var(--texto);
-    font-family: "Cascadia Mono", "Consolas", "JetBrains Mono", monospace;
+    font-family: var(--f-titulo);
     user-select: none;
   }
-  canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .topo {
-    position: absolute; top: 18px; left: 0; right: 0; text-align: center;
-    letter-spacing: 0.6em; font-size: 13px; color: var(--petroleo);
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  canvas { display: block; }
+  #cena { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  button {
+    font: inherit; color: inherit; cursor: pointer;
+    background: var(--vidro); border: 1px solid var(--linha); border-radius: 3px;
   }
-  .status {
+  button:focus { outline: none; }
+  button:focus-visible { outline: 2px solid var(--primaria); outline-offset: 2px; }
+
+  .rotulo {
+    font-family: var(--f-titulo); font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--texto2);
+  }
+  .dado { font-family: var(--f-dados); }
+
+  /* ---------- camadas que somem na troca de visual ---------- */
+  .camada { transition: opacity 0.15s linear; }
+  body.trocando .camada { opacity: 0; }
+
+  /* ---------- topo ---------- */
+  #topo {
+    position: absolute; top: 0; left: 0; right: 0; height: 52px; z-index: 5;
+    display: flex; align-items: center; gap: 14px; padding: 0 16px 0 20px;
+  }
+  #marca {
+    font-family: var(--f-titulo); font-size: 13px; letter-spacing: 0.6em;
+    color: var(--primaria); white-space: nowrap;
+  }
+  #nome-visual { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #topo .separador { width: 1px; height: 14px; background: var(--linha); }
+  #topo .espaco { flex: 1; }
+  #pilula {
+    display: flex; align-items: center; gap: 8px; padding: 5px 12px;
+    border: 1px solid var(--linha); border-radius: 999px; background: var(--vidro);
+  }
+  #pilula .rotulo { color: var(--estado); transition: color 0.4s; }
+  .ponto {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--estado);
+    box-shadow: 0 0 8px var(--estado); transition: background 0.4s, box-shadow 0.4s;
+    flex: none;
+  }
+  #btn-trocar {
+    display: flex; align-items: center; gap: 8px; padding: 7px 12px;
+    font-size: 12px; letter-spacing: 0.08em; color: var(--texto);
+  }
+  #btn-trocar:hover { border-color: var(--primaria); color: var(--primaria); }
+  #btn-trocar svg { width: 16px; height: 16px; flex: none; }
+  body[data-hud="false"] #pilula, body[data-hud="minimo"] #pilula { display: none; }
+  body[data-hud="minimo"] #marca, body[data-hud="minimo"] #topo .separador { display: none; }
+
+  /* ---------- painéis do HUD ---------- */
+  .painel {
+    position: relative; border: 1px solid var(--linha); background: var(--vidro);
+    border-radius: 2px; padding: 10px 12px; min-height: 0;
+  }
+  /* cantoneiras finas, como nos mockups */
+  .painel::before, .painel::after {
+    content: ""; position: absolute; width: 8px; height: 8px; pointer-events: none;
+    border-color: var(--primaria); border-style: solid; opacity: 0.7;
+  }
+  .painel::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+  .painel::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+  .painel > .rotulo { display: flex; justify-content: space-between; margin-bottom: 8px; }
+
+  #hud-completo { position: absolute; inset: 0; pointer-events: none; }
+  #hud-completo .painel, #hud-completo button { pointer-events: auto; }
+  .coluna {
+    position: absolute; top: 60px; bottom: 14px; width: var(--col);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  #col-esq { left: 16px; }
+  #col-dir { right: 16px; }
+
+  #painel-conversa { flex: 1; display: flex; flex-direction: column; }
+  #lista-conversa {
+    flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;
+    justify-content: flex-end; gap: 8px; margin: 0; padding: 0; list-style: none;
+  }
+  #lista-conversa li { font-size: 12.5px; line-height: 1.38; color: var(--texto); }
+  #lista-conversa li .quem { display: block; margin-bottom: 1px; font-size: 9.5px; }
+  #lista-conversa li.jarvis .quem { color: var(--destaque); }
+  #lista-conversa li.voce .quem { color: var(--primaria); }
+  #lista-conversa li.sistema { color: var(--texto2); }
+  #lista-conversa li.sistema .quem { color: var(--erro); }
+  .vazio { color: var(--texto2); font-family: var(--f-dados); font-size: 12px; opacity: 0.8; }
+
+  #cv-entrada { width: 100%; height: 30px; }
+  #cv-nivel-hist { width: 100%; height: 26px; margin-top: 6px; }
+  .rodinha {
+    display: flex; justify-content: space-between; gap: 8px; margin-top: 5px;
+    font-family: var(--f-dados); font-size: 10.5px; color: var(--texto2); white-space: nowrap;
+  }
+  .rodinha b { font-weight: normal; color: var(--texto); }
+  #lat-valor { font-family: var(--f-dados); font-size: 22px; color: var(--texto); line-height: 1; }
+  #cv-latencia { width: 100%; height: 48px; margin-top: 6px; }
+
+  /* Sessão: grade 2x2 de números */
+  #grade-sessao { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
+  #grade-sessao .cel { min-width: 0; }
+  #grade-sessao .cel .rotulo { font-size: 9px; letter-spacing: 0.16em; }
+  #grade-sessao .valor {
+    font-family: var(--f-dados); font-size: 17px; line-height: 1.25; color: var(--texto);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  #grade-sessao .sub {
+    font-family: var(--f-dados); font-size: 10px; color: var(--texto2);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  #grade-sessao .falha { color: var(--erro); }
+
+  /* Ferramentas (ranking) */
+  #lista-ferramentas { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; min-height: 86px; }
+  #lista-ferramentas li { font-family: var(--f-dados); font-size: 11px; }
+  #lista-ferramentas .linha { display: flex; gap: 8px; align-items: baseline; }
+  #lista-ferramentas .nome { flex: 1; min-width: 0; color: var(--texto); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #lista-ferramentas .qtd { flex: none; color: var(--texto); }
+  #lista-ferramentas .falhas { flex: none; color: var(--erro); }
+  #lista-ferramentas .trilho { height: 3px; margin-top: 3px; background: var(--linha); border-radius: 2px; overflow: hidden; display: flex; }
+  #lista-ferramentas .trilho i { display: block; height: 100%; background: var(--primaria); }
+  #lista-ferramentas .trilho i.f { background: var(--erro); }
+
+  /* Tempo em cada estado */
+  #barra-estados { display: flex; height: 8px; border-radius: 2px; overflow: hidden; background: var(--linha); }
+  #barra-estados i { display: block; height: 100%; transition: width 0.4s; }
+  #legenda-estados {
+    list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px;
+    font-family: var(--f-dados); font-size: 10.5px; color: var(--texto2);
+  }
+  #legenda-estados li { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+  #legenda-estados li .pc { margin-left: auto; color: var(--texto); }
+  #legenda-estados li .q { width: 7px; height: 7px; border-radius: 1px; flex: none; }
+
+  #lista-camadas { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  #lista-camadas { gap: 3px; }
+  #lista-camadas li {
+    display: flex; align-items: center; gap: 10px; padding: 4px 8px;
+    border: 1px solid transparent; border-radius: 2px; transition: border-color 0.3s, background 0.3s;
+  }
+  #lista-camadas li .ponto { --estado: var(--linha); box-shadow: none; }
+  #lista-camadas li .nome { font-size: 12.5px; letter-spacing: 0.04em; color: var(--texto2); flex: none; }
+  #lista-camadas li .sub {
+    margin-left: auto; font-family: var(--f-dados); font-size: 11px; color: var(--texto2);
+    opacity: 0.75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+  }
+  #lista-camadas li.ativa { border-color: var(--linha); background: rgba(255, 255, 255, 0.025); }
+  #lista-camadas li.ativa .ponto { --estado: var(--cor-camada); box-shadow: 0 0 9px var(--cor-camada); }
+  #lista-camadas li.ativa .nome { color: var(--texto); }
+  #lista-camadas li.ativa .sub { color: var(--cor-camada); opacity: 1; }
+
+  #painel-atividade { flex: 1; display: flex; flex-direction: column; }
+  #lista-atividade {
+    list-style: none; margin: 0; padding: 0; flex: 1; min-height: 0; overflow: hidden;
+    display: flex; flex-direction: column; gap: 7px;
+  }
+  #lista-atividade li { display: flex; gap: 9px; font-family: var(--f-dados); font-size: 11.5px; align-items: baseline; }
+  #lista-atividade li .hora { color: var(--texto2); flex: none; }
+  #lista-atividade li .acao { color: var(--texto); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #lista-atividade li .res { flex: none; color: var(--primaria); }
+  #lista-atividade li.falhou .res { color: var(--erro); }
+
+  #rodape {
+    position: absolute; bottom: 14px; height: 140px;
+    left: calc(var(--col) + 32px); right: calc(var(--col) + 32px);
+    display: flex; flex-direction: column; justify-content: flex-end; gap: 10px;
+  }
+  #legenda-grande {
+    text-align: center; font-family: var(--f-titulo); font-size: 21px; line-height: 1.3;
+    color: var(--texto); overflow: hidden; display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical; transition: opacity 0.4s;
+  }
+  #legenda-grande.vazia { color: var(--texto2); opacity: 0.6; font-family: var(--f-dados); font-size: 16px; }
+  @media (max-width: 1099px) { #legenda-grande { font-size: 17px; } }
+  #cv-espectro { width: 100%; height: 28px; }
+  #cv-linha-tempo { width: 100%; height: 24px; }
+
+  /* ---------- HUD mínimo (aura) ---------- */
+  #hud-minimo { position: absolute; inset: 0; pointer-events: none; }
+  #caixa-status { position: absolute; top: 66px; right: 24px; width: 250px; pointer-events: auto; }
+  #caixa-status dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 7px 12px; align-items: baseline; }
+  #caixa-status dt { font-size: 9.5px; }
+  #caixa-status dd {
+    margin: 0; text-align: right; font-family: var(--f-dados); font-size: 12px; color: var(--texto);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  #min-status { color: var(--estado) !important; }
+  #cv-min-tempo { width: 100%; height: 6px; margin-top: 10px; border-radius: 2px; }
+  #letreiro { position: absolute; left: 0; right: 0; bottom: 74px; text-align: center; }
+  #letreiro .grande { font-family: var(--f-titulo); font-size: 26px; letter-spacing: 0.45em; color: var(--texto); padding-left: 0.45em; }
+  #letreiro .rotulo { margin-top: 6px; letter-spacing: 0.4em; }
+  #linha-min {
+    position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
+    max-width: min(760px, 80%); text-align: center; font-size: 14px; line-height: 1.4;
+    color: var(--texto); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  #linha-min .rotulo { margin-right: 10px; color: var(--destaque); }
+  #linha-min.voce .rotulo { color: var(--primaria); }
+  #linha-min.sistema .rotulo { color: var(--erro); }
+
+  /* ---------- sem HUD (globo): como no orb original ---------- */
+  #hud-simples { position: absolute; inset: 0; pointer-events: none; }
+  #simples-status {
     position: absolute; bottom: 70px; left: 0; right: 0; text-align: center;
-    font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase;
-    transition: color 0.4s;
+    font-family: var(--f-dados); font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--estado); transition: color 0.4s;
   }
-  .legenda {
+  #simples-legenda {
     position: absolute; bottom: 18px; left: 24px; right: 24px; text-align: center;
-    font-size: 12px; line-height: 1.4; min-height: 34px; opacity: 0;
-    transition: opacity 0.6s;
+    font-family: var(--f-dados); font-size: 13px; line-height: 1.4; min-height: 34px;
+    opacity: 0; transition: opacity 0.6s;
   }
-  .legenda.visivel { opacity: 0.85; }
-  .legenda b { color: var(--limao); font-weight: normal; }
+  #simples-legenda.visivel { opacity: 0.85; }
+  #simples-legenda .quem { color: var(--destaque); margin-right: 6px; }
+
+  /* ---------- tela de escolha ---------- */
+  #escolha {
+    position: absolute; inset: 0; z-index: 20; background: var(--vidro-forte);
+    overflow-y: auto; padding: 26px 32px 32px;
+    --primaria: #2FB5A8; --linha: #1E3A37; --texto: #C9D8D5; --texto2: #7FA09A;
+  }
+  #escolha .cabeca { max-width: 1240px; margin: 0 auto 20px; display: flex; align-items: flex-end; gap: 16px; }
+  #escolha h1 { margin: 0; font-family: var(--f-titulo); font-weight: 400; font-size: 24px; letter-spacing: 0.04em; color: var(--texto); }
+  #escolha .sub { margin: 6px 0 0; font-size: 13px; color: var(--texto2); }
+  #escolha .cabeca .espaco { flex: 1; }
+  #btn-voltar { padding: 8px 16px; font-size: 13px; letter-spacing: 0.06em; display: flex; gap: 8px; align-items: center; }
+  #btn-voltar:hover { border-color: var(--primaria); color: var(--primaria); }
+  #btn-voltar svg { width: 14px; height: 14px; }
+  #grade {
+    max-width: 1240px; margin: 0 auto; display: grid; gap: 14px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .cartao {
+    display: flex; flex-direction: column; text-align: left; padding: 0; overflow: hidden;
+    background: #070B0B; border: 1px solid var(--linha); border-radius: 4px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .cartao:hover { border-color: var(--primaria); transform: translateY(-2px); }
+  .cartao.atual { border-color: var(--primaria); box-shadow: 0 0 0 1px var(--primaria) inset; }
+  .cartao canvas { width: 100%; aspect-ratio: 16 / 10; }
+  .cartao .info { padding: 10px 12px 12px; border-top: 1px solid var(--linha); }
+  .cartao .titulo { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--texto); }
+  .cartao .selo {
+    margin-left: auto; font-size: 9px; letter-spacing: 0.18em; padding: 2px 6px; border-radius: 2px;
+    color: #030605; background: var(--primaria);
+  }
+  .cartao .desc { margin-top: 4px; font-size: 11.5px; line-height: 1.35; color: var(--texto2); }
+  .cartao .amostras { display: flex; gap: 4px; margin-top: 8px; }
+  .cartao .amostras i { width: 10px; height: 4px; border-radius: 1px; }
+  @media (max-height: 680px) {
+    #escolha { padding-top: 16px; }
+    #escolha .cabeca { margin-bottom: 12px; }
+    .cartao .desc { display: none; }
+  }
 </style>
-</head>
-<body>
-<canvas id="orb"></canvas>
-<div class="topo">J A R V I S</div>
-<div class="status" id="status">iniciando</div>
-<div class="legenda" id="legenda"></div>
 
 <script>
 "use strict";
-// Orb original do projeto: esfera de particulas desenhada em Canvas 2D, sem bibliotecas.
-// O Python chama window.jarvis.setState(...), setLevel(...) e addLine(...).
+// Registro dos visuais: definido antes dos scripts dos visuais, que chamam
+// JarvisVisuais.registrar({...}). Aceita registros a qualquer momento.
+(function () {
+  const lista = [];
+  const api = {
+    lista,
+    aoRegistrar: null,
+    registrar(def) {
+      try {
+        if (!def || typeof def.id !== "string" || typeof def.criar !== "function") {
+          console.error("Jarvis: visual invalido ignorado", def && def.id);
+          return false;
+        }
+        const i = lista.findIndex((d) => d.id === def.id);
+        if (i >= 0) lista[i] = def; else lista.push(def);
+        if (typeof api.aoRegistrar === "function") api.aoRegistrar(def);
+        return true;
+      } catch (erro) {
+        console.error("Jarvis: falha ao registrar visual", erro);
+        return false;
+      }
+    },
+  };
+  window.JarvisVisuais = api;
+})();
+</script>
+<script>
+/*JARVIS_CONFIG*/
+</script>
+</head>
+<body data-paleta="petroleo" data-hud="false">
+<canvas id="cena" aria-hidden="true"></canvas>
 
-const canvas = document.getElementById("orb");
-const ctx = canvas.getContext("2d");
-const statusEl = document.getElementById("status");
-const legendaEl = document.getElementById("legenda");
+<header id="topo">
+  <span id="marca">J A R V I S</span>
+  <span class="separador" aria-hidden="true"></span>
+  <span id="nome-visual" class="rotulo"></span>
+  <span class="espaco"></span>
+  <span id="pilula" role="status" aria-live="polite">
+    <span class="ponto" aria-hidden="true"></span>
+    <span id="pilula-texto" class="rotulo">em espera</span>
+  </span>
+  <button id="btn-trocar" type="button" aria-label="Trocar visual do Jarvis" title="Trocar visual">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+      <rect x="1.5" y="1.5" width="5" height="5" rx="0.8"></rect>
+      <rect x="9.5" y="1.5" width="5" height="5" rx="0.8"></rect>
+      <rect x="1.5" y="9.5" width="5" height="5" rx="0.8"></rect>
+      <circle cx="12" cy="12" r="2.6"></circle>
+    </svg>
+    <span>Trocar visual</span>
+  </button>
+</header>
 
-const PETROLEO = [14, 94, 90];
-const LIMAO = [198, 240, 0];
-const ALERTA = [226, 72, 59];
+<!-- HUD completo (hud: true) -->
+<div id="hud-completo" class="camada" hidden>
+  <aside id="col-esq" class="coluna">
+    <section id="painel-conversa" class="painel" aria-label="Conversa">
+      <div class="rotulo"><span>Conversa</span></div>
+      <ul id="lista-conversa"></ul>
+    </section>
+    <section class="painel" aria-label="Entrada de voz">
+      <div class="rotulo"><span>Entrada de voz</span><span id="entrada-estado">—</span></div>
+      <canvas id="cv-entrada" aria-hidden="true"></canvas>
+      <canvas id="cv-nivel-hist" aria-hidden="true"></canvas>
+      <div class="rodinha"><span>últimos 20 s</span><span>pico <b id="entrada-pico">—</b></span></div>
+    </section>
+    <section class="painel" aria-label="Latência">
+      <div class="rotulo"><span>Latência</span><span id="lat-qtd">—</span></div>
+      <div id="lat-valor">—</div>
+      <div class="rodinha">
+        <span>mín <b id="lat-min">—</b></span><span>méd <b id="lat-med">—</b></span><span>máx <b id="lat-max">—</b></span>
+      </div>
+      <canvas id="cv-latencia" aria-hidden="true"></canvas>
+    </section>
+  </aside>
+  <aside id="col-dir" class="coluna">
+    <section class="painel" aria-label="Sessão">
+      <div class="rotulo"><span>Sessão</span></div>
+      <div id="grade-sessao">
+        <div class="cel"><div class="rotulo">Ligado</div><div class="valor" id="ses-ligado">—</div><div class="sub" id="ses-desde">—</div></div>
+        <div class="cel"><div class="rotulo">Agora</div><div class="valor" id="ses-hora">—</div><div class="sub" id="ses-data">—</div></div>
+        <div class="cel"><div class="rotulo">Falas</div><div class="valor" id="ses-falas">—</div><div class="sub">você · jarvis</div></div>
+        <div class="cel"><div class="rotulo">Ações</div><div class="valor" id="ses-acoes">—</div><div class="sub">ok · falhas</div></div>
+      </div>
+    </section>
+    <section class="painel" aria-label="Camadas">
+      <div class="rotulo"><span>Camadas</span></div>
+      <ul id="lista-camadas">
+        <li data-camada="ouvido"><span class="ponto"></span><span class="nome">Ouvido</span><span class="sub">—</span></li>
+        <li data-camada="cerebro"><span class="ponto"></span><span class="nome">Cérebro</span><span class="sub">—</span></li>
+        <li data-camada="acao"><span class="ponto"></span><span class="nome">Ação</span><span class="sub">—</span></li>
+        <li data-camada="voz"><span class="ponto"></span><span class="nome">Voz</span><span class="sub">—</span></li>
+      </ul>
+    </section>
+    <section id="painel-ferramentas" class="painel" aria-label="Ferramentas">
+      <div class="rotulo"><span>Ferramentas</span><span id="ferr-qtd">—</span></div>
+      <ul id="lista-ferramentas"></ul>
+    </section>
+    <section id="painel-tempo" class="painel" aria-label="Tempo em cada estado">
+      <div class="rotulo"><span>Tempo em cada estado</span></div>
+      <div id="barra-estados"></div>
+      <ul id="legenda-estados"></ul>
+    </section>
+    <section id="painel-atividade" class="painel" aria-label="Atividade">
+      <div class="rotulo"><span>Atividade</span></div>
+      <ul id="lista-atividade"></ul>
+    </section>
+  </aside>
+  <footer id="rodape">
+    <div id="legenda-grande" class="vazia" aria-live="polite">—</div>
+    <canvas id="cv-linha-tempo" aria-label="Linha do tempo dos estados nos últimos 2 minutos" role="img"></canvas>
+    <canvas id="cv-espectro" aria-hidden="true"></canvas>
+  </footer>
+</div>
 
-// Parametros visuais por estado: velocidade de giro, brilho, cor e textos.
-const ESTADOS = {
-  idle:      { giro: 0.15, brilho: 0.25, mistura: 0.0, cor: PETROLEO, texto: "em espera" },
-  listening: { giro: 0.25, brilho: 0.45, mistura: 0.25, cor: PETROLEO, texto: "ouvindo" },
-  thinking:  { giro: 1.10, brilho: 0.55, mistura: 0.55, cor: PETROLEO, texto: "pensando" },
-  speaking:  { giro: 0.45, brilho: 0.90, mistura: 1.0, cor: LIMAO, texto: "falando" },
-  offline:   { giro: 0.05, brilho: 0.20, mistura: 0.0, cor: ALERTA, texto: "sem conexao" },
-};
+<!-- HUD mínimo (hud: "minimo") -->
+<div id="hud-minimo" class="camada" hidden>
+  <section id="caixa-status" class="painel" aria-label="Status">
+    <dl>
+      <dt class="rotulo">Status</dt><dd id="min-status">—</dd>
+      <dt class="rotulo">Voz</dt><dd id="min-voz">—</dd>
+      <dt class="rotulo">Modelo</dt><dd id="min-modelo">—</dd>
+      <dt class="rotulo">Latência</dt><dd id="min-latencia">—</dd>
+      <dt class="rotulo">Modo</dt><dd id="min-modo">—</dd>
+      <dt class="rotulo">Sessão</dt><dd id="min-sessao">—</dd>
+      <dt class="rotulo">Ações</dt><dd id="min-acoes">—</dd>
+    </dl>
+    <canvas id="cv-min-tempo" aria-hidden="true"></canvas>
+  </section>
+  <div id="letreiro">
+    <div class="grande">J.A.R.V.I.S</div>
+    <div class="rotulo">Assistente pessoal</div>
+  </div>
+  <div id="linha-min" aria-live="polite"><span class="rotulo">Jarvis</span><span class="txt">—</span></div>
+</div>
 
-let estado = "idle";
-let alvoNivel = 0;   // volume pedido pelo Python
-let nivel = 0;       // volume suavizado usado no desenho
-let rotacao = 0;
-let giroAtual = ESTADOS.idle.giro;
-let brilhoAtual = ESTADOS.idle.brilho;
-let misturaAtual = 0;
-let timerLegenda = null;
+<!-- Sem HUD (hud: false): status e legenda como no orb original -->
+<div id="hud-simples" class="camada" hidden>
+  <div id="simples-status" role="status">em espera</div>
+  <div id="simples-legenda" aria-live="polite"><span class="quem"></span><span class="txt"></span></div>
+</div>
 
-// Pontos distribuidos de forma uniforme numa esfera (espiral de Fibonacci).
-const N = 900;
-const pontos = [];
-const angDourado = Math.PI * (3 - Math.sqrt(5));
-for (let i = 0; i < N; i++) {
-  const y = 1 - (i / (N - 1)) * 2;
-  const r = Math.sqrt(1 - y * y);
-  const t = angDourado * i;
-  pontos.push({ x: Math.cos(t) * r, y, z: Math.sin(t) * r, fase: Math.random() * Math.PI * 2 });
-}
+<!-- Tela de escolha -->
+<div id="escolha" role="dialog" aria-modal="true" aria-labelledby="escolha-titulo" hidden>
+  <div class="cabeca">
+    <div>
+      <h1 id="escolha-titulo">Escolha o visual do Jarvis</h1>
+      <p class="sub">Clique num cartão para usar. Dá para trocar depois pelo botão no canto.</p>
+    </div>
+    <span class="espaco"></span>
+    <button id="btn-voltar" type="button" aria-label="Voltar ao visual anterior">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+        <path d="M8.5 2.5 4 7l4.5 4.5"></path>
+      </svg>
+      <span>Voltar</span>
+    </button>
+  </div>
+  <div id="grade"></div>
+</div>
 
-function redimensionar() {
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = Math.floor(canvas.clientWidth * dpr);
-  canvas.height = Math.floor(canvas.clientHeight * dpr);
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-window.addEventListener("resize", redimensionar);
-redimensionar();
+<!--JARVIS_VISUAIS-->
 
-const misturar = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
-const suavizar = (atual, alvo, fator) => atual + (alvo - atual) * fator;
+<script>
+"use strict";
+// Shell da janela do Jarvis: escolhe o visual, suaviza estado/volume, desenha a cena e o HUD.
+// O Python chama window.jarvis.setState/setLevel/addLine/addTool/setLatency.
+(function () {
+  // ------------------------------------------------------------------ configuracao
+  const cfgBruta = window.JARVIS_CONFIG && typeof window.JARVIS_CONFIG === "object" ? window.JARVIS_CONFIG : {};
+  const CONFIG = {
+    visual: typeof cfgBruta.visual === "string" ? cfgBruta.visual : null,
+    primeiraVez: cfgBruta.primeiraVez === undefined ? true : !!cfgBruta.primeiraVez,
+    info: cfgBruta.info && typeof cfgBruta.info === "object" ? cfgBruta.info : {},
+  };
 
-function desenhar(tempo) {
-  const t = tempo / 1000;
-  const w = canvas.clientWidth, h = canvas.clientHeight;
-  const cx = w / 2, cy = h / 2 - 20;
-  const cfg = ESTADOS[estado] || ESTADOS.idle;
+  const PALETAS = {
+    petroleo: {
+      fundo: "#030605", superficie: "#0A1413", linha: "#16302D", texto: "#9FB3AF", texto2: "#7FA09A",
+      primaria: "#2FB5A8", escura: "#0E5E5A", destaque: "#C6F000", erro: "#E2483B",
+    },
+    aurora: {
+      fundo: "#05070F", superficie: "#0B1124", linha: "#1A2444", texto: "#E6F1FF", texto2: "#8FA3BF",
+      ouvindo: "#38E1FF", pensando: "#8B7CFF", falando: "#FFB23F", erro: "#FF5C7A",
+      primaria: "#38E1FF", destaque: "#FFB23F", escura: "#8B7CFF",
+    },
+    aura: {
+      fundo: "#02040B", superficie: "#07102A", linha: "#1B3A7A", texto: "#D6ECFF", texto2: "#7DB8FF",
+      primaria: "#2F7BFF", clara: "#7DB8FF", gelo: "#D6ECFF", nucleo: "#FF7A1A", ouro: "#FFD25A",
+      erro: "#FF5C7A", destaque: "#FFD25A", escura: "#1B3A7A",
+    },
+  };
 
-  // Volume: sobe rapido (ataque) e desce devagar (soltura), como um medidor de audio.
-  nivel = suavizar(nivel, alvoNivel, alvoNivel > nivel ? 0.35 : 0.08);
-  giroAtual = suavizar(giroAtual, cfg.giro, 0.05);
-  brilhoAtual = suavizar(brilhoAtual, cfg.brilho, 0.05);
-  misturaAtual = suavizar(misturaAtual, cfg.mistura, 0.05);
-  rotacao += giroAtual * 0.016;
-
-  const respiracao = Math.sin(t * 1.6) * 0.02;
-  const raio = Math.min(w, h) * 0.27 * (1 + respiracao + nivel * 0.28);
-  const corBase = estado === "offline" ? ALERTA : misturar(PETROLEO, LIMAO, misturaAtual);
-
-  ctx.clearRect(0, 0, w, h);
-
-  // Brilho atras da esfera.
-  const halo = ctx.createRadialGradient(cx, cy, raio * 0.2, cx, cy, raio * 2.1);
-  const alfaHalo = 0.10 + brilhoAtual * 0.18 + nivel * 0.35;
-  halo.addColorStop(0, `rgba(${corBase.join(",")},${alfaHalo})`);
-  halo.addColorStop(1, "rgba(3,6,5,0)");
-  ctx.fillStyle = halo;
-  ctx.fillRect(0, 0, w, h);
-
-  // Particulas: gira, aplica ondulacao (pensando/falando) e projeta em perspectiva.
-  const cosR = Math.cos(rotacao), sinR = Math.sin(rotacao);
-  const incl = 0.35, cosI = Math.cos(incl), sinI = Math.sin(incl);
-  const onda = (estado === "thinking" ? 0.08 : 0) + nivel * 0.18;
-
-  for (const p of pontos) {
-    const deslocamento = 1 + Math.sin(t * 3 + p.fase + p.y * 4) * onda;
-    let x = p.x * deslocamento, y = p.y * deslocamento, z = p.z * deslocamento;
-    const x1 = x * cosR - z * sinR;
-    const z1 = x * sinR + z * cosR;
-    const y1 = y * cosI - z1 * sinI;
-    const z2 = y * sinI + z1 * cosI;
-    const perspectiva = 2.6 / (2.6 + z2);
-    const px = cx + x1 * raio * perspectiva;
-    const py = cy + y1 * raio * perspectiva;
-    const profundidade = (1 - z2) / 2;             // 0 = fundo, 1 = frente
-    const alfa = 0.15 + profundidade * (0.55 + brilhoAtual * 0.4);
-    const tamanho = (0.6 + profundidade * 1.4) * (1 + nivel * 0.6);
-    const cor = profundidade > 0.7 && estado !== "offline"
-      ? misturar(corBase, LIMAO, 0.35 + nivel * 0.5)
-      : corBase;
-    ctx.fillStyle = `rgba(${cor.join(",")},${alfa.toFixed(3)})`;
-    ctx.beginPath();
-    ctx.arc(px, py, tamanho, 0, Math.PI * 2);
-    ctx.fill();
+  // Cor de cada estado por paleta (indicadores do HUD).
+  function corEstado(nomePaleta, est) {
+    const p = PALETAS[nomePaleta] || PALETAS.petroleo;
+    if (est === "offline") return p.erro;
+    if (nomePaleta === "aurora") {
+      return { listening: p.ouvindo, thinking: p.pensando, speaking: p.falando }[est] || p.texto2;
+    }
+    if (nomePaleta === "aura") {
+      return { listening: p.clara, thinking: p.primaria, speaking: p.ouro }[est] || p.texto2;
+    }
+    return { listening: p.primaria, thinking: p.primaria, speaking: p.destaque }[est] || p.texto2;
   }
 
-  // Anel fino ao redor, que acende quando ele fala.
-  ctx.strokeStyle = `rgba(${LIMAO.join(",")},${(0.05 + nivel * 0.5).toFixed(3)})`;
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.arc(cx, cy, raio * 1.25, 0, Math.PI * 2);
-  ctx.stroke();
+  const ESTADOS = {
+    idle: { texto: "em espera", mistura: 0, agitacao: 0.15 },
+    listening: { texto: "ouvindo", mistura: 0, agitacao: 0.3 },
+    thinking: { texto: "pensando", mistura: 0.55, agitacao: 1 },
+    speaking: { texto: "falando", mistura: 1, agitacao: 0.6 },
+    offline: { texto: "sem conexão", mistura: 0, agitacao: 0.05 },
+  };
+  const ORDEM = ["globo", "cortex", "reator", "holograma", "mapa", "esfera", "aura"];
+  const ESTADOS_DEMO = ["listening", "thinking", "speaking"];
 
-  requestAnimationFrame(desenhar);
-}
-requestAnimationFrame(desenhar);
+  // Visual de reserva: so um circulo, para a janela nunca ficar vazia.
+  const RESERVA = {
+    id: "globo", nome: "Globo", descricao: "Visual de reserva.", paleta: "petroleo", hud: false,
+    criar() {
+      return {
+        desenhar(ctx, q) {
+          const r = Math.min(q.w, q.h) * 0.25 * (1 + q.nivel * 0.3 + Math.sin(q.t * 1.6) * 0.02);
+          ctx.strokeStyle = q.estado === "offline" ? q.cores.erro : q.mistura > 0.5 ? q.cores.destaque : q.cores.primaria;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(q.x + q.w / 2, q.y + q.h / 2, r, 0, Math.PI * 2);
+          ctx.stroke();
+        },
+      };
+    },
+  };
 
-function escapar(texto) {
-  const div = document.createElement("div");
-  div.textContent = texto;
-  return div.innerHTML;
-}
+  // ------------------------------------------------------------------ elementos
+  const $ = (id) => document.getElementById(id);
+  const corpo = document.body;
+  const cena = $("cena");
+  const ctx = cena.getContext("2d");
+  const el = {
+    nomeVisual: $("nome-visual"), pilulaTexto: $("pilula-texto"),
+    btnTrocar: $("btn-trocar"), btnVoltar: $("btn-voltar"),
+    hudCompleto: $("hud-completo"), hudMinimo: $("hud-minimo"), hudSimples: $("hud-simples"),
+    listaConversa: $("lista-conversa"), entradaEstado: $("entrada-estado"),
+    latValor: $("lat-valor"), latQtd: $("lat-qtd"),
+    listaCamadas: $("lista-camadas"), listaAtividade: $("lista-atividade"),
+    legendaGrande: $("legenda-grande"),
+    minStatus: $("min-status"), minVoz: $("min-voz"), minModelo: $("min-modelo"),
+    minLatencia: $("min-latencia"), minModo: $("min-modo"), linhaMin: $("linha-min"),
+    simplesStatus: $("simples-status"), simplesLegenda: $("simples-legenda"),
+    escolha: $("escolha"), grade: $("grade"),
+  };
+  const cvEntrada = $("cv-entrada"), cvLatencia = $("cv-latencia"), cvEspectro = $("cv-espectro");
+  const cvNivelHist = $("cv-nivel-hist"), cvLinhaTempo = $("cv-linha-tempo"), cvMinTempo = $("cv-min-tempo");
+  Object.assign(el, {
+    entradaPico: $("entrada-pico"), latMin: $("lat-min"), latMed: $("lat-med"), latMax: $("lat-max"),
+    sesLigado: $("ses-ligado"), sesDesde: $("ses-desde"), sesHora: $("ses-hora"), sesData: $("ses-data"),
+    sesFalas: $("ses-falas"), sesAcoes: $("ses-acoes"),
+    painelFerramentas: $("painel-ferramentas"), listaFerramentas: $("lista-ferramentas"), ferrQtd: $("ferr-qtd"),
+    painelTempo: $("painel-tempo"), barraEstados: $("barra-estados"), legendaEstados: $("legenda-estados"),
+    minSessao: $("min-sessao"), minAcoes: $("min-acoes"),
+  });
+  const camadas = {};
+  for (const li of el.listaCamadas.children) {
+    camadas[li.dataset.camada] = { li, sub: li.querySelector(".sub"), ativa: false };
+  }
 
-window.jarvis = {
-  setState(novo) {
-    if (!ESTADOS[novo]) return;
-    estado = novo;
-    statusEl.textContent = ESTADOS[novo].texto;
-    statusEl.style.color = novo === "speaking" ? "var(--limao)"
-      : novo === "offline" ? "#E2483B" : "var(--texto)";
-  },
-  setLevel(valor) {
-    const v = Number(valor);
-    alvoNivel = Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0;
-  },
-  addLine(quem, texto) {
-    const rotulo = quem === "jarvis" ? "Jarvis" : quem === "voce" ? "Voce" : "Aviso";
-    legendaEl.innerHTML = `<b>${rotulo}:</b> ${escapar(texto)}`;
-    legendaEl.classList.add("visivel");
-    clearTimeout(timerLegenda);
-    timerLegenda = setTimeout(() => legendaEl.classList.remove("visivel"), 7000);
-  },
-};
-window.jarvis.setState("idle");
+  // ------------------------------------------------------------------ estado
+  let estado = "idle";
+  let alvoNivel = 0;
+  const suave = { nivel: 0, mistura: 0, agitacao: ESTADOS.idle.agitacao };
+  const conversa = [];          // {quem, texto}
+  const atividade = [];         // {hora, nome, ok}
+  const latencias = [];         // segundos
+  let ultimaFalaJarvis = "";
+  let ultimaFerramenta = "";
+  let acaoAte = 0;
+  let timerLegendaSimples = null;
+
+  // Estatisticas da sessao: tudo calculado a partir das chamadas do Python e do relogio.
+  const sessao = {
+    inicioMs: performance.now(),   // para duracoes
+    inicioData: new Date(),        // para "desde HH:MM"
+    falasVoce: 0, falasJarvis: 0,
+    acoesOk: 0, acoesFalha: 0,
+    ferramentas: new Map(),        // nome legivel -> {total, falhas, ultima}
+    latN: 0, latSoma: 0, latMin: Infinity, latMax: -Infinity,
+    picoEntrada: -1,               // -1 = ainda sem medida
+  };
+  const JANELA_LINHA_MS = 120000;
+  const trechos = [];              // linha do tempo: {estado, ini} (ms, performance.now)
+  const tempoEstado = { idle: 0, listening: 0, thinking: 0, speaking: 0, offline: 0 };
+  // Historico do nivel de entrada (~20 s, 10 amostras/s); NaN = sem medida (ele falando).
+  const HIST_N = 200;
+  const histNivel = new Float32Array(HIST_N).fill(NaN);
+  let histPos = 0;
+  let ultimaAmostra = 0, ultimoTexto = 0, ultimaLinha = 0;
+
+  let defAtual = null;
+  let instAtual = null;
+  let visualAnterior = null;    // id para o "Voltar"
+  let transicao = null;         // {fase, inicio, proximo}
+  const errosLogados = new Set();
+  const area = { x: 0, y: 0, w: 1, h: 1 };
+  let dpr = window.devicePixelRatio || 1;
+
+  const inicio = performance.now();
+  let ultimoQuadro = inicio;
+  let rafId = 0;
+
+  const q = {
+    t: 0, dt: 0, x: 0, y: 0, w: 1, h: 1, estado: "idle", nivel: 0, mistura: 0,
+    agitacao: 0.15, previa: false, cores: PALETAS.petroleo,
+  };
+
+  // ------------------------------------------------------------------ utilitarios
+  const limitar = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const fatorQuadro = (f, dt) => 1 - Math.pow(1 - f, dt * 60); // suavizacao independente do fps
+  const pad2 = (n) => (n < 10 ? "0" : "") + n;
+  function horaAgora() {
+    const d = new Date();
+    return pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + ":" + pad2(d.getSeconds());
+  }
+  function formatarSegundos(s) {
+    return s.toFixed(1).replace(".", ",") + " s";
+  }
+  function nomeFerramenta(nome) {
+    return String(nome == null ? "" : nome).replace(/_/g, " ").trim() || "—";
+  }
+  function rotuloQuem(quem) {
+    return quem === "jarvis" ? "Jarvis" : quem === "voce" ? "Você" : "Aviso";
+  }
+  function hexRgba(hex, a) {
+    const n = parseInt(String(hex).slice(1), 16) || 0;
+    return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+  }
+  function logarUmaVez(chave, ...args) {
+    if (errosLogados.has(chave)) return;
+    errosLogados.add(chave);
+    console.error(...args);
+  }
+
+  function registrados() {
+    const lista = (window.JarvisVisuais && window.JarvisVisuais.lista) || [];
+    const mapa = new Map(lista.map((d) => [d.id, d]));
+    const ordenados = [];
+    for (const id of ORDEM) if (mapa.has(id)) ordenados.push(mapa.get(id));
+    for (const d of lista) if (!ORDEM.includes(d.id)) ordenados.push(d);
+    return ordenados;
+  }
+  function obterDef(id) {
+    const lista = (window.JarvisVisuais && window.JarvisVisuais.lista) || [];
+    return lista.find((d) => d.id === id) || lista.find((d) => d.id === "globo") || RESERVA;
+  }
+  function modoHud(def) {
+    return def.hud === true ? "true" : def.hud === "minimo" ? "minimo" : "false";
+  }
+  function paletaDe(def) {
+    return PALETAS[def.paleta] ? def.paleta : "petroleo";
+  }
+
+  // ------------------------------------------------------------------ tamanho e area
+  function ajustarCanvas(cv) {
+    const w = Math.max(1, Math.round(cv.clientWidth * dpr));
+    const h = Math.max(1, Math.round(cv.clientHeight * dpr));
+    if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+  }
+
+  function calcularArea() {
+    const W = window.innerWidth, H = window.innerHeight;
+    const modo = defAtual ? modoHud(defAtual) : "false";
+    if (modo === "true") {
+      const col = W < 1100 ? 240 : 280;
+      const lateral = 16 + col + 16;
+      area.x = lateral; area.y = 56;
+      area.w = Math.max(1, W - lateral * 2);
+      area.h = Math.max(1, H - 56 - 156);
+    } else if (modo === "minimo") {
+      area.x = 0; area.y = 0; area.w = W; area.h = H;
+    } else {
+      area.x = 0; area.y = 52; area.w = W; area.h = Math.max(1, H - 52 - 100);
+    }
+  }
+
+  function redimensionar() {
+    dpr = window.devicePixelRatio || 1;
+    ajustarCanvas(cena);
+    ajustarCanvas(cvEntrada);
+    ajustarCanvas(cvEspectro);
+    ajustarCanvas(cvLatencia);
+    ajustarCanvas(cvNivelHist);
+    ajustarCanvas(cvLinhaTempo);
+    ajustarCanvas(cvMinTempo);
+    calcularArea();
+    ajustarPaineis();
+    desenharLatencia();
+    renderConversa();
+    atualizarTextosPeriodicos(performance.now());
+    desenharLinhasDoTempo(performance.now());
+    desenharHistNivel();
+    if (!el.escolha.hidden) ajustarPrevias();
+    if (!rafId) desenharCena(0); // mantem a imagem certa mesmo pausado
+  }
+  window.addEventListener("resize", redimensionar);
+
+  // ------------------------------------------------------------------ troca de visual
+  function criarInstancia(def) {
+    try {
+      const inst = def.criar();
+      if (!inst || typeof inst.desenhar !== "function") throw new Error("criar() sem desenhar()");
+      return { def, inst };
+    } catch (erro) {
+      logarUmaVez("criar:" + def.id, "Jarvis: falha ao criar o visual", def.id, erro);
+      if (def.id !== "globo") return criarInstancia(obterDef("globo"));
+      if (def !== RESERVA) return criarInstancia(RESERVA);
+      return { def: RESERVA, inst: RESERVA.criar() };
+    }
+  }
+
+  function aplicarVisual(def) {
+    const r = criarInstancia(def);
+    defAtual = r.def;
+    instAtual = r.inst;
+    const paleta = paletaDe(defAtual);
+    q.cores = PALETAS[paleta];
+    corpo.dataset.paleta = paleta;
+    const modo = modoHud(defAtual);
+    corpo.dataset.hud = modo;
+    el.hudCompleto.hidden = modo !== "true";
+    el.hudMinimo.hidden = modo !== "minimo";
+    el.hudSimples.hidden = modo !== "false";
+    el.nomeVisual.textContent = defAtual.nome || defAtual.id;
+    atualizarCorEstado();
+    atualizarCamadas(performance.now());
+    redimensionar();
+  }
+
+  function trocarVisual(id) {
+    const def = obterDef(id);
+    if (def === defAtual) return;
+    if (!defAtual || document.hidden) { aplicarVisual(def); return; }
+    transicao = { fase: "saindo", inicio: performance.now(), proximo: def };
+    corpo.classList.add("trocando");
+  }
+
+  function salvarEscolha(id) {
+    const pv = window.pywebview;
+    if (!pv || !pv.api || typeof pv.api.salvar_visual !== "function") return;
+    try {
+      Promise.resolve(pv.api.salvar_visual(id))
+        .then((ok) => { if (ok === false) console.warn("Jarvis: não consegui salvar o visual", id); })
+        .catch((erro) => console.error("Jarvis: erro ao salvar o visual", erro));
+    } catch (erro) {
+      console.error("Jarvis: erro ao salvar o visual", erro);
+    }
+  }
+
+  // ------------------------------------------------------------------ desenho da cena
+  function desenharCena(dt) {
+    q.t = (performance.now() - inicio) / 1000;
+    q.dt = dt;
+    q.x = area.x; q.y = area.y; q.w = area.w; q.h = area.h;
+    q.estado = estado;
+    q.nivel = suave.nivel; q.mistura = suave.mistura; q.agitacao = suave.agitacao;
+    q.previa = false;
+
+    const W = cena.width / dpr, H = cena.height / dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = "source-over";
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = q.cores.fundo;
+    ctx.fillRect(0, 0, W, H);
+    if (!instAtual) return;
+
+    ctx.save();
+    try {
+      instAtual.desenhar(ctx, q);
+    } catch (erro) {
+      ctx.restore();
+      logarUmaVez("desenhar:" + defAtual.id, "Jarvis: erro no visual", defAtual.id, erro);
+      // Visual com erro cai para o globo (sem salvar a troca); o globo cai para o circulo.
+      const proximo = defAtual.id !== "globo" ? obterDef("globo") : RESERVA;
+      aplicarVisual(defAtual === proximo ? RESERVA : proximo);
+      return;
+    }
+    ctx.restore();
+
+    // Fade da troca de visual: cobre a cena com o fundo.
+    if (transicao) {
+      const p = limitar((performance.now() - transicao.inicio) / 150, 0, 1);
+      const cobertura = transicao.fase === "saindo" ? p : 1 - p;
+      if (cobertura > 0) {
+        ctx.globalAlpha = cobertura;
+        ctx.fillStyle = q.cores.fundo;
+        ctx.fillRect(0, 0, W, H);
+        ctx.globalAlpha = 1;
+      }
+    }
+  }
+
+  function avancarTransicao(agora) {
+    if (!transicao) return;
+    if (agora - transicao.inicio < 150) return;
+    if (transicao.fase === "saindo") {
+      aplicarVisual(transicao.proximo);
+      transicao = { fase: "entrando", inicio: agora, proximo: null };
+      corpo.classList.remove("trocando");
+    } else {
+      transicao = null;
+    }
+  }
+
+  // ------------------------------------------------------------------ HUD desenhado
+  // Barras (entrada de voz e espectro): formas suaves moduladas pelo nivel real.
+  function desenharBarras(cv, n, nivel, t, cor, espelhado) {
+    const c = cv.getContext("2d");
+    const W = cv.width / dpr, H = cv.height / dpr;
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.clearRect(0, 0, W, H);
+    const passo = W / n;
+    const larg = Math.max(1, passo * 0.55);
+    c.fillStyle = cor;
+    for (let i = 0; i < n; i++) {
+      const u = espelhado ? Math.abs(i - (n - 1) / 2) / (n / 2) : i / n;
+      const forma = espelhado ? 1 - u * 0.75 : 0.55 + 0.45 * Math.sin(i * 0.9 + 1);
+      const mov = 0.55 + 0.45 * Math.sin(t * (5 + (i % 5)) + i * 1.7) * Math.sin(t * 2.3 + i * 0.6);
+      const alt = Math.max(1.5, H * limitar(nivel * forma * mov * 1.25, 0, 1));
+      c.globalAlpha = 0.35 + 0.65 * limitar(alt / H + 0.15, 0, 1);
+      if (espelhado) c.fillRect(i * passo + (passo - larg) / 2, (H - alt) / 2, larg, alt);
+      else c.fillRect(i * passo + (passo - larg) / 2, H - alt, larg, alt);
+    }
+    c.globalAlpha = 1;
+  }
+
+  function desenharLatencia() {
+    const c = cvLatencia.getContext("2d");
+    const W = cvLatencia.width / dpr, H = cvLatencia.height / dpr;
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.clearRect(0, 0, W, H);
+    const cores = q.cores;
+    // linhas de grade
+    c.strokeStyle = cores.linha;
+    c.lineWidth = 1;
+    c.setLineDash([2, 3]);
+    for (let i = 1; i <= 2; i++) {
+      const y = Math.round((H * i) / 3) + 0.5;
+      c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke();
+    }
+    c.setLineDash([]);
+    if (latencias.length === 0) return;
+    const max = Math.max(1, ...latencias) * 1.15;
+    const n = latencias.length;
+    const px = (i) => (n === 1 ? W / 2 : 4 + (i / (n - 1)) * (W - 8));
+    const py = (v) => H - 3 - (v / max) * (H - 8);
+    // area sob a linha
+    const grad = c.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, hexRgba(cores.primaria, 0.28));
+    grad.addColorStop(1, hexRgba(cores.primaria, 0));
+    c.beginPath();
+    c.moveTo(px(0), H);
+    for (let i = 0; i < n; i++) c.lineTo(px(i), py(latencias[i]));
+    c.lineTo(px(n - 1), H);
+    c.closePath();
+    c.fillStyle = grad;
+    c.fill();
+    c.beginPath();
+    for (let i = 0; i < n; i++) (i ? c.lineTo : c.moveTo).call(c, px(i), py(latencias[i]));
+    c.strokeStyle = cores.primaria;
+    c.lineWidth = 1.4;
+    c.stroke();
+    // ultimo ponto em destaque
+    c.fillStyle = cores.destaque;
+    c.beginPath();
+    c.arc(px(n - 1), py(latencias[n - 1]), 2.6, 0, Math.PI * 2);
+    c.fill();
+  }
+
+  function atualizarCamadas(agora) {
+    const p = paletaDe(defAtual || RESERVA);
+    const pal = PALETAS[p];
+    const acaoAtiva = agora < acaoAte;
+    const regras = {
+      ouvido: [estado === "listening", corEstado(p, "listening"), estado === "listening" ? "ouvindo" : estado === "offline" ? "sem conexão" : "em espera"],
+      cerebro: [estado === "thinking", corEstado(p, "thinking"), estado === "thinking" ? "pensando" : "—"],
+      acao: [acaoAtiva, pal.destaque, ultimaFerramenta || "—"],
+      voz: [estado === "speaking", corEstado(p, "speaking"), estado === "speaking" ? "falando" : "—"],
+    };
+    for (const chave in regras) {
+      const [ativa, cor, sub] = regras[chave];
+      const cam = camadas[chave];
+      if (cam.ativa !== ativa) { cam.ativa = ativa; cam.li.classList.toggle("ativa", ativa); }
+      cam.li.style.setProperty("--cor-camada", cor);
+      if (cam.sub.textContent !== sub) cam.sub.textContent = sub;
+    }
+  }
+
+  function atualizarCorEstado() {
+    const cor = corEstado(paletaDe(defAtual || RESERVA), estado);
+    corpo.style.setProperty("--estado", cor);
+  }
+
+  // ------------------------------------------------------------------ sessao (dados reais)
+  const DIAS = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+  const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  const NOMES_ESTADO = { listening: "ouvindo", thinking: "pensando", speaking: "falando", idle: "espera", offline: "sem conexão" };
+  const ORDEM_ESTADOS = ["listening", "thinking", "speaking", "idle", "offline"];
+
+  // Cor de cada estado nos graficos: no petroleo "ouvindo" e "pensando" usam a mesma
+  // primaria nos indicadores, entao "pensando" usa o texto claro para se distinguir.
+  function corGrafico(pal, est) {
+    if (est === "idle") return PALETAS[pal].texto2;
+    if (pal === "petroleo" && est === "thinking") return PALETAS[pal].texto;
+    return corEstado(pal, est);
+  }
+
+  function duracao(ms) {
+    const s = Math.floor(ms / 1000);
+    return pad2(Math.floor(s / 3600)) + ":" + pad2(Math.floor((s % 3600) / 60)) + ":" + pad2(s % 60);
+  }
+  const decimal = (v) => v.toFixed(1).replace(".", ",");
+  const porcento = (v) => Math.round(v * 100) + "%";
+  function setTexto(no, txt) { if (no.textContent !== txt) no.textContent = txt; }
+
+  function registrarEstado(novo, agora) {
+    const atual = trechos[trechos.length - 1];
+    if (atual && atual.estado === novo) return;
+    if (atual) tempoEstado[atual.estado] += agora - atual.ini;
+    trechos.push({ estado: novo, ini: agora });
+    // descarta trechos que ja sairam da janela (mantem o que cruza o inicio dela)
+    while (trechos.length > 2 && trechos[1].ini < agora - JANELA_LINHA_MS) trechos.shift();
+  }
+
+  function temposAgora(agora) {
+    const t = Object.assign({}, tempoEstado);
+    const atual = trechos[trechos.length - 1];
+    if (atual) t[atual.estado] += agora - atual.ini;
+    return t;
+  }
+
+  // Painéis de menor prioridade somem primeiro quando falta altura (nada espremido).
+  function ajustarPaineis() {
+    if (el.hudCompleto.hidden) return;
+    el.painelTempo.hidden = false;
+    el.painelFerramentas.hidden = false;
+    for (const painel of [el.painelTempo, el.painelFerramentas]) {
+      if (el.listaAtividade.clientHeight >= 64) break;
+      painel.hidden = true;
+    }
+  }
+
+  // Textos que dependem do relogio: no maximo 4x por segundo.
+  function atualizarTextosPeriodicos(agora) {
+    const ligado = duracao(agora - sessao.inicioMs);
+    const modo = defAtual ? modoHud(defAtual) : "false";
+    if (modo === "minimo") {
+      setTexto(el.minSessao, ligado);
+      return;
+    }
+    if (modo !== "true") return;
+    const d = new Date();
+    setTexto(el.sesLigado, ligado);
+    setTexto(el.sesDesde, "desde " + pad2(sessao.inicioData.getHours()) + ":" + pad2(sessao.inicioData.getMinutes()));
+    setTexto(el.sesHora, pad2(d.getHours()) + ":" + pad2(d.getMinutes()));
+    setTexto(el.sesData, DIAS[d.getDay()] + " " + d.getDate() + " " + MESES[d.getMonth()]);
+    if (!el.painelTempo.hidden) renderTempoEstados(agora);
+  }
+
+  function renderTempoEstados(agora) {
+    const t = temposAgora(agora);
+    let total = 0;
+    for (const k of ORDEM_ESTADOS) total += t[k];
+    const pal = paletaDe(defAtual || RESERVA);
+    const visiveis = ORDEM_ESTADOS.filter((k) => k !== "offline" || t.offline > 0);
+    // barra empilhada
+    const barra = el.barraEstados;
+    if (barra.children.length !== visiveis.length) {
+      barra.replaceChildren(...visiveis.map(() => document.createElement("i")));
+    }
+    const leg = el.legendaEstados;
+    if (leg.children.length !== visiveis.length) {
+      leg.replaceChildren(...visiveis.map(() => {
+        const li = document.createElement("li");
+        const qd = document.createElement("span"); qd.className = "q";
+        const nome = document.createElement("span"); nome.className = "n";
+        const pc = document.createElement("span"); pc.className = "pc";
+        li.append(qd, nome, pc);
+        return li;
+      }));
+    }
+    visiveis.forEach((k, i) => {
+      const frac = total > 0 ? t[k] / total : 0;
+      const cor = corGrafico(pal, k);
+      const seg = barra.children[i];
+      seg.style.width = (frac * 100).toFixed(2) + "%";
+      seg.style.background = cor;
+      seg.style.opacity = k === "idle" ? "0.45" : "1";
+      const li = leg.children[i];
+      li.children[0].style.background = cor;
+      li.children[0].style.opacity = k === "idle" ? "0.6" : "1";
+      setTexto(li.children[1], NOMES_ESTADO[k]);
+      setTexto(li.children[2], total > 0 ? porcento(frac) : "—");
+    });
+  }
+
+  function renderSessao() {
+    setTexto(el.sesFalas, sessao.falasVoce + sessao.falasJarvis ? sessao.falasVoce + " · " + sessao.falasJarvis : "—");
+    const totalAcoes = sessao.acoesOk + sessao.acoesFalha;
+    const ac = el.sesAcoes;
+    ac.replaceChildren();
+    if (!totalAcoes) {
+      ac.textContent = "—";
+    } else {
+      const f = document.createElement("span");
+      f.textContent = String(sessao.acoesFalha);
+      if (sessao.acoesFalha) f.className = "falha";
+      ac.append(String(sessao.acoesOk) + " · ", f);
+    }
+    setTexto(el.minAcoes, !totalAcoes ? "—"
+      : sessao.acoesFalha ? sessao.acoesOk + " ok · " + sessao.acoesFalha + (sessao.acoesFalha === 1 ? " falha" : " falhas")
+      : String(sessao.acoesOk));
+  }
+
+  function renderFerramentas() {
+    const ul = el.listaFerramentas;
+    ul.replaceChildren();
+    const lista = [...sessao.ferramentas.entries()]
+      .sort((a, b) => b[1].total - a[1].total || b[1].ultima - a[1].ultima);
+    setTexto(el.ferrQtd, lista.length ? (lista.length === 1 ? "1 usada" : lista.length + " usadas") : "—");
+    if (!lista.length) {
+      const li = document.createElement("li");
+      li.className = "vazio";
+      li.textContent = "—";
+      ul.appendChild(li);
+      return;
+    }
+    const max = lista[0][1].total;
+    for (const [nome, d] of lista.slice(0, 4)) {
+      const li = document.createElement("li");
+      const linha = document.createElement("div");
+      linha.className = "linha";
+      const n = document.createElement("span"); n.className = "nome"; n.textContent = nome; n.title = nome;
+      linha.appendChild(n);
+      if (d.falhas) {
+        const f = document.createElement("span"); f.className = "falhas";
+        f.textContent = d.falhas === 1 ? "1 falha" : d.falhas + " falhas";
+        linha.appendChild(f);
+      }
+      const qt = document.createElement("span"); qt.className = "qtd"; qt.textContent = "×" + d.total;
+      linha.appendChild(qt);
+      const trilho = document.createElement("div");
+      trilho.className = "trilho";
+      const ok = document.createElement("i");
+      ok.style.width = ((d.total - d.falhas) / max * 100).toFixed(1) + "%";
+      const fa = document.createElement("i");
+      fa.className = "f";
+      fa.style.width = (d.falhas / max * 100).toFixed(1) + "%";
+      trilho.append(ok, fa);
+      li.append(linha, trilho);
+      ul.appendChild(li);
+    }
+  }
+
+  // Linha do tempo dos estados (rodape do HUD completo e versao fina do HUD minimo).
+  function desenharFaixa(cv, agora, comMarcas) {
+    const c = cv.getContext("2d");
+    const W = cv.width / dpr, H = cv.height / dpr;
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.clearRect(0, 0, W, H);
+    const pal = paletaDe(defAtual || RESERVA);
+    const cores = PALETAS[pal];
+    const alt = comMarcas ? 8 : H;
+    const ini = agora - JANELA_LINHA_MS;
+    const xDe = (ms) => ((ms - ini) / JANELA_LINHA_MS) * W;
+    // trilho de fundo
+    c.fillStyle = cores.linha;
+    c.globalAlpha = 0.6;
+    c.fillRect(0, 0, W, alt);
+    c.globalAlpha = 1;
+    for (let i = 0; i < trechos.length; i++) {
+      const tr = trechos[i];
+      const fim = i + 1 < trechos.length ? trechos[i + 1].ini : agora;
+      if (fim <= ini) continue;
+      const x0 = Math.max(0, xDe(tr.ini)), x1 = Math.min(W, xDe(fim));
+      if (x1 - x0 <= 0) continue;
+      c.fillStyle = corGrafico(pal, tr.estado);
+      c.globalAlpha = tr.estado === "idle" ? 0.35 : 0.95;
+      c.fillRect(x0, 0, x1 - x0, alt);
+    }
+    c.globalAlpha = 1;
+    if (!comMarcas) return;
+    // marcas a cada 30 s (fixas em relacao a "agora")
+    c.font = '9px "Cascadia Mono", "Consolas", monospace';
+    c.textBaseline = "top";
+    const rotulos = ["−2 min", "−90 s", "−60 s", "−30 s", "agora"];
+    for (let k = 0; k <= 4; k++) {
+      const x = Math.round((k / 4) * (W - 1)) + 0.5;
+      c.strokeStyle = cores.texto2;
+      c.globalAlpha = 0.6;
+      c.beginPath(); c.moveTo(x, alt + 1); c.lineTo(x, alt + 4); c.stroke();
+      c.globalAlpha = 0.85;
+      c.fillStyle = cores.texto2;
+      c.textAlign = k === 0 ? "left" : k === 4 ? "right" : "center";
+      c.fillText(rotulos[k], k === 0 ? 0 : k === 4 ? W : x, alt + 6);
+    }
+    c.globalAlpha = 1;
+  }
+
+  function desenharLinhasDoTempo(agora) {
+    const modo = defAtual ? modoHud(defAtual) : "false";
+    if (modo === "true") desenharFaixa(cvLinhaTempo, agora, true);
+    else if (modo === "minimo") desenharFaixa(cvMinTempo, agora, false);
+  }
+
+  function amostrarNivel() {
+    // So mede a entrada quando ele nao esta falando (ai o nivel e a voz do Jarvis).
+    const medindo = estado !== "speaking" && estado !== "offline";
+    histNivel[histPos] = medindo ? suave.nivel : NaN;
+    histPos = (histPos + 1) % HIST_N;
+  }
+
+  function desenharHistNivel() {
+    if (el.hudCompleto.hidden) return;
+    const c = cvNivelHist.getContext("2d");
+    const W = cvNivelHist.width / dpr, H = cvNivelHist.height / dpr;
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.clearRect(0, 0, W, H);
+    const cores = q.cores;
+    c.strokeStyle = cores.linha;
+    c.lineWidth = 1;
+    c.setLineDash([2, 3]);
+    c.beginPath(); c.moveTo(0, H - 0.5); c.lineTo(W, H - 0.5); c.stroke();
+    c.setLineDash([]);
+    c.strokeStyle = corEstado(paletaDe(defAtual || RESERVA), "listening");
+    c.lineWidth = 1.2;
+    c.beginPath();
+    let aberto = false;
+    for (let i = 0; i < HIST_N; i++) {
+      const v = histNivel[(histPos + i) % HIST_N];
+      if (Number.isNaN(v)) { aberto = false; continue; }
+      const x = (i / (HIST_N - 1)) * W;
+      const y = H - 1 - limitar(v, 0, 1) * (H - 3);
+      if (aberto) c.lineTo(x, y); else { c.moveTo(x, y); aberto = true; }
+    }
+    c.stroke();
+  }
+
+  // ------------------------------------------------------------------ laco principal
+  let ultimaPrevia = 0;
+  function quadro(agora) {
+    rafId = 0;
+    if (document.hidden) return;
+    const dt = limitar((agora - ultimoQuadro) / 1000, 0, 0.1);
+    ultimoQuadro = agora;
+
+    // Volume: sobe rapido (ataque) e desce devagar (soltura), como um medidor de audio.
+    const cfg = ESTADOS[estado];
+    suave.nivel += (alvoNivel - suave.nivel) * fatorQuadro(alvoNivel > suave.nivel ? 0.35 : 0.08, dt);
+    suave.mistura += (cfg.mistura - suave.mistura) * fatorQuadro(0.05, dt);
+    suave.agitacao += (cfg.agitacao - suave.agitacao) * fatorQuadro(0.05, dt);
+
+    avancarTransicao(agora);
+    const escolhaAberta = !el.escolha.hidden;
+    if (!escolhaAberta) {
+      desenharCena(dt);
+      if (defAtual && modoHud(defAtual) === "true") {
+        const t = q.t;
+        const nivelEntrada = estado === "speaking" ? 0 : suave.nivel;
+        desenharBarras(cvEntrada, 28, nivelEntrada, t, corEstado(paletaDe(defAtual), "listening"), false);
+        desenharBarras(cvEspectro, 64, suave.nivel, t, estado === "speaking" ? q.cores.destaque : q.cores.primaria, true);
+        if (camadas.acao.ativa && agora >= acaoAte) atualizarCamadas(agora);
+      }
+      if (agora - ultimaAmostra >= 100) {
+        ultimaAmostra = agora;
+        amostrarNivel();
+        desenharHistNivel();
+      }
+      if (agora - ultimaLinha >= 100) {
+        ultimaLinha = agora;
+        desenharLinhasDoTempo(agora);
+      }
+      if (agora - ultimoTexto >= 250) {
+        ultimoTexto = agora;
+        atualizarTextosPeriodicos(agora);
+      }
+    } else if (agora - ultimaPrevia >= 1000 / 24) {
+      desenharPrevias(Math.min(0.1, (agora - ultimaPrevia) / 1000));
+      ultimaPrevia = agora;
+    }
+    agendar();
+  }
+  function agendar() {
+    if (!rafId && !document.hidden) rafId = requestAnimationFrame(quadro);
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
+    } else {
+      ultimoQuadro = performance.now();
+      agendar();
+    }
+  });
+
+  // ------------------------------------------------------------------ tela de escolha
+  let previas = [];   // {def, inst, canvas, ctx, q, suave, desvio, erro}
+  let primeiraEscolha = false;
+
+  function criarCartoes() {
+    previas = [];
+    el.grade.replaceChildren();
+    const defs = registrados();
+    const lista = defs.length ? defs : [RESERVA];
+    lista.forEach((def, i) => {
+      const nome = def.nome || def.id;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "cartao";
+      btn.dataset.id = def.id;
+      btn.setAttribute("aria-label", "Usar o visual " + nome);
+      const atual = defAtual && defAtual.id === def.id && !primeiraEscolha;
+      if (atual) { btn.classList.add("atual"); btn.setAttribute("aria-current", "true"); }
+
+      const cv = document.createElement("canvas");
+      cv.setAttribute("aria-hidden", "true");
+      const info = document.createElement("div");
+      info.className = "info";
+      const titulo = document.createElement("div");
+      titulo.className = "titulo";
+      const span = document.createElement("span");
+      span.textContent = nome;
+      titulo.appendChild(span);
+      if (atual) {
+        const selo = document.createElement("span");
+        selo.className = "selo";
+        selo.textContent = "ATUAL";
+        titulo.appendChild(selo);
+      }
+      const desc = document.createElement("div");
+      desc.className = "desc";
+      desc.textContent = def.descricao || "";
+      const amostras = document.createElement("div");
+      amostras.className = "amostras";
+      amostras.setAttribute("aria-hidden", "true");
+      const pal = PALETAS[paletaDe(def)];
+      for (const chave of ["primaria", "escura", "destaque"]) {
+        const a = document.createElement("i");
+        a.style.background = pal[chave];
+        amostras.appendChild(a);
+      }
+      info.append(titulo, desc, amostras);
+      btn.append(cv, info);
+      btn.addEventListener("click", () => escolher(def.id));
+      el.grade.appendChild(btn);
+
+      let inst = null, erro = false;
+      try {
+        inst = def.criar();
+        if (!inst || typeof inst.desenhar !== "function") throw new Error("criar() sem desenhar()");
+      } catch (e) {
+        erro = true;
+        logarUmaVez("previa-criar:" + def.id, "Jarvis: falha ao criar a prévia", def.id, e);
+      }
+      previas.push({
+        def, inst, erro, canvas: cv, ctx: cv.getContext("2d"), desvio: i * 0.83,
+        suave: { nivel: 0, mistura: 0, agitacao: 0.3 },
+        q: { t: 0, dt: 0, x: 0, y: 0, w: 1, h: 1, estado: "listening", nivel: 0, mistura: 0,
+             agitacao: 0.3, previa: true, cores: pal },
+      });
+    });
+  }
+
+  function ajustarPrevias() {
+    for (const p of previas) ajustarCanvas(p.canvas);
+  }
+
+  function desenharPrevias(dt) {
+    const t = (performance.now() - inicio) / 1000;
+    for (const p of previas) {
+      const c = p.ctx;
+      const W = p.canvas.width / dpr, H = p.canvas.height / dpr;
+      c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      c.globalAlpha = 1;
+      c.fillStyle = p.q.cores.fundo;
+      c.fillRect(0, 0, W, H);
+      if (p.erro || !p.inst) continue;
+
+      // Estado demonstrativo: alterna ouvindo/pensando/falando a cada 2,5 s.
+      const tl = t + p.desvio;
+      const est = ESTADOS_DEMO[Math.floor(tl / 2.5) % 3];
+      let alvo = 0;
+      if (est === "listening") alvo = 0.25 + 0.25 * Math.abs(Math.sin(tl * 6.3) * Math.sin(tl * 2.1));
+      else if (est === "thinking") alvo = 0.06;
+      else alvo = 0.35 + 0.45 * Math.abs(Math.sin(tl * 8.7) * Math.sin(tl * 1.9));
+      const s = p.suave;
+      s.nivel += (alvo - s.nivel) * fatorQuadro(alvo > s.nivel ? 0.35 : 0.08, dt);
+      s.mistura += (ESTADOS[est].mistura - s.mistura) * fatorQuadro(0.05, dt);
+      s.agitacao += (ESTADOS[est].agitacao - s.agitacao) * fatorQuadro(0.05, dt);
+
+      const pq = p.q;
+      pq.t = t; pq.dt = dt; pq.x = 0; pq.y = 0; pq.w = W; pq.h = H;
+      pq.estado = est; pq.nivel = s.nivel; pq.mistura = s.mistura; pq.agitacao = s.agitacao;
+      c.save();
+      try {
+        p.inst.desenhar(c, pq);
+      } catch (e) {
+        p.erro = true;
+        logarUmaVez("previa:" + p.def.id, "Jarvis: erro na prévia do visual", p.def.id, e);
+      }
+      c.restore();
+    }
+  }
+
+  function abrirEscolha(primeira) {
+    primeiraEscolha = !!primeira;
+    visualAnterior = primeiraEscolha ? null : (defAtual && defAtual.id);
+    el.btnVoltar.hidden = !visualAnterior;
+    criarCartoes();
+    el.escolha.hidden = false;
+    ajustarPrevias();
+    ultimaPrevia = 0;
+    const alvo = el.grade.querySelector(".cartao.atual") || el.grade.querySelector(".cartao");
+    if (alvo) alvo.focus();
+    agendar();
+  }
+
+  function fecharEscolha() {
+    el.escolha.hidden = true;
+    previas = [];               // libera as instancias das previas
+    el.grade.replaceChildren();
+    primeiraEscolha = false;
+    ultimoQuadro = performance.now();
+    el.btnTrocar.focus();
+    agendar();
+  }
+
+  function escolher(id) {
+    fecharEscolha();
+    trocarVisual(id);
+    salvarEscolha(obterDef(id).id);
+  }
+
+  function voltar() {
+    // Volta ao visual que estava, sem salvar nada. Na primeira vez fica o atual (globo).
+    fecharEscolha();
+  }
+
+  el.btnTrocar.addEventListener("click", () => abrirEscolha(false));
+  el.btnVoltar.addEventListener("click", voltar);
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape" && !el.escolha.hidden) { ev.preventDefault(); voltar(); }
+  });
+
+  // Registros tardios: atualiza a tela de escolha (e o visual, se era o que faltava).
+  window.JarvisVisuais.aoRegistrar = (def) => {
+    if (!el.escolha.hidden) { criarCartoes(); ajustarPrevias(); }
+    if (defAtual === RESERVA && (def.id === "globo" || def.id === CONFIG.visual)) {
+      aplicarVisual(obterDef(CONFIG.visual || "globo"));
+    }
+  };
+
+  // ------------------------------------------------------------------ HUD: textos
+  function renderConversa() {
+    const ul = el.listaConversa;
+    ul.replaceChildren();
+    if (conversa.length === 0) {
+      const li = document.createElement("li");
+      li.className = "vazio";
+      li.textContent = "—";
+      ul.appendChild(li);
+      return;
+    }
+    for (const fala of conversa) {
+      const li = document.createElement("li");
+      li.className = fala.quem;
+      const quem = document.createElement("span");
+      quem.className = "quem rotulo";
+      quem.textContent = rotuloQuem(fala.quem);
+      const txt = document.createElement("span");
+      txt.textContent = fala.texto;
+      li.append(quem, txt);
+      ul.appendChild(li);
+    }
+    // Mostra so as falas que cabem inteiras no painel (tira as mais antigas).
+    if (!el.hudCompleto.hidden) {
+      const topo = ul.getBoundingClientRect().top - 1;
+      while (ul.children.length > 1 && ul.firstElementChild.getBoundingClientRect().top < topo) {
+        ul.firstElementChild.remove();
+      }
+    }
+  }
+
+  function renderAtividade() {
+    const ul = el.listaAtividade;
+    ul.replaceChildren();
+    if (atividade.length === 0) {
+      const li = document.createElement("li");
+      li.className = "vazio";
+      li.textContent = "—";
+      ul.appendChild(li);
+      return;
+    }
+    for (let i = atividade.length - 1; i >= 0; i--) {
+      const a = atividade[i];
+      const li = document.createElement("li");
+      if (!a.ok) li.className = "falhou";
+      const hora = document.createElement("span");
+      hora.className = "hora";
+      hora.textContent = a.hora;
+      const acao = document.createElement("span");
+      acao.className = "acao";
+      acao.textContent = a.nome;
+      acao.title = a.nome;
+      const res = document.createElement("span");
+      res.className = "res";
+      res.textContent = a.ok ? "ok" : "falhou";
+      li.append(hora, acao, res);
+      ul.appendChild(li);
+    }
+  }
+
+  function renderLatencia() {
+    const n = latencias.length;
+    if (n === 0) {
+      el.latValor.textContent = "—";
+      el.latQtd.textContent = "—";
+      el.minLatencia.textContent = "—";
+    } else {
+      const ultimo = formatarSegundos(latencias[n - 1]);
+      el.latValor.textContent = ultimo;
+      el.latQtd.textContent = sessao.latN === 1 ? "1 resposta" : sessao.latN + " respostas";
+      el.minLatencia.textContent = ultimo;
+    }
+    el.latMin.textContent = sessao.latN ? decimal(sessao.latMin) + " s" : "—";
+    el.latMed.textContent = sessao.latN ? decimal(sessao.latSoma / sessao.latN) + " s" : "—";
+    el.latMax.textContent = sessao.latN ? decimal(sessao.latMax) + " s" : "—";
+    desenharLatencia();
+  }
+
+  function renderInfo() {
+    const info = CONFIG.info;
+    const txt = (v) => (typeof v === "string" && v.trim() ? v.trim() : "—");
+    el.minVoz.textContent = txt(info.voz);
+    el.minModelo.textContent = txt(info.modelo);
+    el.minModelo.title = txt(info.modelo);
+    el.minModo.textContent = typeof info.fone === "boolean" ? (info.fone ? "fone de ouvido" : "caixa de som") : "—";
+  }
+
+  function mostrarLegendaSimples(quem, texto) {
+    el.simplesLegenda.querySelector(".quem").textContent = rotuloQuem(quem) + ":";
+    el.simplesLegenda.querySelector(".txt").textContent = texto;
+    el.simplesLegenda.classList.add("visivel");
+    clearTimeout(timerLegendaSimples);
+    timerLegendaSimples = setTimeout(() => el.simplesLegenda.classList.remove("visivel"), 7000);
+  }
+
+  // ------------------------------------------------------------------ API do Python
+  window.jarvis = {
+    setState(novo) {
+      if (!ESTADOS[novo]) return;
+      estado = novo;
+      registrarEstado(novo, performance.now());
+      const texto = ESTADOS[novo].texto;
+      el.pilulaTexto.textContent = texto;
+      el.simplesStatus.textContent = texto;
+      el.minStatus.textContent = texto;
+      el.entradaEstado.textContent = novo === "listening" ? "ouvindo" : "—";
+      atualizarCorEstado();
+      atualizarCamadas(performance.now());
+    },
+    setLevel(valor) {
+      const v = Number(valor);
+      alvoNivel = Number.isFinite(v) ? limitar(v, 0, 1) : 0;
+      if (estado !== "speaking" && estado !== "offline" && alvoNivel > sessao.picoEntrada) {
+        sessao.picoEntrada = alvoNivel;
+        setTexto(el.entradaPico, porcento(alvoNivel));
+      }
+    },
+    addLine(quem, texto) {
+      const q2 = quem === "jarvis" || quem === "voce" ? quem : "sistema";
+      const t = String(texto == null ? "" : texto).trim();
+      if (!t) return;
+      conversa.push({ quem: q2, texto: t });
+      if (q2 === "voce") sessao.falasVoce++;
+      else if (q2 === "jarvis") sessao.falasJarvis++;
+      renderSessao();
+      while (conversa.length > 6) conversa.shift();
+      renderConversa();
+      if (q2 === "jarvis") {
+        ultimaFalaJarvis = t;
+        el.legendaGrande.textContent = t;
+        el.legendaGrande.classList.remove("vazia");
+      }
+      el.linhaMin.className = q2;
+      el.linhaMin.querySelector(".rotulo").textContent = rotuloQuem(q2);
+      el.linhaMin.querySelector(".txt").textContent = t;
+      el.linhaMin.title = t;
+      mostrarLegendaSimples(q2, t);
+    },
+    addTool(nome, ok) {
+      const legivel = nomeFerramenta(nome);
+      const sucesso = ok !== false;
+      atividade.push({ hora: horaAgora(), nome: legivel, ok: sucesso });
+      while (atividade.length > 12) atividade.shift();
+      renderAtividade();
+      ultimaFerramenta = legivel;
+      if (sucesso) sessao.acoesOk++; else sessao.acoesFalha++;
+      const reg = sessao.ferramentas.get(legivel) || { total: 0, falhas: 0, ultima: 0 };
+      reg.total++;
+      if (!sucesso) reg.falhas++;
+      reg.ultima = performance.now();
+      sessao.ferramentas.set(legivel, reg);
+      renderSessao();
+      renderFerramentas();
+      acaoAte = performance.now() + 3000;
+      atualizarCamadas(performance.now());
+      if (instAtual && typeof instAtual.evento === "function") {
+        try {
+          instAtual.evento({ tipo: "tool", nome: String(nome == null ? "" : nome), ok: sucesso });
+        } catch (erro) {
+          logarUmaVez("evento:" + (defAtual && defAtual.id), "Jarvis: erro no evento do visual", erro);
+        }
+      }
+    },
+    setLatency(segundos) {
+      const s = Number(segundos);
+      if (!Number.isFinite(s) || s < 0) return;
+      latencias.push(s);
+      sessao.latN++;
+      sessao.latSoma += s;
+      sessao.latMin = Math.min(sessao.latMin, s);
+      sessao.latMax = Math.max(sessao.latMax, s);
+      while (latencias.length > 24) latencias.shift();
+      renderLatencia();
+    },
+  };
+
+  // ------------------------------------------------------------------ inicio
+  renderConversa();
+  renderAtividade();
+  renderLatencia();
+  renderInfo();
+  renderSessao();
+  renderFerramentas();
+  aplicarVisual(obterDef(CONFIG.visual || "globo"));
+  window.jarvis.setState("idle");
+  if (CONFIG.primeiraVez) abrirEscolha(true);
+  agendar();
+})();
 </script>
 </body>
 </html>

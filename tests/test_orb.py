@@ -14,7 +14,8 @@ from jarvis.assistants.observer import NullObserver, pcm_level
 from jarvis.config import Settings
 from jarvis.os_integration import shortcut, windows
 from jarvis.tools import ToolRegistry
-from jarvis.ui.orb_window import ICON_FILE, ORB_HTML
+from jarvis.ui import preferencias
+from jarvis.ui.orb_window import ICON_FILE, ORB_HTML, VISUAIS_DIR
 
 
 class FakeObserver:
@@ -59,11 +60,13 @@ def test_null_observer_nao_faz_nada() -> None:
 
 def test_html_do_orb_expoe_a_api_usada_pelo_python() -> None:
     html = ORB_HTML.read_text(encoding="utf-8")
-    for trecho in ("window.jarvis", "setState", "setLevel", "addLine"):
+    for trecho in ("window.jarvis", "setState", "setLevel", "addLine", "addTool", "setLatency"):
         assert trecho in html
     for estado in ("idle", "listening", "thinking", "speaking", "offline"):
         assert estado in html
     assert "http" not in html.lower()  # nada carregado da internet
+    for visual in sorted(VISUAIS_DIR.glob("*.js")):
+        assert "http" not in visual.read_text(encoding="utf-8").lower(), visual.name
 
 
 def test_icone_existe() -> None:
@@ -162,8 +165,10 @@ class _FakeWebview:
     def __init__(self) -> None:
         self.window = _FakeWindow()
         self.started_with = None
+        self.created_with: dict = {}
 
     def create_window(self, *args, **kwargs):
+        self.created_with = kwargs
         return self.window
 
     def start(self, func, icon=None):
@@ -171,13 +176,16 @@ class _FakeWebview:
 
 
 @pytest.fixture
-def orb(monkeypatch: pytest.MonkeyPatch):
+def orb(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
     import sys
 
     from jarvis.ui.orb_window import OrbWindow
 
     fake = _FakeWebview()
     monkeypatch.setitem(sys.modules, "webview", fake)
+    monkeypatch.setattr(
+        preferencias, "caminho_preferencias", lambda: tmp_path / "preferencias.json"
+    )
     return OrbWindow(), fake
 
 
@@ -261,3 +269,26 @@ def test_orb_start_roda_o_assistente_em_thread(orb) -> None:
     func, icon = fake.started_with
     assert callable(func)
     assert icon is None or icon.endswith("jarvis.ico")
+
+
+def test_orb_janela_grande_com_api_do_visual(orb) -> None:
+    _window, fake = orb
+    kwargs = fake.created_with
+    assert (kwargs["width"], kwargs["height"]) == (1280, 760)
+    assert kwargs["min_size"] == (900, 600)
+    assert [n for n in dir(kwargs["js_api"]) if not n.startswith("_")] == ["salvar_visual"]
+    assert "/*JARVIS_CONFIG*/" not in kwargs["html"]
+
+
+def test_orb_envia_acoes_e_latencia(orb) -> None:
+    window, fake = orb
+    _load(fake)
+    window.on_tool('abre "isso"', True)
+    window.on_tool("delete_to_trash", False)
+    window.on_latency(0.91234)
+    window.on_latency(float("nan"))  # ignorado
+    window.on_latency("lixo")  # type: ignore[arg-type]  # ignorado, sem levantar
+    assert _wait_js(fake, lambda js: "window.jarvis.setLatency(0.912)" in js)
+    assert 'window.jarvis.addTool("abre \\"isso\\"", true)' in fake.window.js
+    assert 'window.jarvis.addTool("delete_to_trash", false)' in fake.window.js
+    assert sum(code.startswith("window.jarvis.setLatency") for code in fake.window.js) == 1

@@ -19,9 +19,10 @@ Feito para quem está começando: tudo explicado passo a passo, sem pagar nada
 ## O que ele faz
 
 - **Conversa por voz em tempo real** usando o Gemini Live (ouvido e boca da IA).
-- **Orb animado**: uma janela com uma esfera de partículas que muda quando ele está ouvindo,
-  pensando ou falando, e pulsa no ritmo da voz dele. Abre com dois cliques num **atalho na
-  Área de Trabalho**.
+- **Janela animada com 7 visuais à escolha** (do orb original a um cérebro neural, um reator
+  de plasma e uma silhueta de luz): todos mudam quando ele está ouvindo, pensando ou falando e
+  pulsam no ritmo da voz dele. Abre com dois cliques num **atalho na Área de Trabalho**.
+  Veja [Visuais](#visuais).
 - **Modo texto** no terminal, para quem não tem microfone ou quer testar rápido.
 - **Executa ações no Windows** a partir de uma **lista fechada** de ferramentas:
   - dizer a data e a hora;
@@ -110,6 +111,7 @@ Só a `GEMINI_API_KEY` é obrigatória. O resto tem valor padrão.
 | `JARVIS_NOME_USUARIO` | Seu nome ("assistente pessoal do ...") | vazio |
 | `JARVIS_VOZ` | Voz pronta do Google | `Charon` |
 | `JARVIS_FONE` | `sim` se você usa fone: dá para interromper ele no meio da fala | `nao` |
+| `JARVIS_VISUAL` | Força um visual da janela (veja [Visuais](#visuais)). Vazio = usa o que você escolheu | vazio |
 | `JARVIS_SILENCIO_MS` | Silêncio (ms) que encerra a sua fala. Menor = responde mais rápido | `500` |
 | `GEMINI_LIVE_MODEL` | Modelo de voz em tempo real | `gemini-3.1-flash-live-preview` |
 | `GEMINI_MODEL` / `GEMINI_MODEL_RESERVA` | Modelos do modo texto | `gemini-3.5-flash-lite` |
@@ -142,6 +144,42 @@ Sempre com o ambiente ativado (`.venv\Scripts\activate`):
 - "Move o arquivo foto.jpg da área de trabalho para a pasta Fotos."
 - "Cria um arquivo lista de compras na área de trabalho com arroz, feijão e café."
 - "Manda o arquivo rascunho.txt para a Lixeira." (vai abrir uma janela pedindo sua confirmação)
+
+## Visuais
+
+A janela do Jarvis tem **7 visuais**. Na primeira vez que você abre, aparece a tela
+**"Escolha o visual do Jarvis"**, com uma prévia animada de cada um. Clique no que preferir.
+
+| id | Nome | Como é |
+|---|---|---|
+| `globo` | Globo | O orb original: uma esfera de partículas, simples e centralizada. |
+| `cortex` | Córtex Neural | Um cérebro visto de cima, feito de neurônios ligados, com sinapses disparando. |
+| `reator` | Reator de Plasma | Núcleo de energia com anéis girando e raios elétricos. |
+| `holograma` | Holograma | Cabeça em fatias de ressonância, com uma linha de varredura. |
+| `mapa` | Mapa Mental | O "JARVIS" no centro e ramos para voz, cérebro, ferramentas, arquivos e mais. |
+| `esfera` | Esfera Holográfica | Esfera dourada de meridianos girando, com um "olho" que respira. |
+| `aura` | Aura | Silhueta de cabeça e ombros feita de luz azul, com um núcleo dourado. |
+
+Os visuais com painel (todos menos o `globo` e o `aura`) mostram também a conversa, o volume
+do microfone, a latência real até cada resposta e as ações executadas, com a hora.
+
+**Como trocar:**
+
+- **Pela janela:** clique em **"Trocar visual"**, no canto superior direito, e escolha outro.
+  "Voltar" (ou a tecla Esc) fecha a tela sem mudar nada.
+- **Pelo `.env`:** ponha, por exemplo, `JARVIS_VISUAL=reator`. Esse valor **manda** sobre a
+  escolha salva enquanto estiver preenchido. Deixe vazio para voltar a usar a sua escolha.
+  Um id que não existe é ignorado (fica registrado no log).
+
+**Onde fica a sua escolha:** num arquivo pequeno fora da pasta do projeto, para não se perder
+quando você atualiza o Jarvis:
+
+- Windows: `%APPDATA%\Jarvis\preferencias.json`
+- Outros sistemas: `~/.config/jarvis/preferencias.json`
+
+Apagar esse arquivo faz a tela de escolha aparecer de novo na próxima vez.
+
+Tudo roda **sem internet**: os visuais são desenhados em Canvas, sem bibliotecas externas.
 
 ## Segurança (resumo)
 
@@ -214,8 +252,10 @@ jarvis/
 │   │   ├── windows.py        # janelas, processos e caixa de confirmação do Windows
 │   │   └── shortcut.py       # atalho na Área de Trabalho
 │   ├── ui/
-│   │   ├── orb_window.py     # janela do orb (pywebview)
-│   │   ├── orb.html          # a animação da esfera (Canvas, sem internet)
+│   │   ├── orb_window.py     # janela (pywebview): monta o HTML e recebe os eventos
+│   │   ├── orb.html          # a "casca" da janela: tela de escolha, painel, legenda
+│   │   ├── visuais/          # um .js por visual (globo, cortex, reator...), Canvas puro
+│   │   ├── preferencias.py   # guarda o visual escolhido (fora da pasta do projeto)
 │   │   └── jarvis.ico        # ícone do atalho
 │   ├── tools/                # a LISTA FECHADA de ações
 │   │   ├── __init__.py       # ToolRegistry (registro das ferramentas)
@@ -269,6 +309,7 @@ passar pelo `PathGuard`.
 | "Não encontrei a GEMINI_API_KEY" | Confira se o arquivo se chama `.env` (e não `.env.txt`) e se a chave foi colada sem aspas. |
 | Ele não me ouve | Confira o microfone padrão do Windows (Configurações > Sistema > Som > Entrada). |
 | Ele responde a si mesmo / se interrompe | Use fone de ouvido, ou deixe `JARVIS_FONE=nao`. |
+| Quero escolher o visual de novo | Clique em "Trocar visual" na janela (ou apague o `preferencias.json`, veja [Visuais](#visuais)). |
 | A janela do orb não abre | Instale o **WebView2** da Microsoft (já vem no Windows 11) e rode `jarvis --modo voz` para ver a mensagem. |
 | Qualquer outro problema | Veja o arquivo `logs\jarvis.log`: o erro completo fica registrado lá. |
 

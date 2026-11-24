@@ -78,12 +78,56 @@ reserva quando o principal responde com erro 5xx.
    - **voz**: `LiveAssistant` no terminal.
    - **texto**: `TextAssistant` no terminal.
 
-### Como o orb recebe os eventos
+### Como a janela é montada (visuais)
+
+O pywebview recebe a página como **texto** (`create_window(html=...)`), então ela não consegue
+carregar arquivos vizinhos. Por isso o Python monta uma página única antes de abrir a janela:
+
+```
+Settings.visual (JARVIS_VISUAL) --+
+                                  +--> preferencias.visual_inicial() --> montar_config()
+preferencias.json (salvo) --------+        (.env > salvo > None)          {visual, primeiraVez,
+                                                                            info: voz, modelo,
+                                                                            fone, nome}
+                                                                                 |
+orb.html ----------------------------------------------------------------> montar_html()
+   /*JARVIS_CONFIG*/      <-- "window.JARVIS_CONFIG = {...};" (JSON, "</" escapado)
+   <!--JARVIS_VISUAIS-->  <-- um <script> por ui/visuais/*.js, em ordem alfabética
+                                                                                 |
+                                                                                 v
+                                        webview.create_window(html=..., js_api=_ApiJs())
+```
+
+1. `preferencias.visual_inicial()` decide o visual: `JARVIS_VISUAL` do `.env` (se for um id
+   válido), senão o salvo em `preferencias.json`, senão `None` (primeira vez: a página abre a
+   tela de escolha).
+2. `montar_html()` troca os dois marcadores do `orb.html`. Se um marcador faltar, a página segue
+   sem aquela parte e fica um aviso no log (a janela nunca deixa de abrir por isso).
+3. Cada `visuais/<id>.js` chama `JarvisVisuais.registrar({id, nome, descricao, paleta, hud,
+   criar()})`. A lista oficial de ids é `preferencias.VISUAIS`, e um teste garante que cada id
+   tem o seu `.js` e vice-versa.
+4. Quando a pessoa escolhe um visual, a página chama `window.pywebview.api.salvar_visual(id)`.
+   O `_ApiJs` só expõe esse método: ele valida o id e grava o arquivo de forma atômica
+   (temporário + `os.replace`), sem apagar outras chaves. Nunca levanta erro: devolve `False`.
+
+### Como a janela recebe os eventos
 
 ```
 LiveAssistant --on_state / on_level / on_transcript--> OrbWindow --evaluate_js--> orb.html
-   ouvindo / pensando / falando / sem conexao        (no max. 30 atualizacoes de volume por s)
+             --on_tool(nome, ok) / on_latency(s)---->            window.jarvis.setState,
+   ouvindo / pensando / falando / sem conexao        setLevel, addLine, addTool, setLatency
+                                                     (no max. 30 atualizacoes de volume por s)
 ```
+
+- `on_latency(segundos)` sai no mesmo ponto em que o atraso vai para o log: da última vez que
+  ele ouviu o senhor até o primeiro áudio da resposta (uma vez por resposta).
+- `on_tool(nome, ok)` sai depois de cada ação executada. `ok` é `False` quando a ação não é
+  permitida, estoura o tempo, levanta erro ou devolve um texto `"ERRO: ..."` do `safe_tool`.
+- Os dois eventos chegaram na v0.6.0. O `LiveAssistant` os chama com `getattr` e dentro de
+  `try/except`: um observador antigo (sem esses métodos) ou com defeito nunca derruba o
+  assistente.
+- A `OrbWindow` só **enfileira** o JavaScript (com `json.dumps` em todo valor); uma thread
+  própria envia para a janela. O loop de voz nunca espera a interface.
 
 O `LiveAssistant` não sabe nada de janela: ele só avisa um `AssistantObserver`. No terminal,
 o observador é o `NullObserver` (não faz nada). Assim dá para trocar a interface sem mexer na
@@ -94,16 +138,18 @@ lógica de voz.
 | Módulo | Responsabilidade |
 |---|---|
 | `jarvis/__main__.py` | Linha de comando. Trata `ConfigError` (mensagem amigável) e Ctrl+C ("Até logo, senhor."). |
-| `jarvis/config.py` | `Settings`: chave, modelos, voz, nome do usuário (opcional), tempos máximos, pasta do projeto, arquivo de log. Lê o `.env`. |
+| `jarvis/config.py` | `Settings`: chave, modelos, voz, nome do usuário (opcional), visual forçado (`JARVIS_VISUAL`), tempos máximos, pasta do projeto, arquivo de log. Lê o `.env`. |
 | `jarvis/errors.py` | `JarvisError`, `ConfigError`, `friendly_message()` (erro técnico -> frase simples) e `safe_tool()` (embrulha cada ferramenta: nunca levanta exceção, corta resultados longos, preserva nome/docstring/assinatura para a SDK). |
 | `jarvis/logging_setup.py` | Log rotativo (1 MB, 3 cópias, UTF-8) em `logs/`. |
 | `jarvis/persona.py` | `build_system_prompt()`: a personalidade de mordomo britânico e as regras (agir sem pedir licença, apagar só com confirmação manual, erro em uma frase). |
 | `jarvis/os_integration/shortcut.py` | `create_desktop_shortcut()`: cria `Jarvis.lnk` na Área de Trabalho apontando para o `pythonw.exe` do ambiente (`-m jarvis --modo orb`). Nunca sobrescreve. |
-| `jarvis/ui/orb_window.py` | `OrbWindow`: janela do pywebview (WebView2) que implementa o `AssistantObserver`. Nunca derruba o assistente se a janela falhar. |
-| `jarvis/ui/orb.html` | Animação do orb em Canvas 2D: esfera de partículas, 4 estados + sem conexão, volume suavizado, legenda. Sem bibliotecas nem internet. |
+| `jarvis/ui/orb_window.py` | `montar_config()` e `montar_html()` (injeção da configuração e dos visuais) e `OrbWindow`: janela do pywebview (WebView2, 1280x760, mínimo 900x600) que implementa o `AssistantObserver`. Nunca derruba o assistente se a janela falhar. |
+| `jarvis/ui/orb.html` | A "casca" da janela: registro dos visuais, tela de escolha com prévias, botão "Trocar visual", painel (conversa, volume, latência, camadas, atividade) e legenda. Sem bibliotecas nem internet. |
+| `jarvis/ui/visuais/*.js` | Um arquivo por visual (`globo`, `cortex`, `reator`, `holograma`, `mapa`, `esfera`, `aura`), em Canvas 2D puro. Cada um reage aos 5 estados e ao volume. |
+| `jarvis/ui/preferencias.py` | `VISUAIS` (lista oficial), `carregar()`, `salvar_visual()` (atômico, nunca levanta) e `visual_inicial()` (`.env` > salvo > primeira vez). Arquivo em `%APPDATA%\Jarvis\` no Windows ou `~/.config/jarvis/` nos outros. |
 | `jarvis/assistants/voice_output.py` | `VoiceOutput`: decide quem fala. Sem ElevenLabs, o áudio do Gemini toca direto; com ElevenLabs, o texto da resposta vira frases (`split_sentences`) faladas pelo ElevenLabs e o áudio do Gemini fica de reserva. Se o ElevenLabs falhar, volta para o Gemini sem travar. Interrupções descartam frases pendentes. |
 | `jarvis/assistants/elevenlabs_voice.py` | `ElevenLabsVoice`: streaming HTTP do ElevenLabs em PCM 24 kHz (mesmo formato do alto-falante), modelo Flash v2.5 por padrão. |
-| `jarvis/assistants/observer.py` | `AssistantObserver` (protocolo), `NullObserver` e `pcm_level()` (volume do áudio). |
+| `jarvis/assistants/observer.py` | `AssistantObserver` (protocolo: estado, volume, falas, ações e latência), `NullObserver` e `pcm_level()` (volume do áudio). |
 | `jarvis/os_integration/windows.py` | Tudo que fala direto com o Windows: listar janelas do Alt+Tab, fechar janela (WM_CLOSE), encerrar processo, caixa de confirmação Sim/Não, abrir com o programa padrão. Fora do Windows, devolve valores seguros. |
 | `jarvis/tools/security.py` | `PathGuard` (atalhos "área de trabalho", "documentos", "downloads"; pastas protegidas), processos protegidos, extensões executáveis, `normalize()`. |
 | `jarvis/tools/system_tools.py` | `current_time`. |
