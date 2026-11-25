@@ -86,7 +86,7 @@ carregar arquivos vizinhos. Por isso o Python monta uma página única antes de 
 ```
 Settings.visual (JARVIS_VISUAL) --+
                                   +--> preferencias.visual_inicial() --> montar_config()
-preferencias.json (salvo) --------+        (.env > salvo > None)          {visual, primeiraVez,
+preferencias.json (salvo) --------+    (.env > salvo > "galaxia")         {visual, primeiraVez,
                                                                             info: voz, modelo,
                                                                             fone, nome}
                                                                                  |
@@ -99,8 +99,12 @@ orb.html ----------------------------------------------------------------> monta
 ```
 
 1. `preferencias.visual_inicial()` decide o visual: `JARVIS_VISUAL` do `.env` (se for um id
-   válido), senão o salvo em `preferencias.json`, senão `None` (primeira vez: a página abre a
-   tela de escolha).
+   válido), senão o salvo em `preferencias.json`, senão `None` (nada escolhido). Nesse caso
+   `montar_config()` usa `preferencias.VISUAL_PADRAO` (`galaxia`, a Galáxia Neural) e marca
+   `primeiraVez: true` só como informação: a janela abre direto no visual e a tela de escolha
+   aparece apenas pelo botão "Trocar visual". No `orb.html`, id desconhecido também cai na
+   `galaxia`; um visual que **falha** (erro ao criar ou desenhar) cai no `globo`, o mais
+   simples, e o `globo` cai num círculo de reserva.
 2. `montar_html()` troca os dois marcadores do `orb.html`. Se um marcador faltar, a página segue
    sem aquela parte e fica um aviso no log (a janela nunca deixa de abrir por isso).
 3. Cada `visuais/<id>.js` chama `JarvisVisuais.registrar({id, nome, descricao, paleta, hud,
@@ -109,6 +113,22 @@ orb.html ----------------------------------------------------------------> monta
 4. Quando a pessoa escolhe um visual, a página chama `window.pywebview.api.salvar_visual(id)`.
    O `_ApiJs` só expõe esse método: ele valida o id e grava o arquivo de forma atômica
    (temporário + `os.replace`), sem apagar outras chaves. Nunca levanta erro: devolve `False`.
+
+**Paletas.** Cada visual declara uma `paleta`; o `orb.html` aplica as mesmas cores em três
+lugares: variáveis CSS (`body[data-paleta=...]`, para o painel e os textos), o objeto
+`PALETAS` (entregue ao visual em `q.cores`) e as cores dos estados (indicador, camadas, linha do
+tempo e gráficos, via `corEstado()`/`corGrafico()`). Todas têm as chaves `fundo`, `superficie`,
+`linha`, `texto`, `texto2`, `primaria`, `escura`, `destaque` e `erro`.
+
+| Paleta | Visuais | Base | Ouvindo / Pensando / Falando |
+|---|---|---|---|
+| `petroleo` | globo, cortex, reator, holograma | fundo `#030605`, primária `#2FB5A8`, destaque limão `#C6F000` | primária / primária / destaque |
+| `aurora` | mapa, esfera, cerebro | fundo `#05070F`, texto `#E6F1FF` | `#38E1FF` / `#8B7CFF` / `#FFB23F` |
+| `aura` | aura | fundo `#02040B`, primária `#2F7BFF`, ouro `#FFD25A` | `#7DB8FF` / `#2F7BFF` / `#FFD25A` |
+| `nuvem` | galaxia | Transformative Teal (WGSN/Coloro 2026) + Cloud Dancer (Pantone 2026): fundo `#041012`, superfície `#08201F`, linha `#12403D`, texto `#F0EEE9`, texto2 `#8FB8B2`, primária `#2BA79B`, escura `#1E7F7A`, clara `#9FE3DA`, destaque `#F0EEE9`, erro `#FF6B6B` | `#5FC8BE` / `#9FE3DA` / `#F0EEE9` |
+
+Na `nuvem`, o texto principal tem contraste 16,6:1 sobre o fundo e o secundário 8,9:1 (7,8:1
+sobre a superfície dos painéis), acima do mínimo de 4,5:1 para letra pequena.
 
 ### Como a janela recebe os eventos
 
@@ -145,8 +165,8 @@ lógica de voz.
 | `jarvis/os_integration/shortcut.py` | `create_desktop_shortcut()`: cria `Jarvis.lnk` na Área de Trabalho apontando para o `pythonw.exe` do ambiente (`-m jarvis --modo orb`). Nunca sobrescreve. |
 | `jarvis/ui/orb_window.py` | `montar_config()` e `montar_html()` (injeção da configuração e dos visuais) e `OrbWindow`: janela do pywebview (WebView2, 1280x760, mínimo 900x600) que implementa o `AssistantObserver`. Nunca derruba o assistente se a janela falhar. |
 | `jarvis/ui/orb.html` | A "casca" da janela: registro dos visuais, tela de escolha com prévias, botão "Trocar visual", painel (conversa, volume, latência, camadas, atividade) e legenda. Sem bibliotecas nem internet. |
-| `jarvis/ui/visuais/*.js` | Um arquivo por visual (`globo`, `cortex`, `reator`, `holograma`, `mapa`, `esfera`, `aura`), em Canvas 2D puro. Cada um reage aos 5 estados e ao volume. |
-| `jarvis/ui/preferencias.py` | `VISUAIS` (lista oficial), `carregar()`, `salvar_visual()` (atômico, nunca levanta) e `visual_inicial()` (`.env` > salvo > primeira vez). Arquivo em `%APPDATA%\Jarvis\` no Windows ou `~/.config/jarvis/` nos outros. |
+| `jarvis/ui/visuais/*.js` | Um arquivo por visual (`globo`, `cortex`, `reator`, `holograma`, `mapa`, `esfera`, `aura`, `cerebro`, `galaxia`), em Canvas 2D puro. Cada um reage aos 5 estados e ao volume. |
+| `jarvis/ui/preferencias.py` | `VISUAIS` (lista oficial), `carregar()`, `salvar_visual()` (atômico, nunca levanta) e `visual_inicial()` (`.env` > salvo > nada; o padrão `VISUAL_PADRAO = "galaxia"` é aplicado em `montar_config()`). Arquivo em `%APPDATA%\Jarvis\` no Windows ou `~/.config/jarvis/` nos outros. |
 | `jarvis/assistants/voice_output.py` | `VoiceOutput`: decide quem fala. Sem ElevenLabs, o áudio do Gemini toca direto; com ElevenLabs, o texto da resposta vira frases (`split_sentences`) faladas pelo ElevenLabs e o áudio do Gemini fica de reserva. Se o ElevenLabs falhar, volta para o Gemini sem travar. Interrupções descartam frases pendentes. |
 | `jarvis/assistants/elevenlabs_voice.py` | `ElevenLabsVoice`: streaming HTTP do ElevenLabs em PCM 24 kHz (mesmo formato do alto-falante), modelo Flash v2.5 por padrão. |
 | `jarvis/assistants/observer.py` | `AssistantObserver` (protocolo: estado, volume, falas, ações e latência), `NullObserver` e `pcm_level()` (volume do áudio). |

@@ -5,6 +5,7 @@
 
 # --- Ambientes virtuais ---
 .venv/
+.venv-build/
 venv/
 env/
 ENV/
@@ -37,6 +38,7 @@ htmlcov/
 logs/
 *.log
 *.wav
+!src/jarvis/ui/amostras/*.wav
 *.mp3
 
 # --- Editores e sistema ---

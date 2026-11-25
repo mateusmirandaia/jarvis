@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 from jarvis.config import Settings
@@ -40,6 +41,12 @@ def confirm_timeout_for(settings: Settings) -> float:
     return max(total - DIALOG_MARGIN_S, total / 2)
 
 
+def _pasta_usuario() -> Path:
+    from jarvis.armazenamento import pasta_usuario
+
+    return pasta_usuario()
+
+
 class ToolRegistry:
     """Monta as ferramentas, embrulha cada uma com ``safe_tool`` e entrega a lista fechada."""
 
@@ -53,7 +60,8 @@ class ToolRegistry:
             confirm: confirmacao manual (titulo, mensagem) -> bool; None usa a janela do Windows.
         """
         self._settings = settings
-        self._guard = PathGuard(settings.project_root)
+        # A pasta de dados do usuario guarda as chaves (.env): nenhuma acao mexe nela.
+        self._guard = PathGuard(settings.project_root, extra_protected=[_pasta_usuario()])
         self._apps = AppTools()
         files = FileTools(
             self._guard, confirm=confirm, confirm_timeout_s=confirm_timeout_for(settings)

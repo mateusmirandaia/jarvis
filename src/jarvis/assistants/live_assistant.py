@@ -17,7 +17,7 @@ from jarvis.assistants.audio import MIC_MIME_TYPE, AudioIO
 from jarvis.assistants.elevenlabs_voice import ElevenLabsVoice
 from jarvis.assistants.observer import AssistantObserver, NullObserver, pcm_level
 from jarvis.assistants.voice_output import VoiceOutput
-from jarvis.errors import friendly_message
+from jarvis.errors import ChaveInvalidaError, erro_de_autenticacao, friendly_message
 from jarvis.persona import build_system_prompt
 
 if TYPE_CHECKING:
@@ -30,6 +30,10 @@ MAX_BACKOFF_S = 15
 ECHO_GAP_S = 0.2  # folga apos a fala para o eco morrer antes de reabrir o microfone
 PLAYBACK_SLICE_BYTES = 2_048  # ~42 ms de audio a 24 kHz: o orb pulsa no ritmo da fala
 MIC_LEVEL_FACTOR = 0.6  # ao ouvir, o orb reage ao microfone de forma mais discreta
+INVALID_KEY_MESSAGE = (
+    "O Google recusou a chave (GEMINI_API_KEY): ela esta errada, foi apagada ou bloqueada. "
+    "Abra o Jarvis pela janela e troque a chave na engrenagem (aba Chave do Google)."
+)
 RECONNECT_NOTICE = (
     "(Aviso do sistema: a conexao caiu e voltou. Diga ao senhor em uma frase curta que "
     "teve um problema de conexao, mas ja esta de volta.)"
@@ -119,13 +123,22 @@ class LiveAssistant:
 
     # ------------------------------------------------------------------ execucao
     async def run(self) -> None:
-        """Loop principal: abre a sessao e reconecta sozinho com backoff se cair."""
+        """Loop principal: abre a sessao e reconecta sozinho com backoff se cair.
+
+        Raises:
+            ChaveInvalidaError: o Google recusou a chave. Reconectar nao resolve, entao o
+                loop para e quem chamou avisa a pessoa (a janela mostra "Atualizar chave").
+        """
         self.audio = AudioIO()
         try:
             while True:
                 try:
                     await self._session()
                 except Exception as error:  # noqa: BLE001 - inclui ExceptionGroup do TaskGroup
+                    if erro_de_autenticacao(error):
+                        logger.error("o Google recusou a chave; nao vou reconectar")
+                        self.observer.on_state("offline")
+                        raise ChaveInvalidaError(INVALID_KEY_MESSAGE) from None
                     await self._handle_disconnect(error)
         finally:
             self.audio.close()

@@ -81,12 +81,19 @@ class PathGuard:
     Args:
         project_root: pasta do projeto Jarvis (protegida, pois guarda a chave).
         home: pasta do usuario; padrao ``Path.home()`` (injetavel para testes).
+        extra_protected: outras pastas protegidas (ex.: ``%APPDATA%\\Jarvis``, com as chaves).
     """
 
-    def __init__(self, project_root: Path, home: Path | None = None) -> None:
+    def __init__(
+        self,
+        project_root: Path,
+        home: Path | None = None,
+        extra_protected: list[Path] | None = None,
+    ) -> None:
         self._project_root = Path(project_root)
         self._home = Path(home) if home is not None else Path.home()
-        self._protected = [*_system_folders(), self._project_root]
+        extras = [Path(pasta) for pasta in extra_protected or []]
+        self._protected = [*_system_folders(), self._project_root, *extras]
 
     @property
     def project_root(self) -> Path:

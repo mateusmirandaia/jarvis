@@ -19,8 +19,8 @@ Feito para quem está começando: tudo explicado passo a passo, sem pagar nada
 ## O que ele faz
 
 - **Conversa por voz em tempo real** usando o Gemini Live (ouvido e boca da IA).
-- **Janela animada com 7 visuais à escolha** (do orb original a um cérebro neural, um reator
-  de plasma e uma silhueta de luz): todos mudam quando ele está ouvindo, pensando ou falando e
+- **Janela animada com 9 visuais à escolha** (do orb original a um cérebro neural, um reator
+  de plasma, uma silhueta de luz e uma galáxia que vira cérebro): todos mudam quando ele está ouvindo, pensando ou falando e
   pulsam no ritmo da voz dele. Abre com dois cliques num **atalho na Área de Trabalho**.
   Veja [Visuais](#visuais).
 - **Modo texto** no terminal, para quem não tem microfone ou quer testar rápido.
@@ -147,11 +147,13 @@ Sempre com o ambiente ativado (`.venv\Scripts\activate`):
 
 ## Visuais
 
-A janela do Jarvis tem **7 visuais**. Na primeira vez que você abre, aparece a tela
-**"Escolha o visual do Jarvis"**, com uma prévia animada de cada um. Clique no que preferir.
+A janela do Jarvis tem **9 visuais**. O Jarvis abre na **Galáxia Neural**; para usar outro,
+clique em **"Trocar visual"** (canto superior direito): aparece a tela **"Escolha o visual do
+Jarvis"**, com uma prévia animada de cada um. Clique no que preferir e ele fica salvo.
 
 | id | Nome | Como é |
 |---|---|---|
+| `galaxia` | Galáxia Neural (padrão) | Uma galáxia espiral de três braços (820 pontos) girando, que se fecha num cérebro com sinapses e impulsos brancos e depois se abre de novo em galáxia. |
 | `globo` | Globo | O orb original: uma esfera de partículas, simples e centralizada. |
 | `cortex` | Córtex Neural | Um cérebro visto de cima, feito de neurônios ligados, com sinapses disparando. |
 | `reator` | Reator de Plasma | Núcleo de energia com anéis girando e raios elétricos. |
@@ -159,6 +161,11 @@ A janela do Jarvis tem **7 visuais**. Na primeira vez que você abre, aparece a 
 | `mapa` | Mapa Mental | O "JARVIS" no centro e ramos para voz, cérebro, ferramentas, arquivos e mais. |
 | `esfera` | Esfera Holográfica | Esfera dourada de meridianos girando, com um "olho" que respira. |
 | `aura` | Aura | Silhueta de cabeça e ombros feita de luz azul, com um núcleo dourado. |
+| `cerebro` | Globo Cognitivo | Um globo de 760 pontos (ciano e gelo) girando, que se transforma num cérebro (dois hemisférios e cerebelo, com sulcos), com ligações violeta e impulsos âmbar correndo, e volta a ser globo. |
+
+A **Galáxia Neural** usa uma paleta própria, a `nuvem`, feita com as cores do ano de 2026:
+**Transformative Teal** (verde-azulado, cor do ano WGSN/Coloro 2026) nos pontos e
+**Cloud Dancer** (branco suave, cor do ano Pantone 2026) nas sinapses, nos impulsos e no texto.
 
 Os visuais com painel (todos menos o `globo` e o `aura`) mostram também a conversa, o volume
 do microfone, a latência real até cada resposta e as ações executadas, com a hora.
@@ -177,9 +184,33 @@ quando você atualiza o Jarvis:
 - Windows: `%APPDATA%\Jarvis\preferencias.json`
 - Outros sistemas: `~/.config/jarvis/preferencias.json`
 
-Apagar esse arquivo faz a tela de escolha aparecer de novo na próxima vez.
+Apagar esse arquivo faz o Jarvis voltar a abrir na Galáxia Neural. Se um visual der erro, a
+janela cai sozinha no `globo`, o mais simples (sem mudar a sua escolha salva).
 
 Tudo roda **sem internet**: os visuais são desenhados em Canvas, sem bibliotecas externas.
+
+## Instalador
+
+Para quem não quer instalar Python: o Jarvis também sai como **instalador para Windows**
+(`Jarvis-Setup-<versão>.exe`). Ele não pede administrador, instala em
+`%LOCALAPPDATA%\Programs\Jarvis` e cria os atalhos na Área de Trabalho e no Menu Iniciar.
+Na primeira abertura, a própria janela pede a chave do Google e configura microfone e voz.
+
+- **O Windows avisa "O Windows protegeu o computador"?** O instalador não tem assinatura digital
+  (certificado pago). Clique em **"Mais informações"** e depois em **"Executar assim mesmo"**.
+  Confira antes o SHA-256 e o link do VirusTotal publicados junto com o arquivo.
+- **Configurações e logs** ficam em `%APPDATA%\Jarvis\` (chave em `.env`, preferências em
+  `preferencias.json`, logs em `logs\jarvis.log`). Desinstalar **pergunta** antes de apagá-los.
+
+**Gerar o instalador** (Windows, com Python 3.12 e [Inno Setup 6](https://jrsoftware.org/isdl.php)):
+
+```powershell
+python scripts\gerar_amostras_voz.py                               # amostras do botão "Ouvir" (uma vez)
+powershell -ExecutionPolicy Bypass -File packaging\build.ps1      # gera dist\Jarvis-Setup-<versão>.exe
+```
+
+O passo a passo completo (testar numa máquina limpa, SmartScreen, VirusTotal) está em
+[docs/INSTALADOR.md](docs/INSTALADOR.md).
 
 ## Segurança (resumo)
 
@@ -309,7 +340,7 @@ passar pelo `PathGuard`.
 | "Não encontrei a GEMINI_API_KEY" | Confira se o arquivo se chama `.env` (e não `.env.txt`) e se a chave foi colada sem aspas. |
 | Ele não me ouve | Confira o microfone padrão do Windows (Configurações > Sistema > Som > Entrada). |
 | Ele responde a si mesmo / se interrompe | Use fone de ouvido, ou deixe `JARVIS_FONE=nao`. |
-| Quero escolher o visual de novo | Clique em "Trocar visual" na janela (ou apague o `preferencias.json`, veja [Visuais](#visuais)). |
+| Quero escolher o visual de novo | Clique em "Trocar visual" na janela (ou apague o `preferencias.json` para voltar à Galáxia Neural, veja [Visuais](#visuais)). |
 | A janela do orb não abre | Instale o **WebView2** da Microsoft (já vem no Windows 11) e rode `jarvis --modo voz` para ver a mensagem. |
 | Qualquer outro problema | Veja o arquivo `logs\jarvis.log`: o erro completo fica registrado lá. |
 

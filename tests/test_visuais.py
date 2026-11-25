@@ -32,9 +32,20 @@ def pref(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     return arquivo
 
 
-def test_visuais_tem_os_sete_ids() -> None:
-    assert VISUAIS == ("globo", "cortex", "reator", "holograma", "mapa", "esfera", "aura")
-    assert preferencias.VISUAL_PADRAO in VISUAIS
+def test_visuais_tem_os_nove_ids() -> None:
+    assert VISUAIS == (
+        "galaxia",
+        "globo",
+        "cortex",
+        "reator",
+        "holograma",
+        "mapa",
+        "esfera",
+        "aura",
+        "cerebro",
+    )
+    assert preferencias.VISUAL_PADRAO == "galaxia"
+    assert VISUAIS[0] == preferencias.VISUAL_PADRAO  # primeiro cartao da tela de escolha
 
 
 def test_caminho_fica_fora_do_projeto(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
@@ -156,10 +167,10 @@ def test_settings_visual_padrao_vazio() -> None:
     assert Settings(api_key="x").visual == ""
 
 
-def test_montar_config_primeira_vez(pref: Path) -> None:
+def test_montar_config_primeira_vez_abre_na_galaxia(pref: Path) -> None:
     settings = Settings(api_key="x", user_name="Carlos", headphones=True)
     config = montar_config(settings)
-    assert config["visual"] is None and config["primeiraVez"] is True
+    assert config["visual"] == "galaxia" and config["primeiraVez"] is True
     assert config["info"] == {
         "voz": "Charon",
         "modelo": settings.live_model,
@@ -175,6 +186,11 @@ def test_montar_config_com_preferencia_e_env(pref: Path) -> None:
     config = montar_config(Settings(api_key="x", visual="cortex"))
     assert config["visual"] == "cortex" and config["primeiraVez"] is False
     assert montar_config(None)["info"] == {}
+
+
+def test_montar_config_env_invalido_cai_no_padrao(pref: Path) -> None:
+    config = montar_config(Settings(api_key="x", visual="matrix"))
+    assert config["visual"] == "galaxia" and config["primeiraVez"] is True
 
 
 # ------------------------------------------------------------------ montar_html
@@ -266,11 +282,13 @@ def test_cada_visual_tem_arquivo_e_registra_o_proprio_id() -> None:
 # ------------------------------------------------------------------ API do JavaScript
 
 
-def test_api_js_so_expoe_salvar_visual(pref: Path) -> None:
+def test_api_js_so_expoe_a_lista_do_contrato(pref: Path) -> None:
+    from jarvis.ui.api_config import METODOS_PUBLICOS
+
     api = orb_window._ApiJs()
     publicos = [nome for nome in dir(api) if not nome.startswith("_")]
-    assert publicos == ["salvar_visual"]
-    assert vars(api) == {}
+    assert publicos == sorted(METODOS_PUBLICOS)
+    assert all(nome.startswith("_") for nome in vars(api))  # nenhum atributo publico
     assert api.salvar_visual("globo") is True
     assert api.salvar_visual("nada") is False
     assert api.salvar_visual({"id": "globo"}) is False
@@ -411,3 +429,34 @@ def test_live_observador_que_explode_nao_derruba(tmp_path: Path) -> None:
     assert not resultado.startswith("ERRO:")
     assistant._heard_at, assistant._answer_logged = time.monotonic(), False
     assistant._log_latency()
+
+
+def test_orb_html_ordem_dos_cartoes_igual_a_visuais() -> None:
+    html = ORB_HTML.read_text(encoding="utf-8")
+    achado = re.search(r"const ORDEM = \[([^\]]*)\]", html)
+    assert achado, "orb.html sem a lista ORDEM"
+    assert tuple(re.findall(r'"([a-z]+)"', achado.group(1))) == VISUAIS
+
+
+def test_orb_html_tem_a_paleta_nuvem_completa() -> None:
+    html = ORB_HTML.read_text(encoding="utf-8")
+    assert 'body[data-paleta="nuvem"]' in html
+    bloco = re.search(r"nuvem: \{([^}]*)\}", html)
+    assert bloco, "PALETAS.nuvem nao encontrado"
+    cores = dict(re.findall(r'(\w+): "(#[0-9A-Fa-f]{6})"', bloco.group(1)))
+    esperado = {
+        "fundo": "#041012",
+        "superficie": "#08201F",
+        "linha": "#12403D",
+        "texto": "#F0EEE9",
+        "texto2": "#8FB8B2",
+        "primaria": "#2BA79B",
+        "escura": "#1E7F7A",
+        "clara": "#9FE3DA",
+        "destaque": "#F0EEE9",
+        "erro": "#FF6B6B",
+        "ouvindo": "#5FC8BE",
+        "pensando": "#9FE3DA",
+        "falando": "#F0EEE9",
+    }
+    assert cores == esperado

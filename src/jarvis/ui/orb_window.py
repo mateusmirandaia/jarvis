@@ -24,15 +24,17 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from jarvis.assistants.observer import Speaker, State
+from jarvis.config import pasta_pacote
 from jarvis.errors import ConfigError
 from jarvis.ui import preferencias
+from jarvis.ui.api_config import ApiJs, estado_config, ponte_js
 
 if TYPE_CHECKING:
     from jarvis.config import Settings
 
 logger = logging.getLogger(__name__)
 
-UI_DIR = Path(__file__).resolve().parent
+UI_DIR = pasta_pacote() / "ui"  # congelado: sys._MEIPASS/jarvis/ui
 ORB_HTML = UI_DIR / "orb.html"
 VISUAIS_DIR = UI_DIR / "visuais"
 ICON_FILE = UI_DIR / "jarvis.ico"
@@ -42,6 +44,7 @@ MIN_SIZE = (900, 600)
 BACKGROUND = "#030605"
 LEVEL_INTERVAL_S = 1 / 30  # no maximo 30 atualizacoes de volume por segundo
 LEVEL_MIN_CHANGE = 0.02
+ABAS_CONFIG: tuple[str, ...] = ("geral", "chave", "elevenlabs", "sobre")
 
 MARCADOR_CONFIG = "/*JARVIS_CONFIG*/"
 MARCADOR_VISUAIS = "<!--JARVIS_VISUAIS-->"
@@ -55,11 +58,16 @@ def montar_config(settings: Settings | None = None) -> dict[str, Any]:
         settings: configuracoes do Jarvis; None usa so a preferencia salva e ``info`` vazio.
 
     Returns:
-        ``{"visual": id | None, "primeiraVez": bool, "info": {...}}``. ``primeiraVez`` e True
-        quando ainda nao ha visual escolhido (a janela abre a tela de escolha).
+        ``{"visual": id, "primeiraVez": bool, "info": {...}, "config": {...},
+        "precisaConfigurar": bool}``. Sem nada escolhido (nem no .env nem salvo), ``visual``
+        e ``preferencias.VISUAL_PADRAO`` (a Galaxia Neural) e ``primeiraVez`` e True; a janela
+        abre direto no visual e a pessoa troca pelo botao. ``config`` e o mesmo objeto de
+        ``estado_config()`` (sem chaves); ``precisaConfigurar`` e True quando nao ha chave do
+        Google em nenhuma fonte (a janela mostra o assistente de configuracao).
     """
     forcado = settings.visual if settings is not None else ""
-    visual = preferencias.visual_inicial(forcado)
+    escolhido = preferencias.visual_inicial(forcado)
+    visual = escolhido or preferencias.VISUAL_PADRAO
     info: dict[str, Any] = {}
     if settings is not None:
         info = {
@@ -68,7 +76,19 @@ def montar_config(settings: Settings | None = None) -> dict[str, Any]:
             "fone": settings.headphones,
             "nome": settings.user_name,
         }
-    return {"visual": visual, "primeiraVez": visual is None, "info": info}
+    config: dict[str, Any] = {}
+    if settings is not None:
+        try:
+            config = estado_config(settings)
+        except Exception:  # noqa: BLE001 - a janela abre mesmo sem o resumo
+            logger.warning("nao consegui montar o estado da configuracao", exc_info=True)
+    return {
+        "visual": visual,
+        "primeiraVez": escolhido is None,
+        "info": info,
+        "config": config,
+        "precisaConfigurar": settings is None or not settings.has_api_key,
+    }
 
 
 def _json_para_script(valor: Any) -> str:
@@ -132,20 +152,8 @@ def montar_html(
     return pagina
 
 
-class _ApiJs:
-    """Objeto exposto ao JavaScript como ``window.pywebview.api``.
-
-    O pywebview expoe todo metodo e atributo publico deste objeto. Por isso ele tem um unico
-    metodo publico e nenhum atributo: nada alem de salvar o visual fica ao alcance da pagina.
-    """
-
-    def salvar_visual(self, id_visual: object) -> bool:
-        """Salva o visual escolhido na tela de escolha; devolve True se gravou."""
-        try:
-            return preferencias.salvar_visual(id_visual)
-        except Exception:  # noqa: BLE001 - nunca levanta para o JavaScript
-            logger.debug("falha ao salvar o visual", exc_info=True)
-            return False
+# Nome antigo mantido por compatibilidade: a API agora fica em jarvis.ui.api_config.
+_ApiJs = ApiJs
 
 
 class OrbWindow:
@@ -158,7 +166,12 @@ class OrbWindow:
     Se a janela ainda nao carregou, o ultimo estado fica guardado e e aplicado depois.
     """
 
-    def __init__(self, settings: Settings | None = None, title: str = "Jarvis") -> None:
+    def __init__(
+        self,
+        settings: Settings | None = None,
+        title: str = "Jarvis",
+        api: ApiJs | None = None,
+    ) -> None:
         try:
             import webview
         except ImportError as error:  # pragma: no cover - depende do ambiente
@@ -174,12 +187,15 @@ class OrbWindow:
         self._last_level_at = 0.0
         self._commands: queue.Queue[str] = queue.Queue()  # estado, legendas e acoes, em ordem
         self._pending_level: str | None = None  # volume: so o mais recente importa
+        self._pending_mic: str | None = None  # teste do microfone: so o mais recente importa
+        self._api = api if api is not None else ApiJs()
+        self._api._ligar(janela=self)
         self._wake = threading.Event()
         threading.Thread(target=self._dispatch_loop, name="orb-js", daemon=True).start()
         self._window: Any = webview.create_window(
             title,
             html=montar_html(montar_config(settings)),
-            js_api=_ApiJs(),
+            js_api=ponte_js(self._api),
             width=WINDOW_SIZE[0],
             height=WINDOW_SIZE[1],
             min_size=MIN_SIZE,
@@ -196,7 +212,10 @@ class OrbWindow:
         """
         thread = threading.Thread(target=worker, name="jarvis-assistente", daemon=True)
         icon = str(ICON_FILE) if ICON_FILE.exists() else None
-        self._webview.start(thread.start, icon=icon)
+        try:
+            self._webview.start(thread.start, icon=icon)
+        finally:
+            self._api._encerrar()  # janela fechada: solta o microfone do teste
 
     def _on_loaded(self) -> None:
         self._ready.set()
@@ -245,6 +264,31 @@ class OrbWindow:
             return
         self._enqueue(f"window.jarvis.setLatency({json.dumps(round(value, 3))})")
 
+    # ------------------------------------------------------------- configuracao
+    def on_mic_teste(self, level: float) -> None:
+        """Nivel do teste do microfone (0 a 1) para a barra da tela "Microfone"."""
+        try:
+            value = float(level)
+        except (TypeError, ValueError):
+            return
+        if not math.isfinite(value):
+            return
+        value = max(0.0, min(1.0, value))
+        with self._lock:
+            self._pending_mic = f"window.jarvis.setMicTeste({value:.3f})"
+        self._wake.set()
+
+    def on_aviso_chave(self, message: str) -> None:
+        """A chave do Google parou de funcionar: a janela mostra o aviso "Atualizar chave"."""
+        self._enqueue(f"window.jarvis.avisoChave({json.dumps(str(message))})")
+
+    def abrir_configuracao(self, aba: str | None = None) -> None:
+        """Abre o painel da engrenagem (``aba`` em ``ABAS_CONFIG``; None = a primeira)."""
+        if aba is not None and aba not in ABAS_CONFIG:
+            aba = None
+        argumento = json.dumps(aba) if aba is not None else ""
+        self._enqueue(f"window.jarvis.abrirConfiguracao({argumento})")
+
     # ------------------------------------------------------------------ utilitario
     def _enqueue(self, code: str) -> None:
         """Agenda um comando para a janela (nao bloqueia quem chamou)."""
@@ -260,8 +304,11 @@ class OrbWindow:
                 self._run_js(self._commands.get_nowait())
             with self._lock:
                 level, self._pending_level = self._pending_level, None
+                mic, self._pending_mic = self._pending_mic, None
             if level is not None:
                 self._run_js(level)
+            if mic is not None:
+                self._run_js(mic)
 
     def _run_js(self, code: str) -> None:
         """Executa JavaScript na janela; ignora erros (janela fechando, ainda carregando)."""

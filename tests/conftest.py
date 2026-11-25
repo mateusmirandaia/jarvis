@@ -31,6 +31,30 @@ except ImportError:  # pragma: no cover
     sys.modules["send2trash"] = _fake
 
 
+@pytest.fixture(autouse=True)
+def _pasta_do_usuario_isolada(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Nenhum teste le ou grava a pasta real do usuario (preferencias.json, .env, logs).
+
+    HOME/APPDATA apontam para uma pasta temporaria; as variaveis do Jarvis do ambiente real
+    sao removidas para os testes nao dependerem da maquina.
+    """
+    falso = tmp_path / "_usuario"
+    monkeypatch.setenv("HOME", str(falso))
+    monkeypatch.setenv("USERPROFILE", str(falso))
+    monkeypatch.setenv("APPDATA", str(falso / "AppData" / "Roaming"))
+    for nome in (
+        "GEMINI_API_KEY",
+        "ELEVENLABS_API_KEY",
+        "ELEVENLABS_VOICE_ID",
+        "ELEVENLABS_MODEL",
+        "JARVIS_VOZ",
+        "JARVIS_NOME_USUARIO",
+        "JARVIS_FONE",
+        "JARVIS_VISUAL",
+    ):
+        monkeypatch.delenv(nome, raising=False)
+
+
 @pytest.fixture
 def home(tmp_path: Path) -> Path:
     """Home falso com as pastas Desktop, Documents e Downloads."""

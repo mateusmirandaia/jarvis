@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import functools
 import logging
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -20,6 +20,14 @@ class JarvisError(Exception):
 
 class ConfigError(JarvisError):
     """Configuracao ausente ou invalida (ex.: falta a GEMINI_API_KEY no .env)."""
+
+
+class ChaveInvalidaError(ConfigError):
+    """O Google recusou a GEMINI_API_KEY ao conectar (chave errada, apagada ou bloqueada).
+
+    O ``LiveAssistant`` levanta este erro em vez de ficar reconectando: sem chave valida,
+    tentar de novo nunca resolve.
+    """
 
 
 def friendly_message(error: BaseException) -> str:
@@ -70,3 +78,66 @@ def safe_tool(func: Callable[..., Any]) -> Callable[..., str]:
         return result
 
     return wrapper
+
+
+def _cadeia(erro: BaseException) -> Iterator[BaseException]:
+    """O erro, as causas dele e, em ExceptionGroup, os erros de dentro (sem repetir)."""
+    vistos: set[int] = set()
+    pilha: list[BaseException] = [erro]
+    while pilha:
+        atual = pilha.pop()
+        if id(atual) in vistos:
+            continue
+        vistos.add(id(atual))
+        yield atual
+        pilha.extend(getattr(atual, "exceptions", ()) or ())
+        for ligado in (atual.__cause__, atual.__context__):
+            if ligado is not None:
+                pilha.append(ligado)
+
+
+def _codigo(erro: BaseException) -> int | None:
+    codigo = getattr(erro, "code", None)
+    if isinstance(codigo, int):
+        return codigo
+    status = getattr(erro, "status_code", None)
+    return status if isinstance(status, int) else None
+
+
+def _texto(erro: BaseException) -> str:
+    partes = [str(erro), str(getattr(erro, "status", "") or ""), str(getattr(erro, "message", ""))]
+    return " ".join(partes).lower()
+
+
+_TEXTOS_CHAVE_RUIM = (
+    "api key not valid",
+    "api_key_invalid",
+    "invalid api key",
+    "api key expired",
+    "api_key_expired",
+    "api key was reported as leaked",
+    "unauthenticated",
+    "permission_denied",
+)
+
+
+def erro_de_autenticacao(erro: BaseException) -> bool:
+    """True se o erro (ou uma causa dele) e o Google recusando a chave.
+
+    Cobre a API REST (HTTP 400 API_KEY_INVALID, 401, 403) e o Gemini Live, que fecha o
+    WebSocket com codigo 1007/1008 e o motivo "API key not valid".
+    """
+    try:
+        from google.genai import errors as genai_errors
+    except ImportError:  # pragma: no cover - depende do ambiente
+        return False
+    for atual in _cadeia(erro):
+        if not isinstance(atual, genai_errors.APIError):
+            continue
+        codigo = _codigo(atual)
+        if codigo in {401, 403}:
+            return True
+        texto = _texto(atual)
+        if any(trecho in texto for trecho in _TEXTOS_CHAVE_RUIM):
+            return True
+    return False

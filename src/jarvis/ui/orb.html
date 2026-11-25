@@ -21,6 +21,12 @@
     --texto2: #7DB8FF; --primaria: #2F7BFF; --escura: #1B3A7A; --destaque: #FFD25A;
     --erro: #FF5C7A; --vidro: rgba(7, 16, 42, 0.55); --vidro-forte: rgba(2, 4, 11, 0.94);
   }
+  /* nuvem: Transformative Teal (cor do ano WGSN/Coloro 2026) + Cloud Dancer (Pantone 2026) */
+  body[data-paleta="nuvem"] {
+    --fundo: #041012; --superficie: #08201F; --linha: #12403D; --texto: #F0EEE9;
+    --texto2: #8FB8B2; --primaria: #2BA79B; --escura: #1E7F7A; --destaque: #F0EEE9;
+    --erro: #FF6B6B; --vidro: rgba(8, 32, 31, 0.6); --vidro-forte: rgba(4, 16, 18, 0.94);
+  }
   body {
     --col: 280px;
     --f-titulo: "Bahnschrift", "Segoe UI", sans-serif;
@@ -264,18 +270,22 @@
   #btn-voltar { padding: 8px 16px; font-size: 13px; letter-spacing: 0.06em; display: flex; gap: 8px; align-items: center; }
   #btn-voltar:hover { border-color: var(--primaria); color: var(--primaria); }
   #btn-voltar svg { width: 14px; height: 14px; }
+  /* 9 cartoes: 5 por linha (5 + 4, a segunda linha centralizada) cabem sem rolar de
+     1280x760 ate o minimo 900x600. */
   #grade {
-    max-width: 1240px; margin: 0 auto; display: grid; gap: 14px;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    --cols: 5; --vao: 14px;
+    max-width: 1240px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: center;
+    gap: var(--vao);
   }
   .cartao {
+    flex: 0 0 calc((100% - (var(--cols) - 1) * var(--vao)) / var(--cols)); min-width: 0;
     display: flex; flex-direction: column; text-align: left; padding: 0; overflow: hidden;
     background: #070B0B; border: 1px solid var(--linha); border-radius: 4px;
     transition: border-color 0.2s, transform 0.2s;
   }
   .cartao:hover { border-color: var(--primaria); transform: translateY(-2px); }
   .cartao.atual { border-color: var(--primaria); box-shadow: 0 0 0 1px var(--primaria) inset; }
-  .cartao canvas { width: 100%; aspect-ratio: 16 / 10; }
+  .cartao canvas { width: 100%; aspect-ratio: 4 / 3; }
   .cartao .info { padding: 10px 12px 12px; border-top: 1px solid var(--linha); }
   .cartao .titulo { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--texto); }
   .cartao .selo {
@@ -284,11 +294,246 @@
   }
   .cartao .desc { margin-top: 4px; font-size: 11.5px; line-height: 1.35; color: var(--texto2); }
   .cartao .amostras { display: flex; gap: 4px; margin-top: 8px; }
+  .cartao .amostras { align-items: center; }
   .cartao .amostras i { width: 10px; height: 4px; border-radius: 1px; }
+  .cartao .amostras .padrao {
+    margin-left: auto; font-family: var(--f-dados); font-size: 10px; letter-spacing: 0.08em;
+    line-height: 1; padding: 2px 5px; border: 1px solid var(--linha); border-radius: 2px;
+    color: var(--texto2);
+  }
+  @media (max-width: 1099px) { #grade { --vao: 10px; } #escolha { padding-left: 24px; padding-right: 24px; } }
   @media (max-height: 680px) {
     #escolha { padding-top: 16px; }
     #escolha .cabeca { margin-bottom: 12px; }
     .cartao .desc { display: none; }
+  }
+
+  /* ---------- botao de configuracoes (engrenagem) ---------- */
+  #btn-trocar, #btn-config { height: 32px; }
+  #btn-config {
+    display: flex; align-items: center; justify-content: center; width: 34px; padding: 0;
+    color: var(--texto);
+  }
+  #btn-config:hover { border-color: var(--primaria); color: var(--primaria); }
+  #btn-config svg { width: 17px; height: 17px; }
+  /* durante o assistente da primeira vez: so a marca no topo e nada de HUD */
+  body.configurando #topo > :not(#marca) { display: none; }
+  body.configurando .camada { visibility: hidden; }
+
+  /* ---------- faixa de aviso da chave ---------- */
+  #aviso-chave {
+    position: absolute; top: 56px; left: 50%; transform: translateX(-50%); z-index: 12;
+    width: min(760px, calc(100% - 32px)); display: flex; align-items: center; gap: 12px;
+    padding: 9px 10px 9px 14px; border: 1px solid var(--erro); border-radius: 3px;
+    background: var(--vidro-forte); box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  }
+  #aviso-chave > svg { width: 18px; height: 18px; flex: none; color: var(--erro); }
+  #aviso-chave-texto { flex: 1; min-width: 0; font-size: 13px; line-height: 1.35; color: var(--texto); }
+
+  /* ---------- formularios (assistente e engrenagem) ---------- */
+  .cfg { --ok: #4BD58A; color: var(--texto); }
+  .cfg input, .cfg .selecionavel { user-select: text; }
+  .cfg h1 {
+    margin: 0 0 8px; font-family: var(--f-titulo); font-weight: 400; font-size: 24px;
+    letter-spacing: 0.02em; color: var(--texto); outline: none;
+  }
+  .cfg h2 {
+    margin: 18px 0 8px; font-family: var(--f-titulo); font-weight: 400; font-size: 11px;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--texto2);
+  }
+  .cfg h2:first-child { margin-top: 0; }
+  .cfg p { margin: 0 0 10px; font-size: 13.5px; line-height: 1.5; color: var(--texto); }
+  .cfg .fraco { color: var(--texto2); }
+  .cfg .pequeno { font-size: 12px; }
+  .cfg b { font-weight: 600; color: var(--texto); }
+  .botao {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 34px; padding: 7px 14px; font-size: 13px; letter-spacing: 0.03em;
+    color: var(--texto); background: var(--vidro); border: 1px solid var(--linha); border-radius: 3px;
+    white-space: nowrap; transition: border-color 0.15s, color 0.15s, background 0.15s, opacity 0.15s;
+  }
+  .botao:hover { border-color: var(--primaria); color: var(--primaria); }
+  .botao svg { width: 14px; height: 14px; flex: none; }
+  .botao.primario { background: var(--primaria); border-color: var(--primaria); color: var(--fundo); font-weight: 600; }
+  .botao.primario:hover { color: var(--fundo); filter: brightness(1.12); }
+  .botao.perigo:hover { border-color: var(--erro); color: var(--erro); }
+  .botao[aria-disabled="true"], .botao[aria-busy="true"] { opacity: 0.5; cursor: not-allowed; }
+  .botao.primario[aria-disabled="true"]:hover { filter: none; }
+  .botao.icone { width: 34px; padding: 0; }
+  .campo { margin: 0 0 12px; }
+  .campo > label, .cfg legend {
+    display: block; margin: 0 0 6px; font-size: 12.5px; letter-spacing: 0.02em; color: var(--texto);
+  }
+  .campo > label .fraco, .cfg legend .fraco { font-size: 12px; }
+  .linha-campo { display: flex; gap: 8px; align-items: stretch; }
+  .linha-campo input { flex: 1; min-width: 0; }
+  .cfg input[type="text"], .cfg input[type="password"] {
+    width: 100%; min-height: 36px; padding: 7px 10px; font: inherit; font-size: 14px;
+    color: var(--texto); background: var(--superficie); border: 1px solid var(--linha); border-radius: 3px;
+  }
+  .cfg input.chave { font-family: var(--f-dados); font-size: 13px; letter-spacing: 0.02em; }
+  .cfg input[type="text"]:focus, .cfg input[type="password"]:focus { outline: none; border-color: var(--primaria); }
+  .cfg input:focus-visible { outline: 2px solid var(--primaria); outline-offset: 1px; }
+  .cfg input[type="checkbox"], .cfg input[type="radio"] { accent-color: var(--primaria); width: 16px; height: 16px; margin: 0; flex: none; }
+  .cfg fieldset { margin: 0 0 12px; padding: 0; border: 0; min-width: 0; }
+  #cfg-fonte .check { display: flex; }
+  .criador { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; margin: 0 0 16px;
+    border: 1px solid var(--linha); border-radius: 10px; background: color-mix(in srgb, var(--primaria) 7%, transparent); }
+  .criador-nome { font-size: 20px; font-weight: 600; color: var(--texto); letter-spacing: .02em; }
+  .criador .acoes { margin-top: 6px; }
+  .selos { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 2px; padding: 0; }
+  .selos li { font-size: 12px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--linha);
+    color: var(--texto); background: color-mix(in srgb, var(--destaque) 8%, transparent); }
+  .check { display: inline-flex; align-items: center; gap: 10px; font-size: 13.5px; cursor: pointer; padding: 4px 0; }
+  .resultado { min-height: 20px; margin: 8px 0 0 !important; font-size: 13px !important; }
+  .resultado:empty { min-height: 0; margin: 0 !important; }
+  .resultado.ok { color: var(--ok) !important; }
+  .resultado.erro { color: var(--erro) !important; }
+  .resultado.neutro { color: var(--texto2) !important; }
+  .resultado.ok::before { content: "\2713  "; }
+  .resultado.erro::before { content: "\2715  "; }
+  .nota {
+    margin: 12px 0; padding: 9px 12px; font-size: 13px; line-height: 1.45; color: var(--texto);
+    border-left: 2px solid var(--destaque); background: rgba(255, 255, 255, 0.03);
+  }
+  .nota.alerta { border-left-color: var(--erro); }
+  .avisos { margin: 10px 0 14px; padding: 10px 12px 10px 30px; border: 1px solid var(--linha); border-radius: 3px; background: rgba(255, 255, 255, 0.025); }
+  .avisos li { font-size: 13px; line-height: 1.45; margin: 2px 0; }
+  .avisos li::marker { color: var(--destaque); }
+  .acoes { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 12px; }
+
+  /* cartoes de voz */
+  .cartoes-voz { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+  .cartao-voz {
+    display: flex; flex-direction: column; gap: 6px; padding: 9px 10px; min-width: 0;
+    border: 1px solid var(--linha); border-radius: 3px; background: var(--vidro);
+    transition: border-color 0.15s;
+  }
+  .cartao-voz:hover { border-color: var(--escura); }
+  .cartao-voz:has(input:checked) { border-color: var(--primaria); box-shadow: 0 0 0 1px var(--primaria) inset; }
+  .cartao-voz label { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; align-items: center; cursor: pointer; }
+  .cartao-voz .nome { font-size: 14px; color: var(--texto); }
+  .cartao-voz .desc { grid-column: 2; font-size: 11.5px; line-height: 1.3; color: var(--texto2); }
+  .cartao-voz .botao { min-height: 26px; padding: 3px 10px; font-size: 12px; align-self: flex-start; }
+  .cartao-voz .indisponivel { font-family: var(--f-dados); font-size: 11px; color: var(--texto2); padding: 4px 0; }
+  .linha-visual { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .linha-visual .valor { font-size: 14px; color: var(--texto); }
+
+  /* ---------- assistente da primeira vez ---------- */
+  #assistente {
+    position: absolute; inset: 0; z-index: 15; display: flex; align-items: center; justify-content: center;
+    padding: 56px 24px 24px;
+    background: radial-gradient(ellipse at center, color-mix(in srgb, var(--fundo) 35%, transparent) 0%,
+      color-mix(in srgb, var(--fundo) 75%, transparent) 75%);
+  }
+  /* janela larga: cartao a direita e o visual animando a esquerda */
+  @media (min-width: 1100px) {
+    #assistente:not([data-passo="1"]) {
+      justify-content: flex-end; padding-right: 40px;
+      background: linear-gradient(to right, transparent 25%, color-mix(in srgb, var(--fundo) 80%, transparent) 60%);
+    }
+    #assistente:not([data-passo="1"]) .assist-cartao { width: 660px; }
+  }
+  #assistente[data-passo="1"] { align-items: flex-end; background: linear-gradient(to bottom, transparent 45%, color-mix(in srgb, var(--fundo) 85%, transparent)); }
+  .assist-cartao {
+    position: relative; width: min(680px, 100%); max-height: 100%; display: flex; flex-direction: column;
+    border: 1px solid var(--linha); border-radius: 4px; background: color-mix(in srgb, var(--fundo) 90%, transparent);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+  }
+  .assist-cartao::before, .assist-cartao::after {
+    content: ""; position: absolute; width: 12px; height: 12px; pointer-events: none;
+    border-color: var(--primaria); border-style: solid; opacity: 0.8;
+  }
+  .assist-cartao::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+  .assist-cartao::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+  .assist-cabeca { display: flex; align-items: center; gap: 14px; padding: 14px 22px 0; }
+  .assist-pontos { display: flex; gap: 6px; margin: 0 0 0 auto; padding: 0; list-style: none; }
+  .assist-pontos li { width: 22px; height: 3px; border-radius: 2px; background: var(--linha); transition: background 0.3s; }
+  .assist-pontos li.feito { background: var(--escura); }
+  .assist-pontos li.atual { background: var(--primaria); }
+  .assist-corpo { flex: 1; min-height: 0; overflow-y: auto; padding: 14px 22px 6px; }
+  .assist-rodape {
+    display: flex; align-items: center; gap: 12px; padding: 12px 22px 16px; border-top: 1px solid var(--linha);
+  }
+  .assist-rodape .dica { flex: 1; min-width: 0; text-align: right; font-size: 12.5px; line-height: 1.35; color: var(--texto2); }
+  .assist-rodape .dica.alerta { color: var(--destaque); }
+  #assist-voltar.invisivel { visibility: hidden; }
+  #assistente[data-passo="1"] h1 { font-size: 30px; }
+  .exemplo {
+    margin: 10px 0 16px !important; padding: 16px 18px; font-family: var(--f-titulo); font-size: 24px !important;
+    letter-spacing: 0.02em; text-align: center; color: var(--destaque) !important;
+    border: 1px solid var(--linha); border-radius: 3px; background: rgba(255, 255, 255, 0.025);
+  }
+  .passos-lista { margin: 0 0 12px; padding-left: 20px; }
+  .passos-lista li { font-size: 13.5px; line-height: 1.5; color: var(--texto); }
+  .medidor {
+    position: relative; height: 20px; margin: 6px 0 4px; overflow: hidden;
+    border: 1px solid var(--linha); border-radius: 2px; background: var(--superficie);
+  }
+  .medidor i {
+    position: absolute; inset: 0; transform-origin: left center; transform: scaleX(0);
+    background: linear-gradient(90deg, var(--escura), var(--primaria) 55%, var(--destaque));
+    transition: transform 60ms linear;
+  }
+  .medidor b { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background: var(--texto); opacity: 0.8; transition: left 0.25s; }
+  .medidor::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(90deg, transparent 0 10px, var(--superficie) 10px 12px);
+  }
+  @media (max-height: 680px) {
+    #assistente { padding-top: 48px; padding-bottom: 14px; }
+    .assist-corpo { padding-top: 10px; }
+    .cfg h1 { font-size: 21px; }
+    #assistente[data-passo="1"] h1 { font-size: 26px; }
+    .exemplo { font-size: 21px !important; padding: 12px; }
+  }
+
+  /* ---------- painel de configuracoes (engrenagem) ---------- */
+  #config {
+    position: absolute; inset: 0; z-index: 18; display: flex; align-items: center; justify-content: center;
+    padding: 20px; background: color-mix(in srgb, var(--fundo) 72%, transparent);
+  }
+  .config-cartao {
+    position: relative; width: min(820px, 100%); height: min(660px, 100%); display: flex; flex-direction: column;
+    border: 1px solid var(--linha); border-radius: 4px; background: var(--vidro-forte);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+  }
+  .config-cabeca { display: flex; align-items: center; gap: 12px; padding: 14px 16px 10px 22px; }
+  .config-cabeca h1 { margin: 0; font-size: 20px; }
+  .config-cabeca .espaco { flex: 1; }
+  .abas { display: flex; gap: 2px; padding: 0 16px; border-bottom: 1px solid var(--linha); overflow-x: auto; }
+  .abas [role="tab"] {
+    flex: none; padding: 9px 14px; font-size: 13px; letter-spacing: 0.02em; color: var(--texto2);
+    background: transparent; border: 0; border-bottom: 2px solid transparent; border-radius: 0; margin-bottom: -1px;
+  }
+  .abas [role="tab"]:hover { color: var(--texto); }
+  .abas [role="tab"][aria-selected="true"] { color: var(--texto); border-bottom-color: var(--primaria); }
+  .abas [role="tab"]:focus-visible { outline-offset: -3px; }
+  .config-corpo { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 22px; }
+  .config-corpo [role="tabpanel"]:focus-visible { outline: 1px dashed var(--linha); outline-offset: 4px; }
+  .config-rodape { display: flex; align-items: center; gap: 10px; padding: 12px 16px 14px 22px; border-top: 1px solid var(--linha); }
+  #config-status { flex: 1; min-width: 0; margin: 0 !important; font-size: 12.5px !important; line-height: 1.35; }
+  .resumo { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 12px; font-size: 13.5px; }
+  .resumo .dado { font-size: 14px; color: var(--texto); padding: 2px 8px; border: 1px solid var(--linha); border-radius: 2px; }
+  .resumo .estado-ligado { color: var(--ok); }
+  .lista-el { display: flex; flex-direction: column; gap: 4px; max-height: 190px; overflow-y: auto; padding: 6px; border: 1px solid var(--linha); border-radius: 3px; }
+  .lista-el label { display: flex; align-items: center; gap: 10px; padding: 5px 6px; border-radius: 2px; font-size: 13.5px; cursor: pointer; }
+  .lista-el label:hover { background: rgba(255, 255, 255, 0.04); }
+  .lista-el label .dado { margin-left: auto; font-size: 11px; color: var(--texto2); }
+  .confirmar { margin: 8px 0 0; padding: 10px 12px; border: 1px solid var(--destaque); border-radius: 3px; }
+  .confirmar p { margin-bottom: 8px; }
+  .sobre { display: grid; grid-template-columns: max-content 1fr; gap: 10px 18px; margin: 0 0 14px; align-items: baseline; }
+  .sobre dt { font-size: 10px; }
+  .sobre dd { margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; font-size: 13.5px; }
+  .sobre dd .dado { font-size: 12.5px; word-break: break-all; color: var(--texto); }
+  .sobre dd .botao { min-height: 28px; padding: 4px 10px; font-size: 12px; }
+  @media (max-width: 1099px) {
+    .config-corpo { padding: 14px 18px; }
+    .abas [role="tab"] { padding: 9px 11px; }
+  }
+  .sr-only {
+    position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
   }
 </style>
 
@@ -336,6 +581,13 @@
     <span class="ponto" aria-hidden="true"></span>
     <span id="pilula-texto" class="rotulo">em espera</span>
   </span>
+  <button id="btn-config" type="button" aria-label="Abrir as configurações" title="Configurações">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true">
+      <circle cx="8" cy="8" r="2.2"></circle>
+      <circle cx="8" cy="8" r="4.7"></circle>
+      <path d="M8 1.2v2.1M8 12.7v2.1M1.2 8h2.1M12.7 8h2.1M3.2 3.2l1.5 1.5M11.3 11.3l1.5 1.5M3.2 12.8l1.5-1.5M11.3 4.7l1.5-1.5"></path>
+    </svg>
+  </button>
   <button id="btn-trocar" type="button" aria-label="Trocar visual do Jarvis" title="Trocar visual">
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
       <rect x="1.5" y="1.5" width="5" height="5" rx="0.8"></rect>
@@ -436,6 +688,265 @@
   <div id="simples-legenda" aria-live="polite"><span class="quem"></span><span class="txt"></span></div>
 </div>
 
+<!-- Aviso: a chave do Google parou de funcionar -->
+<div id="aviso-chave" role="alert" hidden>
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true">
+    <path d="M8 1.8 15 14H1L8 1.8Z"></path><path d="M8 6.2v3.6M8 11.6v.4" stroke-linecap="round"></path>
+  </svg>
+  <span id="aviso-chave-texto"></span>
+  <button id="btn-aviso-atualizar" class="botao primario" type="button">Atualizar chave</button>
+  <button id="btn-aviso-fechar" class="botao icone" type="button" aria-label="Dispensar o aviso" title="Dispensar">
+    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8"></path></svg>
+  </button>
+</div>
+
+<!-- Assistente da primeira vez (5 passos) -->
+<div id="assistente" class="cfg" role="dialog" aria-modal="true" aria-labelledby="assist-t1" data-passo="1" hidden>
+  <div class="assist-cartao">
+    <div class="assist-cabeca">
+      <span id="assist-passo" class="rotulo">Passo 1 de 5</span>
+      <ol class="assist-pontos" aria-hidden="true"><li></li><li></li><li></li><li></li><li></li></ol>
+    </div>
+    <div class="assist-corpo">
+      <section class="passo" data-passo="1" aria-labelledby="assist-t1">
+        <h1 id="assist-t1" tabindex="-1">Olá, eu sou o Jarvis</h1>
+        <p>Sou o seu assistente pessoal de voz. Vamos deixar tudo pronto em poucos minutos: a chave do Google, o microfone e o meu jeito de falar.</p>
+      </section>
+
+      <section class="passo" data-passo="2" aria-labelledby="assist-t2" hidden>
+        <h1 id="assist-t2" tabindex="-1">Sua chave do Google</h1>
+        <p>Eu uso o Gemini, a inteligência artificial do Google, para entender e responder. Para isso preciso de uma chave de acesso. <b>É grátis</b> e leva um minuto.</p>
+        <ol class="passos-lista">
+          <li>Clique em <b>Criar minha chave grátis</b> e entre com a sua conta Google.</li>
+          <li>Clique em <b>Criar chave de API</b> (Create API key) e copie a chave.</li>
+          <li>Cole aqui embaixo e clique em <b>Testar</b>.</li>
+        </ol>
+        <div class="acoes">
+          <button id="assist-criar-chave" class="botao" type="button">
+            <span>Criar minha chave grátis</span>
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M8 2h4v4M12 2 6.5 7.5M10 8.5V12H2V4h3.5"></path></svg>
+          </button>
+          <span class="fraco pequeno">abre no seu navegador</span>
+        </div>
+        <div class="campo">
+          <label for="assist-chave">Cole a sua chave aqui</label>
+          <div class="linha-campo">
+            <input id="assist-chave" class="chave" type="password" autocomplete="off" spellcheck="false" autocapitalize="off" aria-describedby="assist-chave-res">
+            <button class="botao mostrar" type="button" data-alvo="assist-chave" aria-pressed="false" aria-label="Mostrar a chave">Mostrar</button>
+            <button id="assist-testar" class="botao primario" type="button">Testar</button>
+          </div>
+          <p id="assist-chave-res" class="resultado" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="passo" data-passo="3" aria-labelledby="assist-t3" hidden>
+        <h1 id="assist-t3" tabindex="-1">Microfone</h1>
+        <p>Fale alguma coisa, por exemplo “Oi, Jarvis”. A barra tem que se mexer com a sua voz.</p>
+        <div id="assist-medidor" class="medidor" role="meter" aria-label="Volume do microfone" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i><b></b></div>
+        <p id="assist-mic-res" class="resultado" role="status" aria-live="polite"></p>
+        <div class="nota">Use fone de ouvido: assim eu não escuto a minha própria voz pela caixa de som e não me interrompo sozinho.</div>
+        <label class="check"><input id="assist-fone" type="checkbox"> Estou usando fone de ouvido</label>
+      </section>
+
+      <section class="passo" data-passo="4" aria-labelledby="assist-t4" hidden>
+        <h1 id="assist-t4" tabindex="-1">Personalizar</h1>
+        <div class="campo">
+          <label for="assist-nome">Como devo te chamar? <span class="fraco">(opcional)</span></label>
+          <input id="assist-nome" type="text" maxlength="40" autocomplete="off" spellcheck="false">
+        </div>
+        <fieldset>
+          <legend>Minha voz <span class="fraco">— clique em Ouvir para escutar</span></legend>
+          <div id="assist-vozes" class="cartoes-voz"></div>
+        </fieldset>
+        <div class="linha-visual">
+          <span class="rotulo">Visual</span>
+          <span id="assist-visual-nome" class="valor">—</span>
+          <button id="assist-escolher-visual" class="botao" type="button">Escolher visual</button>
+        </div>
+      </section>
+
+      <section class="passo" data-passo="5" aria-labelledby="assist-t5" hidden>
+        <h1 id="assist-t5" tabindex="-1">Tudo pronto<span id="assist-pronto-nome"></span>!</h1>
+        <p>Quando eu começar, é só falar comigo. Experimente dizer:</p>
+        <p class="exemplo">“Jarvis, que horas são?”</p>
+        <p class="fraco">Para mudar a voz, a chave ou o visual depois, use a engrenagem no canto de cima.</p>
+        <p id="assist-fim-res" class="resultado" role="status" aria-live="polite"></p>
+      </section>
+    </div>
+    <div class="assist-rodape">
+      <button id="assist-voltar" class="botao" type="button">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M8.5 2.5 4 7l4.5 4.5"></path></svg>
+        <span>Voltar</span>
+      </button>
+      <span id="assist-dica" class="dica" aria-live="polite"></span>
+      <button id="assist-avancar" class="botao primario" type="button" aria-describedby="assist-dica">Começar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Configuracoes (engrenagem) -->
+<div id="config" class="cfg" role="dialog" aria-modal="true" aria-labelledby="config-titulo" hidden>
+  <div class="config-cartao">
+    <div class="config-cabeca">
+      <h1 id="config-titulo">Configurações</h1>
+      <span class="espaco"></span>
+      <button id="config-x" class="botao icone" type="button" aria-label="Fechar as configurações" title="Fechar">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8"></path></svg>
+      </button>
+    </div>
+    <div class="abas" role="tablist" aria-label="Seções das configurações">
+      <button id="cfg-aba-geral" type="button" role="tab" aria-controls="cfg-painel-geral" aria-selected="true" tabindex="0" data-aba="geral">Geral</button>
+      <button id="cfg-aba-chave" type="button" role="tab" aria-controls="cfg-painel-chave" aria-selected="false" tabindex="-1" data-aba="chave">Chave do Google</button>
+      <button id="cfg-aba-elevenlabs" type="button" role="tab" aria-controls="cfg-painel-elevenlabs" aria-selected="false" tabindex="-1" data-aba="elevenlabs">Voz personalizada (ElevenLabs)</button>
+      <button id="cfg-aba-sobre" type="button" role="tab" aria-controls="cfg-painel-sobre" aria-selected="false" tabindex="-1" data-aba="sobre">Sobre</button>
+    </div>
+    <div class="config-corpo">
+      <section id="cfg-painel-geral" role="tabpanel" aria-labelledby="cfg-aba-geral" tabindex="0">
+        <div class="campo">
+          <label for="cfg-nome">Como devo te chamar? <span class="fraco">(opcional)</span></label>
+          <input id="cfg-nome" type="text" maxlength="40" autocomplete="off" spellcheck="false">
+        </div>
+        <fieldset id="cfg-fonte">
+          <legend>Qual voz eu uso?</legend>
+          <label class="check"><input id="cfg-fonte-google" type="radio" name="cfg-fonte" value="google"> Voz do Google <span class="fraco">— grátis, escolha abaixo</span></label>
+          <label class="check"><input id="cfg-fonte-eleven" type="radio" name="cfg-fonte" value="elevenlabs"> Minha voz do ElevenLabs <span id="cfg-fonte-eleven-nome" class="fraco"></span></label>
+          <p id="cfg-fonte-dica" class="fraco pequeno" hidden>Para usar uma voz sua, configure primeiro na aba Voz personalizada.</p>
+        </fieldset>
+        <p id="cfg-nota-eleven" class="nota" hidden>Agora eu falo com a voz do ElevenLabs. Escolher uma voz abaixo troca para a voz do Google.</p>
+        <fieldset>
+          <legend>Voz do Google <span class="fraco">— clique em Ouvir para escutar</span></legend>
+          <div id="cfg-vozes" class="cartoes-voz"></div>
+        </fieldset>
+        <h2>Som</h2>
+        <label class="check"><input id="cfg-fone" type="checkbox"> Estou usando fone de ouvido</label>
+        <p class="fraco pequeno">Sem fone, eu evito me ouvir pela caixa de som (fico surdo enquanto falo).</p>
+        <h2>Visual</h2>
+        <div class="linha-visual">
+          <span id="cfg-visual-nome" class="valor">—</span>
+          <button id="cfg-escolher-visual" class="botao" type="button">Escolher visual</button>
+          <span class="fraco pequeno">muda na hora</span>
+        </div>
+      </section>
+
+      <section id="cfg-painel-chave" role="tabpanel" aria-labelledby="cfg-aba-chave" tabindex="0" hidden>
+        <div class="resumo">
+          <span>Chave salva:</span>
+          <span id="cfg-chave-final" class="dado">—</span>
+        </div>
+        <p id="cfg-chave-projeto" class="nota alerta" hidden>Sua chave está no .env da pasta do projeto (modo desenvolvedor); trocar aqui não muda a chave usada.</p>
+        <p>É a chave que eu uso para falar com o Gemini, a inteligência artificial do Google. Ela é grátis; se a atual parou de funcionar, crie outra e cole aqui.</p>
+        <div class="acoes">
+          <button id="cfg-criar-chave" class="botao" type="button">
+            <span>Criar minha chave grátis</span>
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M8 2h4v4M12 2 6.5 7.5M10 8.5V12H2V4h3.5"></path></svg>
+          </button>
+          <span class="fraco pequeno">abre no seu navegador</span>
+        </div>
+        <div class="campo">
+          <label for="cfg-chave">Nova chave <span class="fraco">(deixe vazio para manter a atual; Testar com o campo vazio testa a chave salva)</span></label>
+          <div class="linha-campo">
+            <input id="cfg-chave" class="chave" type="password" autocomplete="off" spellcheck="false" autocapitalize="off" aria-describedby="cfg-chave-res">
+            <button class="botao mostrar" type="button" data-alvo="cfg-chave" aria-pressed="false" aria-label="Mostrar a chave">Mostrar</button>
+            <button id="cfg-testar" class="botao" type="button">Testar</button>
+          </div>
+          <p id="cfg-chave-res" class="resultado" role="status" aria-live="polite"></p>
+        </div>
+        <p class="fraco pequeno">A chave fica guardada só neste computador, na pasta das configurações.</p>
+      </section>
+
+      <section id="cfg-painel-elevenlabs" role="tabpanel" aria-labelledby="cfg-aba-elevenlabs" tabindex="0" hidden>
+        <div class="resumo">
+          <span>Situação:</span>
+          <span id="cfg-el-estado" class="dado">desligada</span>
+        </div>
+        <p><b>Opcional e pago.</b> Troca a voz do Google por uma voz do ElevenLabs (inclusive uma voz sua).</p>
+        <ul class="avisos">
+          <li>Gasta créditos do seu plano do ElevenLabs a cada resposta.</li>
+          <li>Responde um pouco mais devagar (cerca de 2 s, contra cerca de 1 s da voz do Google).</li>
+          <li>Não clone a voz de outra pessoa sem autorização dela.</li>
+        </ul>
+        <div class="acoes">
+          <button id="cfg-el-criar" class="botao" type="button">
+            <span>Criar conta no ElevenLabs</span>
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M8 2h4v4M12 2 6.5 7.5M10 8.5V12H2V4h3.5"></path></svg>
+          </button>
+          <span class="fraco pequeno">abre no seu navegador</span>
+        </div>
+        <p class="nota">Ao criar a chave (API key) no ElevenLabs, marque as permissões <b>Text to Speech</b> e <b>Voices: read</b>.</p>
+        <div class="campo">
+          <label for="cfg-el-chave">Chave do ElevenLabs <span id="cfg-el-chave-dica" class="fraco"></span></label>
+          <div class="linha-campo">
+            <input id="cfg-el-chave" class="chave" type="password" autocomplete="off" spellcheck="false" autocapitalize="off">
+            <button class="botao mostrar" type="button" data-alvo="cfg-el-chave" aria-pressed="false" aria-label="Mostrar a chave">Mostrar</button>
+          </div>
+        </div>
+        <div class="acoes">
+          <button id="cfg-el-buscar" class="botao" type="button">Buscar minhas vozes</button>
+          <button id="cfg-el-manual-abrir" class="botao" type="button">Prefiro colar o ID da voz</button>
+        </div>
+        <p id="cfg-el-buscar-res" class="resultado" role="status" aria-live="polite"></p>
+        <fieldset id="cfg-el-lista-grupo" hidden>
+          <legend>Escolha a voz</legend>
+          <div id="cfg-el-lista" class="lista-el"></div>
+        </fieldset>
+        <div id="cfg-el-manual" class="campo" hidden>
+          <label for="cfg-el-voz-id">ID da voz <span class="fraco">(no ElevenLabs, em Voices, copie o ID da voz)</span></label>
+          <input id="cfg-el-voz-id" class="chave" type="text" maxlength="64" autocomplete="off" spellcheck="false" autocapitalize="off">
+        </div>
+        <h2>Testar e desligar</h2>
+        <div class="acoes">
+          <button id="cfg-el-testar" class="botao" type="button">Testar a voz</button>
+          <button id="cfg-el-desligar" class="botao perigo" type="button">Voltar para a voz do Google</button>
+        </div>
+        <div id="cfg-el-confirmar" class="confirmar" hidden>
+          <p>O teste fala uma frase curta com essa voz e <b>gasta créditos do seu plano</b> do ElevenLabs. Testar mesmo?</p>
+          <div class="acoes">
+            <button id="cfg-el-confirmar-sim" class="botao primario" type="button">Sim, testar</button>
+            <button id="cfg-el-confirmar-nao" class="botao" type="button">Cancelar</button>
+          </div>
+        </div>
+        <p id="cfg-el-res" class="resultado" role="status" aria-live="polite"></p>
+      </section>
+
+      <section id="cfg-painel-sobre" role="tabpanel" aria-labelledby="cfg-aba-sobre" tabindex="0" hidden>
+        <div class="criador">
+          <span class="rotulo">Criado por</span>
+          <strong class="criador-nome">Mateus Miranda</strong>
+          <span>Engenheiro de Software Sênior · Especialista em IA · ex-Microsoft</span>
+          <span class="fraco">22 anos construindo tecnologia · “O Engenheiro de Resultado”</span>
+          <ul class="selos" aria-label="Formação e credenciais">
+            <li>HarvardX · Machine Learning e IA com Python</li>
+            <li>Pós em Sistemas Cognitivos com Agentes de IA</li>
+            <li>Bacharel em Ciência da Computação</li>
+            <li>Membro do IEEE e da SBC</li>
+          </ul>
+          <div class="acoes">
+            <span class="dado">@mateusmirandaia.ia — IA sem hype</span>
+            <button id="cfg-abrir-instagram" class="botao" type="button">Seguir no Instagram</button>
+          </div>
+          <span class="fraco pequeno">Feito para você usar de graça. Se ele te ajudou, me conta lá.</span>
+        </div>
+        <dl class="sobre">
+          <dt class="rotulo">Versão</dt><dd><span id="cfg-versao" class="dado selecionavel">—</span></dd>
+          <dt class="rotulo">Repositório</dt>
+          <dd><span class="dado selecionavel">github.com/mateusmirandaia/jarvis</span><button id="cfg-abrir-repo" class="botao" type="button">Abrir no navegador</button></dd>
+          <dt class="rotulo">Configurações</dt>
+          <dd><span id="cfg-pasta-config" class="dado selecionavel">—</span><button id="cfg-abrir-config" class="botao" type="button">Abrir pasta</button></dd>
+          <dt class="rotulo">Logs</dt>
+          <dd><span id="cfg-pasta-logs" class="dado selecionavel">—</span><button id="cfg-abrir-logs" class="botao" type="button">Abrir pasta</button></dd>
+        </dl>
+        <p class="nota">A conta grátis do Google tem um limite de uso por minuto e por dia. Se passar, eu aviso, e volta a funcionar sozinho depois de um tempo.</p>
+        <p id="cfg-sobre-res" class="resultado" role="status" aria-live="polite"></p>
+      </section>
+    </div>
+    <div class="config-rodape">
+      <p id="config-status" class="resultado" role="status" aria-live="polite"></p>
+      <button id="config-fechar" class="botao" type="button">Fechar</button>
+      <button id="config-salvar" class="botao primario" type="button">Salvar e aplicar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Tela de escolha -->
 <div id="escolha" role="dialog" aria-modal="true" aria-labelledby="escolha-titulo" hidden>
   <div class="cabeca">
@@ -467,6 +978,9 @@
     visual: typeof cfgBruta.visual === "string" ? cfgBruta.visual : null,
     primeiraVez: cfgBruta.primeiraVez === undefined ? true : !!cfgBruta.primeiraVez,
     info: cfgBruta.info && typeof cfgBruta.info === "object" ? cfgBruta.info : {},
+    // estado_config() do Python e se falta configurar (sem chave em nenhuma fonte)
+    config: cfgBruta.config && typeof cfgBruta.config === "object" ? cfgBruta.config : null,
+    precisaConfigurar: cfgBruta.precisaConfigurar === true,
   };
 
   const PALETAS = {
@@ -484,13 +998,19 @@
       primaria: "#2F7BFF", clara: "#7DB8FF", gelo: "#D6ECFF", nucleo: "#FF7A1A", ouro: "#FFD25A",
       erro: "#FF5C7A", destaque: "#FFD25A", escura: "#1B3A7A",
     },
+    // Transformative Teal (WGSN/Coloro 2026) + Cloud Dancer (Pantone 2026)
+    nuvem: {
+      fundo: "#041012", superficie: "#08201F", linha: "#12403D", texto: "#F0EEE9", texto2: "#8FB8B2",
+      primaria: "#2BA79B", escura: "#1E7F7A", clara: "#9FE3DA", destaque: "#F0EEE9", erro: "#FF6B6B",
+      ouvindo: "#5FC8BE", pensando: "#9FE3DA", falando: "#F0EEE9",
+    },
   };
 
   // Cor de cada estado por paleta (indicadores do HUD).
   function corEstado(nomePaleta, est) {
     const p = PALETAS[nomePaleta] || PALETAS.petroleo;
     if (est === "offline") return p.erro;
-    if (nomePaleta === "aurora") {
+    if (nomePaleta === "aurora" || nomePaleta === "nuvem") {
       return { listening: p.ouvindo, thinking: p.pensando, speaking: p.falando }[est] || p.texto2;
     }
     if (nomePaleta === "aura") {
@@ -506,7 +1026,10 @@
     speaking: { texto: "falando", mistura: 1, agitacao: 0.6 },
     offline: { texto: "sem conexão", mistura: 0, agitacao: 0.05 },
   };
-  const ORDEM = ["globo", "cortex", "reator", "holograma", "mapa", "esfera", "aura"];
+  const ORDEM = ["galaxia", "globo", "cortex", "reator", "holograma", "mapa", "esfera", "aura", "cerebro"];
+  // Visual de entrada (sem escolha salva ou id desconhecido). Se ele falhar, cai no "globo",
+  // o mais simples; se o globo falhar, cai no circulo de RESERVA.
+  const PADRAO = "galaxia";
   const ESTADOS_DEMO = ["listening", "thinking", "speaking"];
 
   // Visual de reserva: so um circulo, para a janela nunca ficar vazia.
@@ -543,6 +1066,8 @@
     minLatencia: $("min-latencia"), minModo: $("min-modo"), linhaMin: $("linha-min"),
     simplesStatus: $("simples-status"), simplesLegenda: $("simples-legenda"),
     escolha: $("escolha"), grade: $("grade"),
+    topo: $("topo"), btnConfig: $("btn-config"),
+    assistente: $("assistente"), config: $("config"), avisoChave: $("aviso-chave"),
   };
   const cvEntrada = $("cv-entrada"), cvLatencia = $("cv-latencia"), cvEspectro = $("cv-espectro");
   const cvNivelHist = $("cv-nivel-hist"), cvLinhaTempo = $("cv-linha-tempo"), cvMinTempo = $("cv-min-tempo");
@@ -593,6 +1118,7 @@
   let defAtual = null;
   let instAtual = null;
   let visualAnterior = null;    // id para o "Voltar"
+  let escolheuNaTela = false;   // a pessoa ja escolheu um visual nesta sessao
   let transicao = null;         // {fase, inicio, proximo}
   const errosLogados = new Set();
   const area = { x: 0, y: 0, w: 1, h: 1 };
@@ -644,7 +1170,13 @@
   }
   function obterDef(id) {
     const lista = (window.JarvisVisuais && window.JarvisVisuais.lista) || [];
-    return lista.find((d) => d.id === id) || lista.find((d) => d.id === "globo") || RESERVA;
+    return lista.find((d) => d.id === id) || lista.find((d) => d.id === PADRAO)
+      || lista.find((d) => d.id === "globo") || RESERVA;
+  }
+  // Reserva para visual com erro: o globo registrado ou, sem ele, o circulo.
+  function defGlobo() {
+    const lista = (window.JarvisVisuais && window.JarvisVisuais.lista) || [];
+    return lista.find((d) => d.id === "globo") || RESERVA;
   }
   function modoHud(def) {
     return def.hud === true ? "true" : def.hud === "minimo" ? "minimo" : "false";
@@ -663,7 +1195,15 @@
   function calcularArea() {
     const W = window.innerWidth, H = window.innerHeight;
     const modo = defAtual ? modoHud(defAtual) : "false";
-    if (modo === "true") {
+    if (corpo.classList.contains("configurando")) {
+      // Assistente da primeira vez: o visual usa a janela toda; na boas-vindas fica acima do cartao.
+      const cartao = el.assistente.querySelector(".assist-cartao");
+      const boasVindas = el.assistente.dataset.passo === "1";
+      const baixo = boasVindas && cartao ? cartao.offsetHeight + 30 : 0;
+      area.x = 0; area.y = 44; area.w = W;
+      area.h = Math.max(1, H - 44 - baixo);
+      if (!boasVindas && cartao && W >= 1100) area.w = Math.max(1, cartao.getBoundingClientRect().left - 16);
+    } else if (modo === "true") {
       const col = W < 1100 ? 240 : 280;
       const lateral = 16 + col + 16;
       area.x = lateral; area.y = 56;
@@ -705,7 +1245,7 @@
       return { def, inst };
     } catch (erro) {
       logarUmaVez("criar:" + def.id, "Jarvis: falha ao criar o visual", def.id, erro);
-      if (def.id !== "globo") return criarInstancia(obterDef("globo"));
+      if (def.id !== "globo") return criarInstancia(defGlobo());
       if (def !== RESERVA) return criarInstancia(RESERVA);
       return { def: RESERVA, inst: RESERVA.criar() };
     }
@@ -774,7 +1314,7 @@
       ctx.restore();
       logarUmaVez("desenhar:" + defAtual.id, "Jarvis: erro no visual", defAtual.id, erro);
       // Visual com erro cai para o globo (sem salvar a troca); o globo cai para o circulo.
-      const proximo = defAtual.id !== "globo" ? obterDef("globo") : RESERVA;
+      const proximo = defAtual.id !== "globo" ? defGlobo() : RESERVA;
       aplicarVisual(defAtual === proximo ? RESERVA : proximo);
       return;
     }
@@ -1198,7 +1738,6 @@
 
   // ------------------------------------------------------------------ tela de escolha
   let previas = [];   // {def, inst, canvas, ctx, q, suave, desvio, erro}
-  let primeiraEscolha = false;
 
   function criarCartoes() {
     previas = [];
@@ -1212,7 +1751,7 @@
       btn.className = "cartao";
       btn.dataset.id = def.id;
       btn.setAttribute("aria-label", "Usar o visual " + nome);
-      const atual = defAtual && defAtual.id === def.id && !primeiraEscolha;
+      const atual = !!defAtual && defAtual.id === def.id;
       if (atual) { btn.classList.add("atual"); btn.setAttribute("aria-current", "true"); }
 
       const cv = document.createElement("canvas");
@@ -1236,11 +1775,18 @@
       const amostras = document.createElement("div");
       amostras.className = "amostras";
       amostras.setAttribute("aria-hidden", "true");
+      if (def.id === PADRAO) btn.setAttribute("aria-label", "Usar o visual " + nome + " (padrão)");
       const pal = PALETAS[paletaDe(def)];
       for (const chave of ["primaria", "escura", "destaque"]) {
         const a = document.createElement("i");
         a.style.background = pal[chave];
         amostras.appendChild(a);
+      }
+      if (def.id === PADRAO) {
+        const padrao = document.createElement("span");
+        padrao.className = "padrao";
+        padrao.textContent = "padrão";
+        amostras.appendChild(padrao);
       }
       info.append(titulo, desc, amostras);
       btn.append(cv, info);
@@ -1305,12 +1851,15 @@
     }
   }
 
-  function abrirEscolha(primeira) {
-    primeiraEscolha = !!primeira;
-    visualAnterior = primeiraEscolha ? null : (defAtual && defAtual.id);
+  let focoAntesEscolha = null;
+  let aoEscolherVisual = null;   // callback do assistente/engrenagem
+  function abrirEscolha() {
+    focoAntesEscolha = document.activeElement;
+    visualAnterior = defAtual ? defAtual.id : null;
     el.btnVoltar.hidden = !visualAnterior;
     criarCartoes();
     el.escolha.hidden = false;
+    atualizarInert();
     ajustarPrevias();
     ultimaPrevia = 0;
     const alvo = el.grade.querySelector(".cartao.atual") || el.grade.querySelector(".cartao");
@@ -1322,34 +1871,47 @@
     el.escolha.hidden = true;
     previas = [];               // libera as instancias das previas
     el.grade.replaceChildren();
-    primeiraEscolha = false;
+    atualizarInert();
     ultimoQuadro = performance.now();
-    el.btnTrocar.focus();
+    const volta = focoAntesEscolha;
+    focoAntesEscolha = null;
+    if (volta && volta.isConnected && volta.getClientRects().length && typeof volta.focus === "function") volta.focus();
+    else el.btnTrocar.focus();
     agendar();
   }
 
   function escolher(id) {
+    escolheuNaTela = true;
     fecharEscolha();
     trocarVisual(id);
     salvarEscolha(obterDef(id).id);
+    if (typeof aoEscolherVisual === "function") {
+      try { aoEscolherVisual(obterDef(id)); } catch (erro) { console.error("Jarvis: erro ao avisar a escolha", erro); }
+    }
   }
 
   function voltar() {
-    // Volta ao visual que estava, sem salvar nada. Na primeira vez fica o atual (globo).
+    // Volta ao visual que estava, sem salvar nada.
     fecharEscolha();
   }
 
-  el.btnTrocar.addEventListener("click", () => abrirEscolha(false));
+  el.btnTrocar.addEventListener("click", () => abrirEscolha());
   el.btnVoltar.addEventListener("click", voltar);
+  // Esc: fecha a tela de escolha; senao fecha a engrenagem. O assistente da primeira vez nao fecha.
   document.addEventListener("keydown", (ev) => {
-    if (ev.key === "Escape" && !el.escolha.hidden) { ev.preventDefault(); voltar(); }
+    if (ev.key !== "Escape") return;
+    if (!el.escolha.hidden) { ev.preventDefault(); voltar(); return; }
+    if (!el.config.hidden) { ev.preventDefault(); escConfiguracao(); }
   });
 
   // Registros tardios: atualiza a tela de escolha (e o visual, se era o que faltava).
   window.JarvisVisuais.aoRegistrar = (def) => {
     if (!el.escolha.hidden) { criarCartoes(); ajustarPrevias(); }
-    if (defAtual === RESERVA && (def.id === "globo" || def.id === CONFIG.visual)) {
-      aplicarVisual(obterDef(CONFIG.visual || "globo"));
+    // So troca se ainda esta no circulo de reserva ou se chegou o visual que devia abrir
+    // (nunca desfaz uma escolha feita na tela).
+    const alvo = obterDef(CONFIG.visual || PADRAO);
+    if (!escolheuNaTela && defAtual !== alvo && (defAtual === RESERVA || def === alvo)) {
+      aplicarVisual(alvo);
     }
   };
 
@@ -1448,6 +2010,882 @@
     timerLegendaSimples = setTimeout(() => el.simplesLegenda.classList.remove("visivel"), 7000);
   }
 
+  // ------------------------------------------------------------------ configuracao (assistente e engrenagem)
+  // Chamadas ao Python: sempre por api(nome, ...args), que devolve uma Promise e nunca rejeita.
+  // Fora do app (abrindo o arquivo no navegador) nao ha window.pywebview: devolve ok:false.
+  const FORA_DO_APP = "indisponível fora do app";
+  const LIMITE_API_MS = 45000;
+  function api(nome, ...args) {
+    const pv = window.pywebview;
+    const f = pv && pv.api && pv.api[nome];
+    if (typeof f !== "function") return Promise.resolve({ ok: false, mensagem: FORA_DO_APP });
+    let timer = 0;
+    const limite = new Promise((resolver) => {
+      timer = setTimeout(() => resolver({ ok: false, mensagem: "O Jarvis demorou demais para responder. Tente de novo." }), LIMITE_API_MS);
+    });
+    let chamada;
+    try {
+      chamada = Promise.resolve(f.apply(pv.api, args));
+    } catch (erro) {
+      chamada = Promise.reject(erro);
+    }
+    return Promise.race([chamada, limite])
+      .catch((erro) => {
+        console.error("Jarvis: erro ao chamar", nome, erro && erro.message ? erro.message : erro);
+        return { ok: false, mensagem: "Erro inesperado. Tente de novo." };
+      })
+      .finally(() => clearTimeout(timer));
+  }
+  // Os metodos devolvem {ok,...} ou bool (microfone_parar, abrir_link, salvar_visual).
+  const deuCerto = (r) => r === true || (!!r && typeof r === "object" && r.ok === true);
+  const mensagemDe = (r, padrao) => (r && typeof r === "object" && typeof r.mensagem === "string" && r.mensagem.trim() ? r.mensagem.trim() : padrao);
+
+  // Vozes do Google (contrato); so usadas se o Python nao mandar config.vozes.
+  const VOZES_PADRAO = [
+    ["Charon", "Grave e calma (padrão)"], ["Puck", "Animada"], ["Kore", "Firme"], ["Fenrir", "Empolgada"],
+    ["Aoede", "Leve"], ["Leda", "Jovem"], ["Orus", "Firme e grave"], ["Zephyr", "Clara"],
+  ].map(([id, descricao]) => ({ id, descricao, tem_amostra: true }));
+
+  // So os 4 ultimos caracteres, sempre como "…abcd" (mesmo se vier mais do que isso).
+  function mascara(valor) {
+    const s = String(valor == null ? "" : valor).replace(/^[.…\s]+/, "").trim();
+    return s ? "…" + s.slice(-4) : "";
+  }
+  const textoOu = (v, padrao) => (typeof v === "string" && v.trim() ? v.trim() : padrao);
+
+  function normalizarEstado(bruto) {
+    const b = bruto && typeof bruto === "object" ? bruto : {};
+    const e = b.elevenlabs && typeof b.elevenlabs === "object" ? b.elevenlabs : {};
+    const vozes = Array.isArray(b.vozes)
+      ? b.vozes.filter((v) => v && typeof v.id === "string" && v.id).map((v) => ({
+        id: v.id, descricao: typeof v.descricao === "string" ? v.descricao : "", tem_amostra: v.tem_amostra !== false,
+      }))
+      : [];
+    const info = CONFIG.info;
+    return {
+      configurado: b.configurado === true,
+      tem_chave: b.tem_chave === true,
+      chave_final: mascara(b.chave_final),
+      chave_origem: textoOu(b.chave_origem, ""),
+      voz: textoOu(b.voz, textoOu(info.voz, "Charon")),
+      nome: typeof b.nome === "string" ? b.nome : textoOu(info.nome, ""),
+      fone: typeof b.fone === "boolean" ? b.fone : info.fone === true,
+      visual: typeof b.visual === "string" ? b.visual : null,
+      fonte_voz: b.fonte_voz === "elevenlabs" || (b.fonte_voz !== "google" && e.ativo === true) ? "elevenlabs" : "google",
+      elevenlabs: {
+        ativo: e.ativo === true, configurado: e.configurado === true || e.ativo === true,
+        voz_id: textoOu(e.voz_id, ""), voz_nome: textoOu(e.voz_nome, ""),
+        chave_final: mascara(e.chave_final),
+      },
+      versao: textoOu(b.versao, "—"),
+      pasta_config: textoOu(b.pasta_config, "—"),
+      pasta_logs: textoOu(b.pasta_logs, "—"),
+      vozes: vozes.length ? vozes : VOZES_PADRAO,
+    };
+  }
+  let cfgEstado = normalizarEstado(CONFIG.config);
+
+  // Resultado de teste (verde/vermelho/neutro), sempre por textContent.
+  function mostrarResultado(no, tipo, texto) {
+    no.classList.remove("ok", "erro", "neutro");
+    if (tipo) no.classList.add(tipo);
+    no.textContent = texto || "";
+  }
+  // Botao ocupado: aria-busy + texto temporario; devolve a funcao que restaura.
+  function ocupar(btn, texto) {
+    const alvo = btn.querySelector("span") || btn;
+    const antes = alvo.textContent;
+    btn.setAttribute("aria-busy", "true");
+    alvo.textContent = texto;
+    return () => { btn.removeAttribute("aria-busy"); alvo.textContent = antes; };
+  }
+  const ocupado = (btn) => btn.getAttribute("aria-busy") === "true";
+
+  // Botoes "Mostrar/Ocultar" dos campos de chave.
+  for (const btn of document.querySelectorAll(".botao.mostrar")) {
+    const input = $(btn.dataset.alvo);
+    btn.addEventListener("click", () => {
+      const mostrar = input.type === "password";
+      input.type = mostrar ? "text" : "password";
+      btn.textContent = mostrar ? "Ocultar" : "Mostrar";
+      btn.setAttribute("aria-pressed", String(mostrar));
+      btn.setAttribute("aria-label", mostrar ? "Ocultar a chave" : "Mostrar a chave");
+    });
+  }
+  function ocultarChave(input) {
+    input.type = "password";
+    const btn = document.querySelector('.botao.mostrar[data-alvo="' + input.id + '"]');
+    if (btn) { btn.textContent = "Mostrar"; btn.setAttribute("aria-pressed", "false"); btn.setAttribute("aria-label", "Mostrar a chave"); }
+  }
+
+  // Teste da chave do Google (assistente e aba Chave usam o mesmo).
+  function criarTesteChave(input, btn, res, aoMudar) {
+    const t = { ok: false, valor: "" };
+    input.addEventListener("input", () => {
+      if (t.ok || res.textContent) { t.ok = false; t.valor = ""; mostrarResultado(res, null, ""); }
+      if (aoMudar) aoMudar();
+    });
+    t.testando = () => ocupado(btn);
+    t.limpar = () => { t.ok = false; t.valor = ""; input.value = ""; ocultarChave(input); mostrarResultado(res, null, ""); };
+    t.testar = async () => {
+      const valor = input.value.trim();
+      if (ocupado(btn)) return false;
+      const salva = !valor && typeof t.permitirSalva === "function" && t.permitirSalva();
+      if (!valor && !salva) {
+        mostrarResultado(res, "erro", "Cole a chave no campo antes de testar.");
+        input.focus();
+        return false;
+      }
+      const restaurar = ocupar(btn, "Testando…");
+      mostrarResultado(res, "neutro", "Testando a chave… pode levar alguns segundos.");
+      if (aoMudar) aoMudar();
+      const r = await api("testar_chave", valor);
+      restaurar();
+      if (input.value.trim() !== valor) { if (aoMudar) aoMudar(); return false; } // mudou durante o teste
+      t.ok = deuCerto(r);
+      t.valor = t.ok ? valor : "";
+      mostrarResultado(res, t.ok ? "ok" : "erro", t.ok ? (salva ? "A chave salva está funcionando" : "Chave funcionando")
+        : mensagemDe(r, "Não consegui testar a chave."));
+      if (salva) t.ok = false; // nada novo para salvar
+      if (aoMudar) aoMudar();
+      if (t.ok && typeof t.aoOk === "function") t.aoOk();
+      return t.ok;
+    };
+    btn.addEventListener("click", () => { t.testar(); });
+    input.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter" && !ev.isComposing) { ev.preventDefault(); ev.stopPropagation(); t.testar(); }
+    });
+    return t;
+  }
+
+  // ---------------- amostras de voz: so uma tocando por vez
+  const cacheAmostras = new Map();
+  let tocando = null;       // {audio, btn}
+  let pedidoAmostra = 0;
+  function marcarOuvir(btn, ativo) {
+    btn.textContent = ativo ? "Parar" : "Ouvir";
+    btn.setAttribute("aria-pressed", String(ativo));
+  }
+  function pararAmostra() {
+    pedidoAmostra++;
+    if (!tocando) return;
+    try { tocando.audio.pause(); } catch (erro) { /* ja parou */ }
+    marcarOuvir(tocando.btn, false);
+    tocando = null;
+  }
+  function amostraIndisponivel(btn) {
+    const span = document.createElement("span");
+    span.className = "indisponivel";
+    span.textContent = "amostra indisponível";
+    const tinhaFoco = document.activeElement === btn;
+    const cartao = btn.closest(".cartao-voz");
+    btn.replaceWith(span);
+    if (tinhaFoco && cartao) { const r = cartao.querySelector("input"); if (r) r.focus(); }
+  }
+  async function tocarAmostra(id, btn) {
+    if (tocando && tocando.btn === btn) { pararAmostra(); return; }
+    pararAmostra();
+    const meu = pedidoAmostra;
+    let dados = cacheAmostras.get(id);
+    if (!dados) {
+      btn.setAttribute("aria-busy", "true");
+      btn.textContent = "Carregando…";
+      const r = await api("amostra_voz", id);
+      btn.removeAttribute("aria-busy");
+      btn.textContent = "Ouvir";
+      if (deuCerto(r) && typeof r.dados === "string" && r.dados.startsWith("data:audio/")) {
+        dados = r.dados;
+        cacheAmostras.set(id, dados);
+      }
+    }
+    if (!btn.isConnected) return;
+    if (!dados) { amostraIndisponivel(btn); return; }
+    if (meu !== pedidoAmostra) return; // outro Ouvir foi clicado enquanto carregava
+    const audio = new Audio(dados);
+    tocando = { audio, btn };
+    marcarOuvir(btn, true);
+    const fim = () => { if (tocando && tocando.audio === audio) { marcarOuvir(btn, false); tocando = null; } };
+    audio.addEventListener("ended", fim);
+    audio.addEventListener("error", fim);
+    try {
+      await audio.play();
+    } catch (erro) {
+      fim();
+      console.warn("Jarvis: não consegui tocar a amostra", id);
+    }
+  }
+
+  // Cartoes das vozes do Google (radio + Ouvir).
+  function montarVozes(container, grupo, selecionada, aoMudar) {
+    container.replaceChildren();
+    const ids = cfgEstado.vozes.map((v) => v.id);
+    const sel = ids.includes(selecionada) ? selecionada : ids[0];
+    for (const v of cfgEstado.vozes) {
+      const cartao = document.createElement("div");
+      cartao.className = "cartao-voz";
+      const label = document.createElement("label");
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = grupo;
+      radio.value = v.id;
+      radio.checked = v.id === sel;
+      radio.addEventListener("change", () => { if (radio.checked) aoMudar(v.id); });
+      const nome = document.createElement("span");
+      nome.className = "nome";
+      nome.textContent = v.id;
+      const desc = document.createElement("span");
+      desc.className = "desc";
+      desc.textContent = v.descricao || "—";
+      label.append(radio, nome, desc);
+      cartao.appendChild(label);
+      if (v.tem_amostra) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "botao";
+        btn.textContent = "Ouvir";
+        btn.setAttribute("aria-pressed", "false");
+        btn.setAttribute("aria-label", "Ouvir a voz " + v.id);
+        btn.addEventListener("click", () => { tocarAmostra(v.id, btn); });
+        cartao.appendChild(btn);
+      } else {
+        const span = document.createElement("span");
+        span.className = "indisponivel";
+        span.textContent = "amostra indisponível";
+        cartao.appendChild(span);
+      }
+      container.appendChild(cartao);
+    }
+    return sel;
+  }
+
+  function nomeVisualAtual() {
+    return defAtual ? defAtual.nome || defAtual.id : "—";
+  }
+
+  // Bloqueia (inert) tudo que fica embaixo da camada modal de cima.
+  function atualizarInert() {
+    const camadasTopo = [el.topo, el.hudCompleto, el.hudMinimo, el.hudSimples, el.avisoChave, el.assistente, el.config, el.escolha];
+    const modal = !el.escolha.hidden ? el.escolha : !el.config.hidden ? el.config : !el.assistente.hidden ? el.assistente : null;
+    for (const no of camadasTopo) {
+      const bloquear = !!modal && no !== modal;
+      no.inert = bloquear;
+      if (bloquear) no.setAttribute("aria-hidden", "true"); else no.removeAttribute("aria-hidden");
+    }
+  }
+
+  function aplicarInfoLocal() {
+    CONFIG.info.voz = cfgEstado.elevenlabs.ativo ? "ElevenLabs" : cfgEstado.voz;
+    CONFIG.info.fone = cfgEstado.fone;
+    CONFIG.info.nome = cfgEstado.nome;
+    renderInfo();
+  }
+
+  // ================================================================== assistente da primeira vez
+  const ax = {
+    passo: $("assist-passo"), pontos: el.assistente.querySelectorAll(".assist-pontos li"),
+    secoes: el.assistente.querySelectorAll(".passo"),
+    voltar: $("assist-voltar"), avancar: $("assist-avancar"), dica: $("assist-dica"),
+    chave: $("assist-chave"), testar: $("assist-testar"), chaveRes: $("assist-chave-res"),
+    criarChave: $("assist-criar-chave"),
+    medidor: $("assist-medidor"), micRes: $("assist-mic-res"), fone: $("assist-fone"),
+    nome: $("assist-nome"), vozes: $("assist-vozes"), visualNome: $("assist-visual-nome"),
+    escolherVisual: $("assist-escolher-visual"), prontoNome: $("assist-pronto-nome"), fimRes: $("assist-fim-res"),
+  };
+  const ROTULO_AVANCAR = { 1: "Começar", 5: "Começar a usar" };
+  const assist = { n: 1, voz: cfgEstado.voz, mic: false, pico: 0, ouviu: false, concluindo: false };
+  const testeAssist = criarTesteChave(ax.chave, ax.testar, ax.chaveRes, () => atualizarAvancar());
+  testeAssist.aoOk = () => ax.avancar.focus();
+  const assistenteAberto = () => !el.assistente.hidden;
+
+  function abrirAssistente() {
+    if (!el.config.hidden) fecharConfiguracao(true);
+    corpo.classList.add("configurando");
+    el.assistente.hidden = false;
+    ax.nome.value = cfgEstado.nome;
+    ax.fone.checked = cfgEstado.fone;
+    assist.voz = cfgEstado.voz;
+    esconderAvisoChave();
+    atualizarInert();
+    irPasso(1);
+  }
+
+  function fecharAssistente() {
+    pararMic();
+    pararAmostra();
+    el.assistente.hidden = true;
+    corpo.classList.remove("configurando");
+    if (aoEscolherVisual === visualDoAssistente) aoEscolherVisual = null;
+    atualizarInert();
+    redimensionar();
+    el.btnConfig.focus();
+  }
+
+  function motivoParaNaoAvancar() {
+    if (assist.n !== 2 || testeAssist.ok) return "";
+    if (testeAssist.testando()) return "Aguarde o teste da chave terminar.";
+    if (!ax.chave.value.trim()) return "Cole a sua chave e clique em Testar para continuar.";
+    return "Clique em Testar: só sigo com uma chave que funciona.";
+  }
+
+  function atualizarAvancar(destacar) {
+    const motivo = motivoParaNaoAvancar();
+    if (motivo) ax.avancar.setAttribute("aria-disabled", "true");
+    else ax.avancar.removeAttribute("aria-disabled");
+    ax.dica.textContent = motivo;
+    ax.dica.classList.toggle("alerta", !!motivo && !!destacar);
+  }
+
+  function irPasso(n) {
+    const antes = assist.n;
+    if (antes === 3 && n !== 3) pararMic();
+    pararAmostra();
+    assist.n = n;
+    el.assistente.dataset.passo = String(n);
+    el.assistente.setAttribute("aria-labelledby", "assist-t" + n);
+    for (const s of ax.secoes) s.hidden = s.dataset.passo !== String(n);
+    ax.passo.textContent = "Passo " + n + " de 5";
+    ax.pontos.forEach((li, i) => {
+      li.classList.toggle("feito", i + 1 < n);
+      li.classList.toggle("atual", i + 1 === n);
+    });
+    ax.voltar.classList.toggle("invisivel", n === 1);
+    ax.voltar.disabled = n === 1;
+    ax.avancar.textContent = ROTULO_AVANCAR[n] || "Avançar";
+    mostrarResultado(ax.fimRes, null, "");
+    atualizarAvancar();
+    if (n === 3) iniciarMic();
+    if (n === 4) {
+      assist.voz = montarVozes(ax.vozes, "assist-voz", assist.voz, (id) => { assist.voz = id; });
+      ax.visualNome.textContent = nomeVisualAtual();
+    }
+    if (n === 5) {
+      const nome = ax.nome.value.trim();
+      ax.prontoNome.textContent = nome ? ", " + nome : "";
+    }
+    el.assistente.querySelector(".assist-corpo").scrollTop = 0;
+    // foco no controle principal de cada passo
+    const foco = { 1: ax.avancar, 2: ax.chave, 3: ax.fone, 4: ax.nome, 5: ax.avancar }[n];
+    if (n === 1 || antes !== n) (foco || $("assist-t" + n)).focus();
+    calcularArea();
+  }
+
+  async function avancar() {
+    if (ocupado(ax.avancar)) return;
+    const motivo = motivoParaNaoAvancar();
+    if (motivo) {
+      atualizarAvancar(true);
+      if (!ax.chave.value.trim() || !testeAssist.testando()) ax.chave.focus();
+      return;
+    }
+    if (assist.n === 5) { concluirAssistente(); return; }
+    irPasso(Math.min(5, assist.n + 1));
+  }
+
+  function voltarPasso() {
+    if (assist.n > 1 && !ocupado(ax.avancar)) irPasso(assist.n - 1);
+  }
+
+  // Microfone: o Python manda o nivel por window.jarvis.setMicTeste(n) enquanto ativo.
+  async function iniciarMic() {
+    assist.mic = true;
+    assist.pico = 0;
+    assist.ouviu = false;
+    desenharMedidor(0);
+    mostrarResultado(ax.micRes, "neutro", "Ligando o microfone…");
+    const r = await api("microfone_iniciar");
+    if (assist.n !== 3 || !assistenteAberto()) {
+      if (deuCerto(r)) api("microfone_parar");
+      return;
+    }
+    if (deuCerto(r)) {
+      if (!assist.ouviu) mostrarResultado(ax.micRes, "neutro", "Microfone ligado. Fale alguma coisa.");
+    } else {
+      assist.mic = false;
+      mostrarResultado(ax.micRes, "erro", mensagemDe(r, "Não consegui ligar o microfone.") + " Dá para seguir e ajustar depois.");
+    }
+  }
+  function pararMic() {
+    if (!assist.mic) return;
+    assist.mic = false;
+    api("microfone_parar");
+    desenharMedidor(0);
+    alvoNivel = 0;
+  }
+  function desenharMedidor(v) {
+    assist.pico = Math.max(assist.pico * 0.96, v);
+    ax.medidor.firstElementChild.style.transform = "scaleX(" + v.toFixed(3) + ")";
+    ax.medidor.lastElementChild.style.left = "calc(" + (assist.pico * 100).toFixed(1) + "% - 2px)";
+    ax.medidor.setAttribute("aria-valuenow", String(Math.round(v * 100)));
+  }
+
+  function visualDoAssistente(def) {
+    ax.visualNome.textContent = def ? def.nome || def.id : nomeVisualAtual();
+  }
+
+  async function concluirAssistente() {
+    if (assist.concluindo) return;
+    assist.concluindo = true;
+    const restaurar = ocupar(ax.avancar, "Iniciando…");
+    const falhar = (texto) => {
+      restaurar();
+      assist.concluindo = false;
+      mostrarResultado(ax.fimRes, "erro", texto);
+    };
+    mostrarResultado(ax.fimRes, "neutro", "Salvando…");
+    const chave = ax.chave.value.trim();
+    let r = await api("salvar_chave", chave);
+    if (!deuCerto(r)) { falhar(mensagemDe(r, "Não consegui salvar a chave.") + " Volte ao passo 2 e tente de novo."); return; }
+    const prefs = { nome: ax.nome.value.trim().replace(/\s+/g, " ").slice(0, 40), voz: assist.voz, fone: ax.fone.checked };
+    r = await api("salvar_preferencias", prefs);
+    if (!deuCerto(r)) { falhar(mensagemDe(r, "Não consegui salvar as preferências.")); return; }
+    mostrarResultado(ax.fimRes, "neutro", "Aplicando… pode levar alguns segundos.");
+    r = await api("concluir_configuracao");
+    if (!deuCerto(r)) { falhar(mensagemDe(r, "Não consegui iniciar o Jarvis.")); return; }
+    Object.assign(cfgEstado, prefs, { configurado: true, tem_chave: true, chave_final: mascara(chave) });
+    testeAssist.limpar();     // a chave nao fica no DOM
+    restaurar();
+    assist.concluindo = false;
+    CONFIG.precisaConfigurar = false;
+    aplicarInfoLocal();
+    fecharAssistente();
+  }
+
+  ax.avancar.addEventListener("click", () => { avancar(); });
+  ax.voltar.addEventListener("click", voltarPasso);
+  ax.criarChave.addEventListener("click", () => { api("abrir_link", "chave_google"); });
+  ax.escolherVisual.addEventListener("click", () => { aoEscolherVisual = visualDoAssistente; abrirEscolha(); });
+  // Enter avanca (menos em botoes, que ja clicam, e no campo da chave, que testa).
+  el.assistente.addEventListener("keydown", (ev) => {
+    if (ev.key !== "Enter" || ev.isComposing || ev.defaultPrevented) return;
+    const tag = ev.target && ev.target.tagName;
+    if (tag === "BUTTON" || tag === "A" || tag === "TEXTAREA") return;
+    ev.preventDefault();
+    avancar();
+  });
+
+  // ================================================================== engrenagem (configuracoes)
+  const cx = {
+    abas: [...el.config.querySelectorAll('[role="tab"]')],
+    corpo: el.config.querySelector(".config-corpo"),
+    status: $("config-status"), salvar: $("config-salvar"), fechar: $("config-fechar"), x: $("config-x"),
+    nome: $("cfg-nome"), vozes: $("cfg-vozes"), fone: $("cfg-fone"), notaEleven: $("cfg-nota-eleven"),
+    visualNome: $("cfg-visual-nome"), escolherVisual: $("cfg-escolher-visual"),
+    chaveFinal: $("cfg-chave-final"), chave: $("cfg-chave"), testar: $("cfg-testar"), chaveRes: $("cfg-chave-res"),
+    criarChave: $("cfg-criar-chave"),
+    elEstado: $("cfg-el-estado"), elCriar: $("cfg-el-criar"), elChave: $("cfg-el-chave"), elChaveDica: $("cfg-el-chave-dica"),
+    elBuscar: $("cfg-el-buscar"), elBuscarRes: $("cfg-el-buscar-res"), elListaGrupo: $("cfg-el-lista-grupo"),
+    elLista: $("cfg-el-lista"), elManual: $("cfg-el-manual"), elManualAbrir: $("cfg-el-manual-abrir"),
+    elVozId: $("cfg-el-voz-id"), elTestar: $("cfg-el-testar"), elDesligar: $("cfg-el-desligar"),
+    elConfirmar: $("cfg-el-confirmar"), elSim: $("cfg-el-confirmar-sim"), elNao: $("cfg-el-confirmar-nao"),
+    elRes: $("cfg-el-res"),
+    versao: $("cfg-versao"), pastaConfig: $("cfg-pasta-config"), pastaLogs: $("cfg-pasta-logs"), sobreRes: $("cfg-sobre-res"),
+  };
+  const ABAS = ["geral", "chave", "elevenlabs", "sobre"];
+  const painel = { aba: "geral", voz: cfgEstado.voz, fonte: cfgEstado.fonte_voz, sujo: false, avisouSujo: false, abridor: null, vozesEl: [] };
+  const testeCfg = criarTesteChave(cx.chave, cx.testar, cx.chaveRes, null);
+  testeCfg.permitirSalva = () => cfgEstado.tem_chave;
+
+  function selecionarAba(aba, focar) {
+    const id = ABAS.includes(aba) ? aba : "geral";
+    painel.aba = id;
+    for (const tab of cx.abas) {
+      const ativa = tab.dataset.aba === id;
+      tab.setAttribute("aria-selected", String(ativa));
+      tab.tabIndex = ativa ? 0 : -1;
+      $(tab.getAttribute("aria-controls")).hidden = !ativa;
+      if (ativa && focar) tab.focus();
+    }
+    cx.corpo.scrollTop = 0;
+  }
+  cx.abas.forEach((tab, i) => {
+    tab.addEventListener("click", () => selecionarAba(tab.dataset.aba, true));
+    tab.addEventListener("keydown", (ev) => {
+      let j = -1;
+      if (ev.key === "ArrowRight") j = (i + 1) % cx.abas.length;
+      else if (ev.key === "ArrowLeft") j = (i - 1 + cx.abas.length) % cx.abas.length;
+      else if (ev.key === "Home") j = 0;
+      else if (ev.key === "End") j = cx.abas.length - 1;
+      if (j < 0) return;
+      ev.preventDefault();
+      selecionarAba(cx.abas[j].dataset.aba, true);
+    });
+  });
+
+  // Partes so de leitura (podem ser atualizadas sem perder o que a pessoa digitou).
+  function preencherResumo() {
+    const e = cfgEstado;
+    $("cfg-chave-projeto").hidden = e.chave_origem !== "projeto";
+    cx.chaveFinal.textContent = e.tem_chave && e.chave_final ? e.chave_final : e.tem_chave ? "salva" : "nenhuma chave salva";
+    const el11 = e.elevenlabs;
+    cx.elEstado.textContent = el11.ativo
+      ? "ligada — " + (el11.voz_nome || el11.voz_id || "voz personalizada")
+      : "desligada (usando a voz do Google)";
+    cx.elEstado.classList.toggle("estado-ligado", el11.ativo);
+    cx.elDesligar.hidden = !el11.ativo;
+    if (!el11.ativo && el11.configurado) cx.elEstado.textContent = "pausada (usando a voz do Google; religue em Geral)";
+    cx.elChaveDica.textContent = el11.chave_final ? "(salva " + el11.chave_final + " — deixe vazio para manter)" : "";
+    cx.versao.textContent = e.versao;
+    cx.pastaConfig.textContent = e.pasta_config;
+    cx.pastaLogs.textContent = e.pasta_logs;
+    cx.visualNome.textContent = nomeVisualAtual();
+  }
+
+  function preencherPainel() {
+    const e = cfgEstado;
+    cx.nome.value = e.nome;
+    cx.fone.checked = e.fone;
+    painel.voz = montarVozes(cx.vozes, "cfg-voz", e.voz, (id) => {
+      painel.voz = id;
+      if (painel.fonte !== "google") definirFonte("google");
+      marcarSujo();
+    });
+    definirFonte(e.fonte_voz);
+    testeCfg.limpar();
+    cx.elChave.value = "";
+    ocultarChave(cx.elChave);
+    cx.elVozId.value = "";
+    cx.elManual.hidden = true;
+    cx.elListaGrupo.hidden = true;
+    cx.elLista.replaceChildren();
+    painel.vozesEl = [];
+    cx.elConfirmar.hidden = true;
+    for (const no of [cx.elBuscarRes, cx.elRes, cx.sobreRes, cx.status]) mostrarResultado(no, null, "");
+    painel.sujo = false;
+    painel.avisouSujo = false;
+    preencherResumo();
+  }
+
+  // Qual voz o Jarvis usa (Google ou ElevenLabs), sem apagar a chave do ElevenLabs.
+  function definirFonte(fonte) {
+    const podeEleven = cfgEstado.elevenlabs.configurado;
+    painel.fonte = fonte === "elevenlabs" && podeEleven ? "elevenlabs" : "google";
+    $("cfg-fonte-google").checked = painel.fonte === "google";
+    $("cfg-fonte-eleven").checked = painel.fonte === "elevenlabs";
+    $("cfg-fonte-eleven").disabled = !podeEleven;
+    $("cfg-fonte-dica").hidden = podeEleven;
+    const el11 = cfgEstado.elevenlabs;
+    $("cfg-fonte-eleven-nome").textContent = podeEleven ? "— " + (el11.voz_nome || "voz personalizada") : "";
+    cx.notaEleven.hidden = painel.fonte !== "elevenlabs";
+  }
+  for (const id of ["cfg-fonte-google", "cfg-fonte-eleven"]) {
+    $(id).addEventListener("change", (ev) => { if (ev.target.checked) { definirFonte(ev.target.value); marcarSujo(); } });
+  }
+
+  function marcarSujo() {
+    painel.sujo = true;
+    painel.avisouSujo = false;
+  }
+  for (const no of [cx.nome, cx.fone, cx.chave, cx.elChave, cx.elVozId]) {
+    no.addEventListener("input", marcarSujo);
+    no.addEventListener("change", marcarSujo);
+  }
+
+  async function abrirConfiguracao(aba) {
+    if (assistenteAberto()) return false;
+    if (!el.escolha.hidden) voltar();
+    if (el.config.hidden) {
+      painel.abridor = document.activeElement;
+      preencherPainel();
+      el.config.hidden = false;
+      atualizarInert();
+      selecionarAba(aba, true);
+      // Estado fresco do Python; so reescreve os campos se a pessoa ainda nao mexeu.
+      const r = await api("estado_config");
+      if (r && typeof r === "object" && r.ok !== false && !el.config.hidden) {
+        cfgEstado = normalizarEstado(r);
+        if (!painel.sujo) {
+          const foco = document.activeElement;
+          preencherPainel();
+          if (foco && foco.isConnected) foco.focus();
+        } else {
+          preencherResumo();
+        }
+      }
+    } else {
+      selecionarAba(aba, true);
+    }
+    return true;
+  }
+
+  function fecharConfiguracao(forcar) {
+    if (el.config.hidden) return;
+    if (!forcar && painel.sujo && !painel.avisouSujo) {
+      painel.avisouSujo = true;
+      mostrarResultado(cx.status, "erro", "Há mudanças não salvas. Clique em Salvar e aplicar, ou em Fechar de novo para descartar.");
+      return;
+    }
+    pararAmostra();
+    el.config.hidden = true;
+    if (aoEscolherVisual === visualDaEngrenagem) aoEscolherVisual = null;
+    testeCfg.limpar();
+    cx.elChave.value = "";
+    atualizarInert();
+    const volta = painel.abridor;
+    painel.abridor = null;
+    if (volta && volta.isConnected && volta.getClientRects().length && typeof volta.focus === "function") volta.focus();
+    else el.btnConfig.focus();
+  }
+  function escConfiguracao() {
+    if (!cx.elConfirmar.hidden) { cx.elConfirmar.hidden = true; cx.elTestar.focus(); return; }
+    fecharConfiguracao(false);
+  }
+
+  function visualDaEngrenagem(def) {
+    cx.visualNome.textContent = def ? def.nome || def.id : nomeVisualAtual();
+  }
+
+  // ---------------- ElevenLabs
+  function vozElevenEscolhida() {
+    const manual = cx.elManual.hidden ? "" : cx.elVozId.value.trim();
+    if (manual) return { id: manual, nome: "" };
+    const marcado = cx.elLista.querySelector("input:checked");
+    if (marcado) {
+      const v = painel.vozesEl.find((x) => x.id === marcado.value);
+      return { id: marcado.value, nome: v ? v.nome : "" };
+    }
+    return null;
+  }
+  const ID_PLAUSIVEL = /^[A-Za-z0-9_-]{8,64}$/;
+
+  // O que salvar do ElevenLabs: {salvar:false} | {salvar:true, chave, id, nome} | {erro}
+  function coletarEleven() {
+    const chave = cx.elChave.value.trim();
+    const voz = vozElevenEscolhida();
+    const salva = !!cfgEstado.elevenlabs.chave_final;
+    if (!voz && !chave) return { salvar: false };
+    if (!voz) return { erro: "Para ligar a voz personalizada, escolha uma voz (Buscar minhas vozes) ou cole o ID da voz." };
+    if (!ID_PLAUSIVEL.test(voz.id)) return { erro: "O ID da voz parece incompleto. Copie de novo no ElevenLabs (só letras e números)." };
+    if (!chave && !salva) return { erro: "Cole a sua chave do ElevenLabs." };
+    if (!chave && cfgEstado.elevenlabs.ativo && voz.id === cfgEstado.elevenlabs.voz_id) return { salvar: false };
+    return { salvar: true, chave, id: voz.id, nome: voz.nome };
+  }
+
+  async function buscarVozesEleven() {
+    if (ocupado(cx.elBuscar)) return;
+    const chave = cx.elChave.value.trim();
+    if (!chave && !cfgEstado.elevenlabs.chave_final) {
+      mostrarResultado(cx.elBuscarRes, "erro", "Cole a sua chave do ElevenLabs primeiro.");
+      cx.elChave.focus();
+      return;
+    }
+    mostrarResultado(cx.elRes, null, "");
+    cx.elConfirmar.hidden = true;
+    const restaurar = ocupar(cx.elBuscar, "Buscando…");
+    mostrarResultado(cx.elBuscarRes, "neutro", "Buscando as vozes da sua conta…");
+    const r = await api("elevenlabs_listar_vozes", chave);
+    restaurar();
+    const vozes = deuCerto(r) && Array.isArray(r.vozes)
+      ? r.vozes.filter((v) => v && typeof v.id === "string" && v.id).map((v) => ({ id: v.id, nome: textoOu(v.nome, v.id) }))
+      : null;
+    if (!vozes) {
+      cx.elListaGrupo.hidden = true;
+      cx.elManual.hidden = false;
+      mostrarResultado(cx.elBuscarRes, "erro", mensagemDe(r, "Não consegui buscar as vozes.") + " Se preferir, cole o ID da voz no campo abaixo.");
+      cx.elVozId.focus();
+      return;
+    }
+    painel.vozesEl = vozes;
+    cx.elLista.replaceChildren();
+    if (!vozes.length) {
+      cx.elListaGrupo.hidden = true;
+      cx.elManual.hidden = false;
+      mostrarResultado(cx.elBuscarRes, "erro", "A conta não tem nenhuma voz. Crie ou adicione uma voz no ElevenLabs, ou cole o ID abaixo.");
+      return;
+    }
+    const atual = cfgEstado.elevenlabs.voz_id;
+    for (const v of vozes) {
+      const label = document.createElement("label");
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "cfg-el-voz";
+      radio.value = v.id;
+      radio.checked = v.id === atual;
+      radio.addEventListener("change", () => {
+        if (radio.checked) { cx.elVozId.value = ""; mostrarResultado(cx.elRes, null, ""); marcarSujo(); }
+      });
+      const nome = document.createElement("span");
+      nome.textContent = v.nome;
+      const id = document.createElement("span");
+      id.className = "dado";
+      id.textContent = v.id;
+      label.append(radio, nome, id);
+      cx.elLista.appendChild(label);
+    }
+    cx.elListaGrupo.hidden = false;
+    mostrarResultado(cx.elBuscarRes, "ok", vozes.length === 1 ? "Encontrei 1 voz." : "Encontrei " + vozes.length + " vozes. Escolha uma.");
+    (cx.elLista.querySelector("input:checked") || cx.elLista.querySelector("input")).focus();
+  }
+
+  function pedirTesteEleven() {
+    if (ocupado(cx.elTestar)) return;
+    const voz = vozElevenEscolhida() || (cfgEstado.elevenlabs.voz_id ? { id: cfgEstado.elevenlabs.voz_id } : null);
+    if (!voz) { mostrarResultado(cx.elRes, "erro", "Escolha uma voz primeiro (Buscar minhas vozes ou cole o ID)."); return; }
+    if (!cx.elChave.value.trim() && !cfgEstado.elevenlabs.chave_final) {
+      mostrarResultado(cx.elRes, "erro", "Cole a sua chave do ElevenLabs primeiro.");
+      cx.elChave.focus();
+      return;
+    }
+    mostrarResultado(cx.elRes, null, "");
+    cx.elConfirmar.hidden = false;
+    cx.elSim.focus();
+  }
+  async function testarEleven() {
+    cx.elConfirmar.hidden = true;
+    const voz = vozElevenEscolhida() || { id: "" }; // "" = a voz salva
+    const restaurar = ocupar(cx.elTestar, "Testando…");
+    mostrarResultado(cx.elRes, "neutro", "Falando uma frase de teste…");
+    cx.elTestar.focus();
+    const r = await api("elevenlabs_testar", cx.elChave.value.trim(), voz.id);
+    restaurar();
+    mostrarResultado(cx.elRes, deuCerto(r) ? "ok" : "erro",
+      deuCerto(r) ? mensagemDe(r, "Pronto: falei uma frase com essa voz.") : mensagemDe(r, "O teste não funcionou."));
+  }
+
+  async function desligarEleven() {
+    if (ocupado(cx.elDesligar)) return;
+    const restaurar = ocupar(cx.elDesligar, "Voltando…");
+    mostrarResultado(cx.elRes, "neutro", "Voltando para a voz do Google…");
+    let r = await api("elevenlabs_desligar");
+    const msgDesligar = deuCerto(r) ? mensagemDe(r, "") : "";
+    if (deuCerto(r)) {
+      mostrarResultado(cx.elRes, "neutro", "Aplicando… pode levar alguns segundos.");
+      r = await api("aplicar_configuracao");
+    }
+    restaurar();
+    if (!deuCerto(r)) { mostrarResultado(cx.elRes, "erro", mensagemDe(r, "Não consegui desligar a voz personalizada.")); return; }
+    const novo = normalizarEstado(await api("estado_config"));
+    if (novo.versao !== "—") cfgEstado.elevenlabs = novo.elevenlabs;
+    else cfgEstado.elevenlabs = { ...cfgEstado.elevenlabs, ativo: false };
+    cfgEstado.fonte_voz = "google";
+    definirFonte("google");
+    aplicarInfoLocal();
+    preencherResumo();
+    mostrarResultado(cx.elRes, "ok", msgDesligar || "Pronto: voltei para a voz do Google.");
+    cx.elBuscar.focus();
+  }
+
+  // ---------------- Salvar e aplicar
+  async function salvarPainel() {
+    if (ocupado(cx.salvar)) return;
+    const restaurar = ocupar(cx.salvar, "Salvando…");
+    const falhar = (aba, texto) => {
+      restaurar();
+      if (aba) selecionarAba(aba, false);
+      mostrarResultado(cx.status, "erro", texto);
+    };
+    mostrarResultado(cx.status, "neutro", "Salvando…");
+    let mudou = false;
+    let r;
+    let avisoExtra = "";
+
+    // 1. chave do Google nova (testa antes, se ainda nao testou)
+    const novaChave = cx.chave.value.trim();
+    if (novaChave) {
+      if (!(testeCfg.ok && testeCfg.valor === novaChave)) {
+        mostrarResultado(cx.status, "neutro", "Testando a chave nova…");
+        const ok = await testeCfg.testar();
+        if (!ok) { falhar("chave", "A chave nova não funcionou: nada foi salvo."); return; }
+      }
+      r = await api("salvar_chave", novaChave);
+      if (!deuCerto(r)) { falhar("chave", mensagemDe(r, "Não consegui salvar a chave.")); return; }
+      avisoExtra = mensagemDe(r, "");
+      cfgEstado.tem_chave = true;
+      cfgEstado.chave_final = mascara(novaChave);
+      testeCfg.limpar();
+      esconderAvisoChave();
+      mudou = true;
+    }
+
+    // 2. ElevenLabs (valida antes de salvar as preferencias, para nao salvar pela metade)
+    const eleven = coletarEleven();
+    if (eleven.erro) { falhar("elevenlabs", eleven.erro); return; }
+
+    // 3. preferencias (nome, voz do Google, fone)
+    const prefs = { nome: cx.nome.value.trim().replace(/\s+/g, " ").slice(0, 40), voz: painel.voz, fone: cx.fone.checked };
+    const novaFonte = eleven.salvar ? cfgEstado.fonte_voz : (painel.fonte || cfgEstado.fonte_voz);
+    if (novaFonte !== cfgEstado.fonte_voz) prefs.fonte_voz = novaFonte;
+    if (prefs.nome !== cfgEstado.nome || prefs.voz !== cfgEstado.voz || prefs.fone !== cfgEstado.fone || "fonte_voz" in prefs) {
+      r = await api("salvar_preferencias", prefs);
+      if (!deuCerto(r)) { falhar("geral", mensagemDe(r, "Não consegui salvar as preferências.")); return; }
+      avisoExtra = [avisoExtra, mensagemDe(r, "")].filter(Boolean).join(" ");
+      Object.assign(cfgEstado, prefs);
+      cfgEstado.elevenlabs.ativo = cfgEstado.fonte_voz === "elevenlabs" && cfgEstado.elevenlabs.configurado;
+      mudou = true;
+    }
+
+    if (eleven.salvar) {
+      r = await api("elevenlabs_salvar", eleven.chave, eleven.id, eleven.nome);
+      if (!deuCerto(r)) { falhar("elevenlabs", mensagemDe(r, "Não consegui salvar a voz personalizada.")); return; }
+      cfgEstado.fonte_voz = "elevenlabs";
+      cfgEstado.elevenlabs = {
+        ativo: true, configurado: true, voz_id: eleven.id, voz_nome: eleven.nome,
+        chave_final: eleven.chave ? mascara(eleven.chave) : cfgEstado.elevenlabs.chave_final,
+      };
+      cx.elChave.value = "";
+      ocultarChave(cx.elChave);
+      mudou = true;
+    }
+
+    if (!mudou) {
+      restaurar();
+      painel.sujo = false;
+      mostrarResultado(cx.status, "neutro", "Nada mudou.");
+      return;
+    }
+    aplicarInfoLocal();
+    preencherResumo();
+    painel.sujo = false;
+    painel.avisouSujo = false;
+    mostrarResultado(cx.status, "neutro", "Aplicando… pode levar alguns segundos.");
+    r = await api("aplicar_configuracao");
+    restaurar();
+    if (!deuCerto(r)) {
+      mostrarResultado(cx.status, "erro", "Salvei, mas não consegui aplicar agora: " + mensagemDe(r, "erro inesperado.") + " Feche e abra o Jarvis.");
+      return;
+    }
+    mostrarResultado(cx.status, "ok", "Salvo. O Jarvis está reconectando com as configurações novas."
+      + (avisoExtra ? " " + avisoExtra : ""));
+  }
+
+  cx.salvar.addEventListener("click", () => { salvarPainel(); });
+  cx.fechar.addEventListener("click", () => fecharConfiguracao(false));
+  cx.x.addEventListener("click", () => fecharConfiguracao(false));
+  cx.criarChave.addEventListener("click", () => { api("abrir_link", "chave_google"); });
+  $("cfg-abrir-instagram").addEventListener("click", () => { api("abrir_link", "instagram"); });
+  cx.escolherVisual.addEventListener("click", () => { aoEscolherVisual = visualDaEngrenagem; abrirEscolha(); });
+  cx.elCriar.addEventListener("click", () => { api("abrir_link", "elevenlabs"); });
+  cx.elBuscar.addEventListener("click", () => { buscarVozesEleven(); });
+  cx.elManualAbrir.addEventListener("click", () => { cx.elManual.hidden = false; cx.elVozId.focus(); });
+  cx.elVozId.addEventListener("input", () => {
+    mostrarResultado(cx.elRes, null, "");
+    if (cx.elVozId.value.trim()) for (const r of cx.elLista.querySelectorAll("input:checked")) r.checked = false;
+  });
+  cx.elTestar.addEventListener("click", pedirTesteEleven);
+  cx.elSim.addEventListener("click", () => { testarEleven(); });
+  cx.elNao.addEventListener("click", () => { cx.elConfirmar.hidden = true; cx.elTestar.focus(); });
+  cx.elDesligar.addEventListener("click", () => { desligarEleven(); });
+  async function abrirLinkSobre(nome) {
+    const r = await api("abrir_link", nome);
+    mostrarResultado(cx.sobreRes, deuCerto(r) ? null : "erro", deuCerto(r) ? "" : mensagemDe(r, "Não consegui abrir."));
+  }
+  $("cfg-abrir-repo").addEventListener("click", () => { abrirLinkSobre("repositorio"); });
+  $("cfg-abrir-config").addEventListener("click", () => { abrirLinkSobre("pasta_config"); });
+  $("cfg-abrir-logs").addEventListener("click", () => { abrirLinkSobre("pasta_logs"); });
+  el.btnConfig.addEventListener("click", () => { abrirConfiguracao("geral"); });
+
+  // ---------------- aviso: a chave parou de funcionar
+  function mostrarAvisoChave(mensagem) {
+    if (assistenteAberto()) return;
+    $("aviso-chave-texto").textContent = textoOu(typeof mensagem === "string" ? mensagem : "",
+      "A chave do Google parou de funcionar.");
+    el.avisoChave.hidden = false;
+  }
+  function esconderAvisoChave() {
+    el.avisoChave.hidden = true;
+  }
+  $("btn-aviso-atualizar").addEventListener("click", () => { abrirConfiguracao("chave"); });
+  $("btn-aviso-fechar").addEventListener("click", () => { esconderAvisoChave(); el.btnConfig.focus(); });
+
   // ------------------------------------------------------------------ API do Python
   window.jarvis = {
     setState(novo) {
@@ -1527,6 +2965,28 @@
       while (latencias.length > 24) latencias.shift();
       renderLatencia();
     },
+    // Nivel do microfone (0..1) durante o teste do assistente (~20x/s).
+    setMicTeste(valor) {
+      const v = Number(valor);
+      if (!assist.mic || el.assistente.hidden) return;
+      const n = Number.isFinite(v) ? limitar(v, 0, 1) : 0;
+      desenharMedidor(n);
+      alvoNivel = n; // o visual ao fundo reage a voz tambem
+      if (!assist.ouviu && n > 0.12) {
+        assist.ouviu = true;
+        mostrarResultado(ax.micRes, "ok", "Estou ouvindo você.");
+      }
+    },
+    // A chave do Google parou de funcionar: faixa no topo com "Atualizar chave".
+    avisoChave(mensagem) {
+      mostrarAvisoChave(mensagem);
+    },
+    // Abre a engrenagem numa aba ("geral" | "chave" | "elevenlabs" | "sobre").
+    abrirConfiguracao(aba) {
+      if (assistenteAberto()) return false;
+      abrirConfiguracao(typeof aba === "string" ? aba : "geral");
+      return true;
+    },
   };
 
   // ------------------------------------------------------------------ inicio
@@ -1536,9 +2996,12 @@
   renderInfo();
   renderSessao();
   renderFerramentas();
-  aplicarVisual(obterDef(CONFIG.visual || "globo"));
+  // Abre direto no visual salvo (ou no PADRAO, a Galaxia Neural); a tela de escolha so abre
+  // pelo botao "Trocar visual". CONFIG.primeiraVez fica so como informacao.
+  aplicarVisual(obterDef(CONFIG.visual || PADRAO));
   window.jarvis.setState("idle");
-  if (CONFIG.primeiraVez) abrirEscolha(true);
+  // Sem chave em nenhuma fonte: assistente da primeira vez por cima da cena.
+  if (CONFIG.precisaConfigurar) abrirAssistente();
   agendar();
 })();
 </script>

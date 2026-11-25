@@ -276,7 +276,10 @@ def test_orb_janela_grande_com_api_do_visual(orb) -> None:
     kwargs = fake.created_with
     assert (kwargs["width"], kwargs["height"]) == (1280, 760)
     assert kwargs["min_size"] == (900, 600)
-    assert [n for n in dir(kwargs["js_api"]) if not n.startswith("_")] == ["salvar_visual"]
+    from jarvis.ui.api_config import METODOS_PUBLICOS
+
+    publicos = [n for n in dir(kwargs["js_api"]) if not n.startswith("_")]
+    assert publicos == sorted(METODOS_PUBLICOS)
     assert "/*JARVIS_CONFIG*/" not in kwargs["html"]
 
 

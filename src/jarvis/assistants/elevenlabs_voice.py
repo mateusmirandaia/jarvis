@@ -30,7 +30,17 @@ FIRST_PIECE_MIN_CHARS = 12  # a primeira fala sai na primeira virgula: ele comec
 
 
 class ElevenLabsError(RuntimeError):
-    """Falha ao gerar voz no ElevenLabs (chave, cota, rede)."""
+    """Falha ao gerar voz no ElevenLabs (chave, cota, rede).
+
+    Attributes:
+        status: codigo HTTP da resposta (None quando a falha foi de rede).
+        detail: inicio do corpo da resposta de erro (o ElevenLabs nunca devolve a chave nele).
+    """
+
+    def __init__(self, message: str, status: int | None = None, detail: str = "") -> None:
+        super().__init__(message)
+        self.status = status
+        self.detail = detail
 
 
 def split_sentences(buffer: str, first_piece: bool = False) -> tuple[list[str], str]:
@@ -69,12 +79,19 @@ def split_sentences(buffer: str, first_piece: bool = False) -> tuple[list[str], 
 class ElevenLabsVoice:
     """Cliente de streaming de voz do ElevenLabs (Flash v2.5 por padrao: menor atraso)."""
 
-    def __init__(self, api_key: str, voice_id: str, model: str) -> None:
+    def __init__(
+        self,
+        api_key: str,
+        voice_id: str,
+        model: str,
+        transport: httpx.AsyncBaseTransport | None = None,
+    ) -> None:
         self._url = API_URL.format(voice_id=voice_id)
         self._model = model
         self._client = httpx.AsyncClient(
             timeout=TIMEOUT,
             headers={"xi-api-key": api_key, "accept": "audio/pcm"},
+            transport=transport,  # None = rede de verdade; os testes passam um transporte falso
         )
 
     async def stream(self, text: str) -> AsyncIterator[bytes]:
@@ -96,7 +113,9 @@ class ElevenLabsVoice:
             ) as response:
                 if response.status_code != 200:
                     detail = (await response.aread()).decode("utf-8", "replace")[:300]
-                    raise ElevenLabsError(f"HTTP {response.status_code}: {detail}")
+                    raise ElevenLabsError(
+                        f"HTTP {response.status_code}: {detail}", response.status_code, detail
+                    )
                 leftover = b""
                 async for chunk in response.aiter_bytes(CHUNK_BYTES):
                     data = leftover + chunk

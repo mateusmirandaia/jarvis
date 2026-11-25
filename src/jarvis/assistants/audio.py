@@ -7,6 +7,7 @@ O ``pyaudio`` so e importado quando ``AudioIO`` e criado, para que o resto do pa
 from __future__ import annotations
 
 import logging
+import threading
 from typing import Any
 
 from jarvis.errors import ConfigError
@@ -35,6 +36,10 @@ class AudioIO:
         self._pa = pyaudio.PyAudio()
         self._mic: Any | None = None
         self._speaker: Any | None = None
+        # Fechar um stream enquanto outra thread le/escreve nele pode derrubar o PortAudio.
+        # Com as travas, fechar espera a leitura/escrita em andamento (no maximo ~40 ms).
+        self._mic_lock = threading.Lock()
+        self._speaker_lock = threading.Lock()
 
     # ----------------------------------------------------------------- microfone
     def open_mic(self) -> None:
@@ -49,15 +54,17 @@ class AudioIO:
 
     def read_mic(self) -> bytes:
         """Le um bloco de CHUNK amostras do microfone (bloqueante)."""
-        if self._mic is None:
-            raise RuntimeError("microfone nao foi aberto")
-        return self._mic.read(CHUNK, exception_on_overflow=False)
+        with self._mic_lock:
+            if self._mic is None:
+                raise RuntimeError("microfone nao foi aberto")
+            return self._mic.read(CHUNK, exception_on_overflow=False)
 
     def close_mic(self) -> None:
         """Fecha o microfone, se aberto."""
-        if self._mic is not None:
-            self._close_stream(self._mic)
-            self._mic = None
+        with self._mic_lock:
+            if self._mic is not None:
+                self._close_stream(self._mic)
+                self._mic = None
 
     # -------------------------------------------------------------- alto-falante
     def open_speaker(self) -> None:
@@ -71,15 +78,17 @@ class AudioIO:
 
     def write_speaker(self, data: bytes) -> None:
         """Toca um bloco de audio PCM16 (bloqueante)."""
-        if self._speaker is None:
-            raise RuntimeError("alto-falante nao foi aberto")
-        self._speaker.write(data)
+        with self._speaker_lock:
+            if self._speaker is None:
+                raise RuntimeError("alto-falante nao foi aberto")
+            self._speaker.write(data)
 
     def close_speaker(self) -> None:
         """Fecha a saida de audio, se aberta."""
-        if self._speaker is not None:
-            self._close_stream(self._speaker)
-            self._speaker = None
+        with self._speaker_lock:
+            if self._speaker is not None:
+                self._close_stream(self._speaker)
+                self._speaker = None
 
     # --------------------------------------------------------------------- geral
     def close(self) -> None:
