@@ -17,7 +17,8 @@ import pytest
 from jarvis.assistants.observer import NullObserver
 from jarvis.config import Settings
 from jarvis.tools import ToolRegistry
-from jarvis.ui import orb_window, preferencias
+from jarvis.ui import preferencias
+from jarvis.ui.api_config import ApiJs
 from jarvis.ui.orb_window import ORB_HTML, VISUAIS_DIR, montar_config, montar_html
 from jarvis.ui.preferencias import VISUAIS
 
@@ -257,7 +258,8 @@ def test_montar_html_sem_marcadores_ainda_funciona(tmp_path: Path) -> None:
 
 def test_montar_html_real_sem_internet() -> None:
     pagina = montar_html({"visual": "globo", "primeiraVez": False, "info": {}})
-    assert "http" not in pagina.lower()
+    # Nada da internet: nenhuma URL (a palavra "http" aparece no http-equiv da CSP).
+    assert not re.search(r"https?://", pagina, re.IGNORECASE)
 
 
 def test_orb_html_tem_os_dois_marcadores() -> None:
@@ -276,7 +278,9 @@ def test_cada_visual_tem_arquivo_e_registra_o_proprio_id() -> None:
         codigo = (VISUAIS_DIR / f"{id_visual}.js").read_text(encoding="utf-8")
         padrao = rf"registrar\(\s*\{{[\s\S]*?\bid\s*:\s*[\"']{id_visual}[\"']"
         assert re.search(padrao, codigo), f'{id_visual}.js nao registra id: "{id_visual}"'
-        assert "http" not in codigo.lower(), f"{id_visual}.js carrega algo da internet"
+        assert not re.search(r"https?://", codigo, re.IGNORECASE), (
+            f"{id_visual}.js carrega algo da internet"
+        )
 
 
 # ------------------------------------------------------------------ API do JavaScript
@@ -285,7 +289,7 @@ def test_cada_visual_tem_arquivo_e_registra_o_proprio_id() -> None:
 def test_api_js_so_expoe_a_lista_do_contrato(pref: Path) -> None:
     from jarvis.ui.api_config import METODOS_PUBLICOS
 
-    api = orb_window._ApiJs()
+    api = ApiJs()
     publicos = [nome for nome in dir(api) if not nome.startswith("_")]
     assert publicos == sorted(METODOS_PUBLICOS)
     assert all(nome.startswith("_") for nome in vars(api))  # nenhum atributo publico
@@ -299,7 +303,7 @@ def test_api_js_nunca_levanta(monkeypatch: pytest.MonkeyPatch) -> None:
         raise RuntimeError("inesperado")
 
     monkeypatch.setattr(preferencias, "salvar_visual", explode)
-    assert orb_window._ApiJs().salvar_visual("globo") is False
+    assert ApiJs().salvar_visual("globo") is False
 
 
 # ------------------------------------------------------------------ observador / LiveAssistant

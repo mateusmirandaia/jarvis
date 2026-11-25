@@ -45,7 +45,10 @@ def friendly_message(error: BaseException) -> str:
     elif isinstance(error, FileNotFoundError):
         reason = "nao encontrei o arquivo ou o programa"
     elif isinstance(error, TimeoutError | asyncio.TimeoutError):
-        reason = "a acao demorou demais e eu desisti"
+        reason = (
+            "a acao demorou demais e eu desisti de esperar, mas ela pode ter terminado "
+            "mesmo assim; confira antes de repetir"
+        )
     elif isinstance(error, OSError):
         reason = "o Windows recusou a acao"
     else:

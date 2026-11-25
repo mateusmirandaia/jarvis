@@ -92,9 +92,14 @@ class TesteMicrofone:
                 logger.warning("nao consegui abrir o microfone para o teste", exc_info=True)
                 _fechar(pa, None)
                 return False, MSG_SEM_MICROFONE
-            self._parar.clear()
+            # Um sinal de parada por rodada: se a rodada anterior ainda estiver presa num read()
+            # lento, ela continua vendo o SEU sinal (ja ligado) e termina, em vez de ficar viva.
+            self._parar = threading.Event()
             self._thread = threading.Thread(
-                target=self._medir, args=(pa, stream), name="jarvis-teste-mic", daemon=True
+                target=self._medir,
+                args=(pa, stream, self._parar),
+                name="jarvis-teste-mic",
+                daemon=True,
             )
             self._thread.start()
             logger.info("teste do microfone iniciado")
@@ -109,10 +114,10 @@ class TesteMicrofone:
             thread.join(espera_s)
         return True
 
-    def _medir(self, pa: Any, stream: Any) -> None:
+    def _medir(self, pa: Any, stream: Any, parar: threading.Event) -> None:
         inicio = time.monotonic()
         try:
-            while not self._parar.is_set():
+            while not parar.is_set():
                 if time.monotonic() - inicio > self._limite_s:
                     logger.info("teste do microfone parou sozinho (tempo maximo)")
                     break

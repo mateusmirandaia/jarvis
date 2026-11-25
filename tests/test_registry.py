@@ -125,6 +125,7 @@ def test_registry_sem_confirm_usa_janela_com_prazo(
         return False
 
     monkeypatch.setattr(windows, "IS_WINDOWS", True)
+    monkeypatch.setattr(windows, "drive_type", lambda _path: windows.DRIVE_FIXED)
     monkeypatch.setattr(windows, "confirm_dialog", janela_falsa)
     alvo = tmp_path.parent / f"{tmp_path.name}_livre" / "a.txt"
     alvo.parent.mkdir()

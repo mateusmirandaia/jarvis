@@ -4,7 +4,8 @@
 
 .DESCRIPTION
     1. cria (ou reaproveita) o ambiente de build .venv-build na raiz do projeto;
-    2. instala o Jarvis e o PyInstaller nele;
+    2. instala nele as versoes EXATAS de packaging\requirements-build.txt (Jarvis, PyInstaller
+       e todas as dependencias) e depois o Jarvis sem dependencias extras;
     3. roda o PyInstaller com packaging\jarvis.spec (gera dist\Jarvis\Jarvis.exe);
     4. acha o ISCC.exe do Inno Setup 6 e compila packaging\jarvis.iss;
     5. mostra o caminho e o SHA-256 do instalador (para o VirusTotal e a pagina de download).
@@ -44,6 +45,7 @@ function Conferir([string]$etapa) {
 $Raiz = Split-Path -Parent $PSScriptRoot
 $Spec = Join-Path $PSScriptRoot "jarvis.spec"
 $Iss = Join-Path $PSScriptRoot "jarvis.iss"
+$Requisitos = Join-Path $PSScriptRoot "requirements-build.txt"
 $Venv = Join-Path $Raiz ".venv-build"
 $Dist = Join-Path $Raiz "dist"
 $Work = Join-Path $Raiz "build"
@@ -79,11 +81,15 @@ if (-not (Test-Path $PyVenv)) {
     Conferir "A criacao do ambiente de build"
 }
 
-Escrever "Instalando o Jarvis e o PyInstaller no ambiente de build"
-& $PyVenv -m pip install --upgrade pip --quiet
-Conferir "A atualizacao do pip"
-& $PyVenv -m pip install $Raiz pyinstaller --quiet
-Conferir "A instalacao das dependencias"
+if (-not (Test-Path $Requisitos)) { Falhar "nao achei $Requisitos (versoes fixas do build)." }
+Escrever "Instalando as versoes fixas de packaging\requirements-build.txt"
+& $PyVenv -m pip install --require-virtualenv --quiet -r $Requisitos
+Conferir "A instalacao das dependencias (versoes fixas)"
+Escrever "Instalando o Jarvis (sem buscar outras versoes de dependencias)"
+& $PyVenv -m pip install --require-virtualenv --quiet --no-deps $Raiz
+Conferir "A instalacao do Jarvis"
+& $PyVenv -m pip check
+Conferir "A conferencia das dependencias (pip check)"
 
 # --- amostras de voz -----------------------------------------------------------------------
 $amostras = @(Get-ChildItem -Path (Join-Path $Raiz "src\jarvis\ui\amostras") -Filter *.wav -ErrorAction SilentlyContinue)

@@ -123,10 +123,26 @@ def salvar_segredos(alteracoes: Mapping[str, str | None], caminho: Path | None =
     return True
 
 
+def ler_texto_env(arquivo: Path) -> str:
+    """Le um .env editado a mao no Windows sem perder a chave por causa da codificacao.
+
+    O Bloco de Notas e o PowerShell gravam UTF-8 com BOM, "Unicode" (UTF-16) ou ANSI
+    (cp1252). Com BOM, a primeira variavel viraria ``\\ufeffGEMINI_API_KEY`` e a chave
+    sumiria; em ANSI, um comentario com acento quebraria a leitura inteira.
+    """
+    dados = arquivo.read_bytes()
+    if dados.startswith((b"\xff\xfe", b"\xfe\xff")):
+        return dados.decode("utf-16")
+    try:
+        return dados.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        return dados.decode("cp1252", errors="replace")
+
+
 def _ler_linhas(arquivo: Path) -> list[str]:
     if not arquivo.exists():
         return []
-    texto = arquivo.read_text(encoding="utf-8")
+    texto = ler_texto_env(arquivo)
     linhas = texto.splitlines(keepends=True)
     if linhas and not linhas[-1].endswith(("\n", "\r")):
         linhas[-1] += "\n"

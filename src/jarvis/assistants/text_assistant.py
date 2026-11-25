@@ -57,7 +57,10 @@ class TextAssistant:
 
     def _new_chat(self, history: list[types.Content] | None = None) -> Chat:
         return self.client.chats.create(
-            model=self.current_model, config=self.config, history=history or []
+            # list(...) copia o historico e deixa o tipo como a SDK espera (lista invariante).
+            model=self.current_model,
+            config=self.config,
+            history=list(history or []),
         )
 
     def _switch_model(self) -> None:

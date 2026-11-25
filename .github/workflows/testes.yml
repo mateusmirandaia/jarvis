@@ -1,0 +1,49 @@
+name: Testes
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  testes:
+    name: ${{ matrix.os }} / Python 3.12
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      # No Linux o PyAudio compila a partir do codigo e precisa do PortAudio.
+      # No Windows ele instala pronto (wheel), sem compilar.
+      - name: PortAudio (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y portaudio19-dev
+
+      - name: PyAudio por wheel (Windows)
+        if: runner.os == 'Windows'
+        run: python -m pip install --only-binary=pyaudio pyaudio
+
+      - name: Instalar o Jarvis e as ferramentas de teste
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Ruff (lint)
+        run: ruff check .
+
+      - name: Ruff (formatacao)
+        run: ruff format --check .
+
+      - name: Pytest
+        run: python -m pytest -q

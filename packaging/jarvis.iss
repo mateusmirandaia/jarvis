@@ -67,6 +67,36 @@ Filename: "{app}\{#AppExe}"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags
 Type: filesandordirs; Name: "{app}"
 
 [Code]
+// Pasta unica aceita. DisableDirPage esconde a escolha, mas "Jarvis-Setup.exe /DIR=..." ainda
+// mudaria {app}; como o [UninstallDelete] apaga {app} inteiro, outra pasta (ex.: Documentos)
+// seria apagada ao desinstalar. Por isso instalar e desinstalar fora dela e recusado.
+function PastaEsperada(): String;
+begin
+  Result := ExpandConstant('{localappdata}\Programs\Jarvis');
+end;
+
+function PastaDoAppValida(): Boolean;
+begin
+  Result := CompareText(RemoveBackslashUnlessRoot(ExpandConstant('{app}')), PastaEsperada()) = 0;
+end;
+
+function PrepareToInstall(var NeedsRestart: Boolean): String;
+begin
+  Result := '';
+  if not PastaDoAppValida() then
+    Result := 'O Jarvis só pode ser instalado em ' + PastaEsperada() + '.' + #13#10 +
+              'Rode o instalador sem o parâmetro /DIR.';
+end;
+
+function InitializeUninstall(): Boolean;
+begin
+  Result := PastaDoAppValida();
+  if not Result then
+    MsgBox('Este Jarvis está numa pasta inesperada (' + ExpandConstant('{app}') + ').' + #13#10 +
+           'Para não apagar outros arquivos, a desinstalação automática foi cancelada.' + #13#10 +
+           'Apague manualmente só os arquivos do Jarvis.', mbError, MB_OK);
+end;
+
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
   PastaConfig: String;

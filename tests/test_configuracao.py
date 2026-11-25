@@ -281,8 +281,9 @@ def test_nome_valido(nome: object, valido: bool) -> None:
 def test_vozes_lista_fixa() -> None:
     assert vozes.IDS == ("Charon", "Puck", "Kore", "Fenrir", "Aoede", "Leda", "Orus", "Zephyr")
     assert vozes.VOZ_PADRAO == "Charon" == vozes.IDS[0]
-    assert vozes.DESCRICOES["Charon"] == "Grave e calma (padrão)"
-    assert vozes.DESCRICOES["Orus"] == "Firme e grave"
+    assert vozes.DESCRICOES["Charon"] == "Masculina, grave e calma (padrão)"
+    assert vozes.DESCRICOES["Orus"] == "Masculina, firme"
+    assert vozes.DESCRICOES["Kore"].startswith("Feminina")
 
 
 @pytest.mark.parametrize("ruim", ["charon", "../etc/passwd", "Charon.wav", "", None, 1, ["Puck"]])

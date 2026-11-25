@@ -17,6 +17,7 @@ pasta do projeto: o ``.env`` do projeto simplesmente nao e procurado e os logs v
 
 from __future__ import annotations
 
+import io
 import os
 import sys
 from collections.abc import Mapping
@@ -42,9 +43,9 @@ _PLACEHOLDER_KEYS: frozenset[str] = frozenset(
 )
 
 _MISSING_KEY_MESSAGE = (
-    "Nao encontrei a GEMINI_API_KEY, senhor. Abra o Jarvis pela janela (comando jarvis, sem "
-    "--modo) para configurar a chave, ou copie o .env.example para .env e cole a sua chave do "
-    "Google AI Studio (https://aistudio.google.com/apikey)."
+    "Não encontrei a chave do Google (GEMINI_API_KEY), senhor. Abra o Jarvis pela janela "
+    "(comando jarvis, sem --modo) para configurar a chave, ou copie o .env.example para .env e "
+    "cole a sua chave do Google AI Studio (https://aistudio.google.com/apikey)."
 )
 
 LOG_NOME = "jarvis.log"
@@ -88,10 +89,13 @@ def raiz_projeto() -> Path:
 
 
 def pasta_usuario() -> Path:
-    """Pasta de dados do usuario (a mesma do ``preferencias.json``)."""
-    from jarvis.ui import preferencias
+    """Pasta de dados do usuario (a mesma do ``preferencias.json``).
 
-    return preferencias.caminho_preferencias().parent
+    Uma so implementacao: delega para ``armazenamento.pasta_usuario``.
+    """
+    from jarvis import armazenamento
+
+    return armazenamento.pasta_usuario()
 
 
 def pasta_logs() -> Path:
@@ -127,10 +131,12 @@ def _ler_dotenv(caminho: Path | None) -> dict[str, str]:
     """Le um arquivo .env sem mexer em ``os.environ``; arquivo ausente/ilegivel = vazio."""
     if caminho is None:
         return {}
+    from jarvis.armazenamento import ler_texto_env
+
     try:
         if not caminho.is_file():
             return {}
-        valores = dotenv_values(caminho, encoding="utf-8")
+        valores = dotenv_values(stream=io.StringIO(ler_texto_env(caminho)))
     except (OSError, UnicodeDecodeError, ValueError):
         return {}
     return {chave: valor for chave, valor in valores.items() if isinstance(valor, str)}

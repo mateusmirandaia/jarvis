@@ -2,6 +2,9 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<!-- CSP: a pagina nao carrega nada de fora nem conversa com a rede. 'unsafe-eval' e exigido pelo
+     pywebview (evaluate_js usa eval() e a ponte window.pywebview.api e criada com new Function). -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; img-src data:; media-src data:; font-src data:; connect-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jarvis</title>
 <style>
@@ -2042,8 +2045,9 @@
 
   // Vozes do Google (contrato); so usadas se o Python nao mandar config.vozes.
   const VOZES_PADRAO = [
-    ["Charon", "Grave e calma (padrão)"], ["Puck", "Animada"], ["Kore", "Firme"], ["Fenrir", "Empolgada"],
-    ["Aoede", "Leve"], ["Leda", "Jovem"], ["Orus", "Firme e grave"], ["Zephyr", "Clara"],
+    ["Charon", "Masculina, grave e calma (padrão)"], ["Puck", "Masculina, animada"],
+    ["Kore", "Feminina, firme"], ["Fenrir", "Masculina, empolgada"], ["Aoede", "Feminina, leve"],
+    ["Leda", "Feminina, jovem"], ["Orus", "Masculina, firme"], ["Zephyr", "Feminina, clara"],
   ].map(([id, descricao]) => ({ id, descricao, tem_amostra: true }));
 
   // So os 4 ultimos caracteres, sempre como "…abcd" (mesmo se vier mais do que isso).
@@ -2051,6 +2055,9 @@
     const s = String(valor == null ? "" : valor).replace(/^[.…\s]+/, "").trim();
     return s ? "…" + s.slice(-4) : "";
   }
+  // Nome de ate 40 caracteres contados como o Python (por codigo, nao por UTF-16): cortar
+  // com slice() poderia partir um emoji ao meio e o Python recusaria o nome.
+  const limparNome = (v) => Array.from(String(v).trim().replace(/\s+/g, " ")).slice(0, 40).join("").trim();
   const textoOu = (v, padrao) => (typeof v === "string" && v.trim() ? v.trim() : padrao);
 
   function normalizarEstado(bruto) {
@@ -2435,7 +2442,7 @@
     const chave = ax.chave.value.trim();
     let r = await api("salvar_chave", chave);
     if (!deuCerto(r)) { falhar(mensagemDe(r, "Não consegui salvar a chave.") + " Volte ao passo 2 e tente de novo."); return; }
-    const prefs = { nome: ax.nome.value.trim().replace(/\s+/g, " ").slice(0, 40), voz: assist.voz, fone: ax.fone.checked };
+    const prefs = { nome: limparNome(ax.nome.value), voz: assist.voz, fone: ax.fone.checked };
     r = await api("salvar_preferencias", prefs);
     if (!deuCerto(r)) { falhar(mensagemDe(r, "Não consegui salvar as preferências.")); return; }
     mostrarResultado(ax.fimRes, "neutro", "Aplicando… pode levar alguns segundos.");
@@ -2801,7 +2808,7 @@
     if (eleven.erro) { falhar("elevenlabs", eleven.erro); return; }
 
     // 3. preferencias (nome, voz do Google, fone)
-    const prefs = { nome: cx.nome.value.trim().replace(/\s+/g, " ").slice(0, 40), voz: painel.voz, fone: cx.fone.checked };
+    const prefs = { nome: limparNome(cx.nome.value), voz: painel.voz, fone: cx.fone.checked };
     const novaFonte = eleven.salvar ? cfgEstado.fonte_voz : (painel.fonte || cfgEstado.fonte_voz);
     if (novaFonte !== cfgEstado.fonte_voz) prefs.fonte_voz = novaFonte;
     if (prefs.nome !== cfgEstado.nome || prefs.voz !== cfgEstado.voz || prefs.fone !== cfgEstado.fone || "fonte_voz" in prefs) {
@@ -2816,6 +2823,7 @@
     if (eleven.salvar) {
       r = await api("elevenlabs_salvar", eleven.chave, eleven.id, eleven.nome);
       if (!deuCerto(r)) { falhar("elevenlabs", mensagemDe(r, "Não consegui salvar a voz personalizada.")); return; }
+      if (r && typeof r.aviso === "string" && r.aviso.trim()) avisoExtra = [avisoExtra, r.aviso.trim()].filter(Boolean).join(" ");
       cfgEstado.fonte_voz = "elevenlabs";
       cfgEstado.elevenlabs = {
         ativo: true, configurado: true, voz_id: eleven.id, voz_nome: eleven.nome,
@@ -2834,6 +2842,9 @@
     }
     aplicarInfoLocal();
     preencherResumo();
+    // A aba Geral passa a mostrar a fonte de voz salva (ex.: acabou de ligar o ElevenLabs);
+    // sem isso, ela continuava em "Google" e o proximo Salvar desligava o ElevenLabs.
+    definirFonte(cfgEstado.fonte_voz);
     painel.sujo = false;
     painel.avisouSujo = false;
     mostrarResultado(cx.status, "neutro", "Aplicando… pode levar alguns segundos.");

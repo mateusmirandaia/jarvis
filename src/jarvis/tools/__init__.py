@@ -13,6 +13,7 @@ from typing import Any
 
 from jarvis.config import Settings
 from jarvis.errors import safe_tool
+from jarvis.logging_setup import registrar_segredos
 from jarvis.tools.app_tools import AppTools
 from jarvis.tools.file_tools import FileTools
 from jarvis.tools.security import PathGuard
@@ -60,6 +61,8 @@ class ToolRegistry:
             confirm: confirmacao manual (titulo, mensagem) -> bool; None usa a janela do Windows.
         """
         self._settings = settings
+        # O log apaga o valor exato das chaves em uso, qualquer que seja o formato delas.
+        registrar_segredos(settings.api_key, settings.elevenlabs_api_key)
         # A pasta de dados do usuario guarda as chaves (.env): nenhuma acao mexe nela.
         self._guard = PathGuard(settings.project_root, extra_protected=[_pasta_usuario()])
         self._apps = AppTools()

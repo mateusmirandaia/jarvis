@@ -261,3 +261,49 @@ def open_with_shell(target: str | Path) -> None:
         raise NotImplementedError("open_with_shell so funciona no Windows")
     os.startfile(target)  # type: ignore[attr-defined]  # noqa: S606
     logger.info("open_with_shell: %s", target)
+
+
+# Tipos de unidade do GetDriveTypeW.
+DRIVE_UNKNOWN = 0
+DRIVE_NO_ROOT_DIR = 1
+DRIVE_REMOVABLE = 2
+DRIVE_FIXED = 3
+DRIVE_REMOTE = 4
+DRIVE_CDROM = 5
+DRIVE_RAMDISK = 6
+
+
+def drive_type(path: str | Path) -> int:
+    """Tipo da unidade onde fica ``path`` (``GetDriveTypeW``); fora do Windows, DRIVE_FIXED.
+
+    Args:
+        path: arquivo ou pasta.
+    """
+    if not IS_WINDOWS:
+        return DRIVE_FIXED
+    import ctypes
+
+    anchor = Path(path).resolve().anchor or str(path)[:3]
+    if not anchor.endswith("\\"):
+        anchor += "\\"
+    tipo = int(ctypes.windll.kernel32.GetDriveTypeW(anchor))  # type: ignore[attr-defined]
+    logger.debug("GetDriveTypeW(%s) -> %s", anchor, tipo)
+    return tipo
+
+
+def has_recycle_bin(path: str | Path) -> bool:
+    """True so para disco interno (DRIVE_FIXED): pendrive, rede e CD nao tem Lixeira.
+
+    Neles o ``send2trash`` apagaria de vez (ou falharia), entao o Jarvis nem tenta.
+
+    Args:
+        path: arquivo ou pasta que seria mandado para a Lixeira.
+    """
+    texto = str(path)
+    if texto.startswith(("\\\\", "//")):
+        return False
+    try:
+        return drive_type(path) == DRIVE_FIXED
+    except (OSError, AttributeError, ValueError):
+        logger.warning("nao consegui saber o tipo da unidade de %s; negando", path)
+        return False

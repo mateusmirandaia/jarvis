@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Final
 
@@ -21,7 +22,16 @@ from jarvis.assistants.observer import AssistantObserver
 logger = logging.getLogger(__name__)
 
 _END: Final = object()  # marca o fim do audio de uma frase
-FALLBACK_NOTICE = "Senhor, a voz do ElevenLabs falhou. Vou usar a voz padrao por enquanto."
+FALLBACK_NOTICE = "Senhor, a voz do ElevenLabs falhou. Vou usar a voz do Google por enquanto."
+
+
+def _fecha_fila(chunks: asyncio.Queue[object]) -> Callable[[asyncio.Task[None]], None]:
+    """Callback que poe ``_END`` na fila da frase quando a tarefa termina (de qualquer jeito)."""
+
+    def fechar(_task: asyncio.Task[None]) -> None:
+        chunks.put_nowait(_END)
+
+    return fechar
 
 
 @dataclass(frozen=True)
@@ -121,6 +131,9 @@ class VoiceOutput:
                 task = asyncio.create_task(self._fetch(self._elevenlabs, item.text, chunks))
                 self._fetches.add(task)
                 task.add_done_callback(self._fetches.discard)
+                # cancelada antes de comecar, a corrotina nem roda o ``finally`` do _fetch:
+                # este callback garante o _END mesmo assim (um _END a mais e inofensivo).
+                task.add_done_callback(_fecha_fila(chunks))
                 self._ordered.put_nowait((item, chunks))
         finally:
             forwarder.cancel()
@@ -129,13 +142,23 @@ class VoiceOutput:
 
     @staticmethod
     async def _fetch(voice: ElevenLabsVoice, text: str, chunks: asyncio.Queue[object]) -> None:
-        """Baixa o audio de uma frase para a fila dela (ou a excecao, se falhar)."""
+        """Baixa o audio de uma frase para a fila dela (ou a excecao, se falhar).
+
+        A fila SEMPRE termina com ``_END`` (tambem quando a tarefa e cancelada por uma
+        interrupcao): sem isso o ``_forward`` ficaria esperando para sempre e o Jarvis mudo.
+        """
         try:
             async for chunk in voice.stream(text):
                 chunks.put_nowait(chunk)
-            chunks.put_nowait(_END)
+        except asyncio.CancelledError:
+            raise
         except ElevenLabsError as error:
             chunks.put_nowait(error)
+        except Exception as error:  # noqa: BLE001 - erro inesperado: cai para a voz do Gemini
+            logger.exception("erro inesperado no ElevenLabs")
+            chunks.put_nowait(ElevenLabsError(f"erro inesperado: {error!r}"))
+        finally:
+            chunks.put_nowait(_END)
 
     async def _forward(self) -> None:
         """Entrega o audio das frases ao alto-falante, uma frase de cada vez, na ordem."""

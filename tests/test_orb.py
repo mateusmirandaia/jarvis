@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import array
 import asyncio
+import re
 import warnings
 from pathlib import Path
 
@@ -64,9 +65,13 @@ def test_html_do_orb_expoe_a_api_usada_pelo_python() -> None:
         assert trecho in html
     for estado in ("idle", "listening", "thinking", "speaking", "offline"):
         assert estado in html
-    assert "http" not in html.lower()  # nada carregado da internet
+    # Nada carregado da internet: nenhuma URL (o "http-equiv" da CSP nao conta).
+    assert not re.search(r"https?://", html, re.IGNORECASE)
+    csp = re.search(r'http-equiv="Content-Security-Policy" content="([^"]+)"', html)
+    assert csp and not re.search(r"https?:|//", csp.group(1)), "a CSP nao pode liberar URL"
     for visual in sorted(VISUAIS_DIR.glob("*.js")):
-        assert "http" not in visual.read_text(encoding="utf-8").lower(), visual.name
+        texto = visual.read_text(encoding="utf-8")
+        assert not re.search(r"https?://", texto, re.IGNORECASE), visual.name
 
 
 def test_icone_existe() -> None:

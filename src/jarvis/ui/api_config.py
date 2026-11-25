@@ -17,13 +17,16 @@ import functools
 import logging
 import os
 import sys
+import types
 import webbrowser
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Protocol
+from urllib.parse import urlsplit
 
 from jarvis import __version__, armazenamento, verificacao, vozes
 from jarvis.config import Settings
+from jarvis.logging_setup import registrar_segredos
 from jarvis.microfone import MSG_EM_USO, TesteMicrofone, tocar_pcm
 from jarvis.ui import preferencias
 
@@ -32,13 +35,19 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-# Lista FECHADA de destinos de abrir_link. Nenhuma URL vem da pagina.
-LINKS: dict[str, str] = {
-    "chave_google": "https://aistudio.google.com/apikey",
-    "elevenlabs": "https://elevenlabs.io",
-    "repositorio": "https://github.com/mateusmirandaia/jarvis",
-    "instagram": "https://www.instagram.com/mateusmirandaia.ia/",
-}
+# Lista FECHADA de destinos de abrir_link. Nenhuma URL vem da pagina. Somente leitura.
+LINKS: Mapping[str, str] = types.MappingProxyType(
+    {
+        "chave_google": "https://aistudio.google.com/apikey",
+        "elevenlabs": "https://elevenlabs.io",
+        "repositorio": "https://github.com/mateusmirandaia/jarvis",
+        "instagram": "https://www.instagram.com/mateusmirandaia.ia/",
+    }
+)
+# Hosts aceitos por abrir_link (segunda trava: mesmo que LINKS fosse trocado).
+HOSTS_LINKS: frozenset[str] = frozenset(
+    {"aistudio.google.com", "elevenlabs.io", "github.com", "www.instagram.com"}
+)
 PASTAS: tuple[str, ...] = ("pasta_config", "pasta_logs")
 
 # Nomes exatos do contrato (um teste garante que sao os unicos metodos publicos).
@@ -85,6 +94,11 @@ MSG_EL_DO_PROJETO = (
     "A voz do ElevenLabs está definida no arquivo .env da pasta do projeto. Apague as linhas "
     "ELEVENLABS_API_KEY e ELEVENLABS_VOICE_ID de lá para voltar à voz do Google."
 )
+MSG_EL_PRESA = (
+    "Salvei, mas o arquivo .env da pasta do projeto define outra chave ou voz do ElevenLabs, e "
+    "ela continua valendo. Apague as linhas ELEVENLABS_API_KEY e ELEVENLABS_VOICE_ID de lá "
+    "para usar a voz escolhida aqui."
+)
 MSG_NAO_INICIOU = "Não consegui iniciar o Jarvis. Veja o log."
 
 
@@ -93,15 +107,33 @@ class _Janela(Protocol):
 
 
 def _carregar_padrao() -> Settings:
-    return Settings.from_env(exigir_chave=False)
+    settings = Settings.from_env(exigir_chave=False)
+    registrar_segredos(settings.api_key, settings.elevenlabs_api_key)
+    return settings
+
+
+def url_segura(url: object) -> bool:
+    """True so para ``https://`` de um host da lista ``HOSTS_LINKS`` (sem usuario/senha)."""
+    if not isinstance(url, str) or any(ch.isspace() or ord(ch) < 32 for ch in url):
+        return False
+    partes = urlsplit(url)
+    return (
+        partes.scheme == "https"
+        and partes.hostname in HOSTS_LINKS
+        and partes.username is None
+        and partes.port is None
+    )
 
 
 def _abrir_url(url: str) -> bool:
     """Abre no navegador padrao; no Windows, se o webbrowser falhar, tenta o shell."""
+    if not url_segura(url):
+        logger.warning("url fora da lista recusada")
+        return False
     if webbrowser.open(url, new=2):
         return True
     if sys.platform == "win32":
-        os.startfile(url)  # type: ignore[attr-defined]  # noqa: S606 - so URLs da lista LINKS
+        os.startfile(url)  # type: ignore[attr-defined]  # noqa: S606 - so https da lista
         return True
     return False
 
@@ -241,6 +273,7 @@ class ApiJs:
         texto = _texto(chave)
         if not texto:
             texto = self._carregar().api_key
+        registrar_segredos(texto)
         resultado = verificacao.testar_chave_gemini(texto, self._fabrica_gemini)
         return resultado.como_dict()
 
@@ -248,6 +281,7 @@ class ApiJs:
     def salvar_chave(self, chave: object) -> dict[str, Any]:
         """Salva a chave no .env do usuario, se o formato for plausivel (nao testa de novo)."""
         texto = _texto(chave)
+        registrar_segredos(texto)
         if not verificacao.chave_google_plausivel(texto):
             return {"ok": False, "mensagem": verificacao.MSG_FORMATO}
         if not armazenamento.salvar_segredos({armazenamento.GEMINI_API_KEY: texto}):
@@ -371,8 +405,9 @@ class ApiJs:
 
     # --------------------------------------------------------------- ElevenLabs
     def _chave_elevenlabs(self, chave: object) -> str:
-        texto = _texto(chave)
-        return texto or self._carregar().elevenlabs_api_key
+        texto = _texto(chave) or self._carregar().elevenlabs_api_key
+        registrar_segredos(texto)
+        return texto
 
     @_seguro(lambda: {"ok": False, "vozes": [], "mensagem": MSG_ERRO})
     def elevenlabs_listar_vozes(self, chave: object = "") -> dict[str, Any]:
@@ -387,6 +422,7 @@ class ApiJs:
         """Fala UMA frase curta com a voz (gasta creditos). Vazios = os valores salvos."""
         settings = self._carregar()
         texto = _texto(chave) or settings.elevenlabs_api_key
+        registrar_segredos(texto)
         voz = _texto(voz_id) or settings.elevenlabs_voice_id
         if not texto:
             return {"ok": False, "mensagem": MSG_EL_SEM_CHAVE}
@@ -416,13 +452,17 @@ class ApiJs:
         segredos = {armazenamento.ELEVENLABS_API_KEY: texto, armazenamento.ELEVENLABS_VOICE_ID: voz}
         if not armazenamento.salvar_segredos(segredos):
             return {"ok": False, "mensagem": MSG_SALVAR_FALHOU}
-        preferencias.atualizar(
-            {
-                preferencias.CHAVE_ELEVENLABS_VOZ_NOME: nome,
-                preferencias.CHAVE_FONTE_VOZ: "elevenlabs",
-            }
-        )
-        logger.info("voz do ElevenLabs salva")
+        # O .env do projeto (ou o ambiente) ganha do .env do usuario: se ele define outra
+        # chave/voz, a escolhida aqui nao vale. Avisa e nao troca o nome mostrado.
+        valendo = self._carregar()
+        presa = valendo.elevenlabs_voice_id != voz or valendo.elevenlabs_api_key != texto
+        alteracoes: dict[str, Any] = {preferencias.CHAVE_FONTE_VOZ: "elevenlabs"}
+        if not presa:
+            alteracoes[preferencias.CHAVE_ELEVENLABS_VOZ_NOME] = nome
+        preferencias.atualizar(alteracoes)
+        logger.info("voz do ElevenLabs salva%s", " (o .env do projeto manda)" if presa else "")
+        if presa:
+            return {"ok": True, "mensagem": MSG_EL_PRESA, "aviso": MSG_EL_PRESA}
         return {"ok": True, "mensagem": "Voz do ElevenLabs salva."}
 
     @_seguro(_falha)
@@ -459,7 +499,11 @@ class ApiJs:
         if not isinstance(nome, str):
             return False
         if nome in LINKS:
-            aberto = bool(self._abrir_url(LINKS[nome]))
+            url = LINKS[nome]
+            if not url_segura(url):
+                logger.warning("abrir_link %s: endereco fora da lista recusado", nome)
+                return False
+            aberto = bool(self._abrir_url(url))
             logger.info("abrir_link %s: %s", nome, "ok" if aberto else "falhou")
             return aberto
         if nome == "pasta_config":
@@ -470,22 +514,46 @@ class ApiJs:
         return False
 
 
+# Fabrica das funcoes da ponte, compilada num espaco de nomes VAZIO (sem modulos, sem
+# builtins). O pywebview resolve o nome pedido pela pagina com getattr encadeado ("a.b.c",
+# sem filtrar "__"): assim "abrir_link.__globals__" e so este dicionario descartavel, e nao
+# os globais deste modulo (LINKS, os, webbrowser...). A funcao gerada nao le nenhum global:
+# o metodo da ApiJs fica so na closure, que o getattr nao alcanca.
+_FABRICA_FONTE = """
+def fabrica(metodo):
+    def chamar(*args):
+        return metodo(*args)
+    return chamar
+"""
+
+
+def _criar_chamada(metodo: Callable[..., Any], nome: str) -> Callable[..., Any]:
+    caixa: dict[str, Any] = {"__builtins__": {}}
+    exec(compile(_FABRICA_FONTE, "<ponte_js>", "exec"), caixa)  # noqa: S102 - texto fixo acima
+    chamar = caixa.pop("fabrica")(metodo)
+    caixa.clear()
+    caixa["__builtins__"] = {}
+    chamar.__name__ = nome
+    chamar.__qualname__ = f"PonteJs.{nome}"
+    chamar.__doc__ = getattr(metodo, "__doc__", None)
+    return chamar
+
+
 def ponte_js(api: ApiJs) -> object:
-    """Objeto entregue ao pywebview: so as funcoes do contrato, e nada mais.
+    """Objeto entregue ao pywebview: so as 15 funcoes do contrato, e nada mais.
 
-    O pywebview executa qualquer nome que a pagina mandar (inclusive nomes com ``_`` e
-    atributos internos). Por isso a janela nao recebe a ``ApiJs`` em si, e sim esta
-    fachada sem atributos, cujas funcoes guardam a ``ApiJs`` so na closure.
+    O pywebview executa qualquer nome que a pagina mandar, inclusive "a.b.c" resolvido com
+    getattr encadeado e nomes com ``_``/``__``. Por isso a janela nao recebe a ``ApiJs``, e
+    sim esta fachada:
+
+    - a classe nao tem nenhuma funcao Python (so ``__slots__``), entao ``__class__``,
+      ``__init__``, ``__setattr__``... sao todos do proprio Python (sem ``__globals__``);
+    - cada uma das 15 funcoes fica num slot da instancia (nao vira metodo: sem ``__self__``
+      nem ``__func__``) e foi criada por ``_criar_chamada``: ``__globals__`` e um dicionario
+      vazio e descartavel, e a ``ApiJs`` fica so na closure.
     """
-
-    def _criar(nome: str) -> Callable[..., Any]:
-        def chamar(self: object, *args: Any) -> Any:  # noqa: ARG001
-            return getattr(api, nome)(*args)
-
-        chamar.__name__ = nome
-        chamar.__qualname__ = f"PonteJs.{nome}"
-        return chamar
-
-    corpo: dict[str, Any] = {nome: _criar(nome) for nome in METODOS_PUBLICOS}
-    corpo["__slots__"] = ()
-    return type("PonteJs", (), corpo)()
+    classe = type("PonteJs", (), {"__slots__": METODOS_PUBLICOS, "__module__": "jarvis.ponte"})
+    ponte = classe()
+    for nome in METODOS_PUBLICOS:
+        object.__setattr__(ponte, nome, _criar_chamada(getattr(api, nome), nome))
+    return ponte

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import logging
 import re
+import threading
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
@@ -25,8 +26,34 @@ _PADROES_SEGREDO: tuple[tuple[re.Pattern[str], str], ...] = (
 )
 
 
+# Valores EXATOS das chaves carregadas (qualquer formato): tambem saem do log.
+_SEGREDOS_MIN = 8
+_segredos: set[str] = set()
+_segredos_trava = threading.Lock()
+
+
+def registrar_segredos(*valores: object) -> None:
+    """Guarda os valores exatos das chaves em uso para ``redigir`` apagar do log.
+
+    Cobre chaves de formato novo ou diferente (que os padroes ``AIza…``/``sk_…`` nao pegam).
+    Valores vazios, curtos (menos de 8 caracteres) ou que nao sao texto sao ignorados.
+
+    Args:
+        valores: chaves (Google, ElevenLabs...).
+    """
+    novos = {v.strip() for v in valores if isinstance(v, str) and len(v.strip()) >= _SEGREDOS_MIN}
+    if novos:
+        with _segredos_trava:
+            _segredos.update(novos)
+
+
 def redigir(texto: str) -> str:
     """Troca por ``…`` qualquer coisa com cara de chave de API dentro de ``texto``."""
+    with _segredos_trava:
+        exatos = sorted(_segredos, key=len, reverse=True)
+    for segredo in exatos:
+        if segredo in texto:
+            texto = texto.replace(segredo, "…")
     for padrao, troca in _PADROES_SEGREDO:
         texto = padrao.sub(troca, texto)
     return texto

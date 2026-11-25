@@ -21,7 +21,7 @@ def build_system_prompt(
         Instrucao de sistema em portugues do Brasil.
     """
     name = " ".join(user_name.split())
-    owner = f"assistente pessoal do {name}" if name else "seu assistente pessoal"
+    owner = f"assistente pessoal de {name}" if name else "seu assistente pessoal"
     folders = "; ".join(f"{alias}: {path}" for alias, path in user_folders.items())
     apps = ", ".join(app_names) if app_names else "nenhum cadastrado"
     return f"""Voce e o Jarvis, {owner}.

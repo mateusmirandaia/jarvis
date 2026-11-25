@@ -31,12 +31,12 @@ ECHO_GAP_S = 0.2  # folga apos a fala para o eco morrer antes de reabrir o micro
 PLAYBACK_SLICE_BYTES = 2_048  # ~42 ms de audio a 24 kHz: o orb pulsa no ritmo da fala
 MIC_LEVEL_FACTOR = 0.6  # ao ouvir, o orb reage ao microfone de forma mais discreta
 INVALID_KEY_MESSAGE = (
-    "O Google recusou a chave (GEMINI_API_KEY): ela esta errada, foi apagada ou bloqueada. "
+    "O Google recusou a chave (GEMINI_API_KEY): ela está errada, foi apagada ou bloqueada. "
     "Abra o Jarvis pela janela e troque a chave na engrenagem (aba Chave do Google)."
 )
 RECONNECT_NOTICE = (
-    "(Aviso do sistema: a conexao caiu e voltou. Diga ao senhor em uma frase curta que "
-    "teve um problema de conexao, mas ja esta de volta.)"
+    "(Aviso do sistema: a conexão caiu e voltou. Diga ao senhor em uma frase curta que "
+    "teve um problema de conexão, mas já está de volta.)"
 )
 
 
@@ -150,7 +150,7 @@ class LiveAssistant:
         logger.error("sessao caiu: %r", cause)
         self.failures += 1
         wait = min(2**self.failures, MAX_BACKOFF_S)
-        notice = f"Senhor, perdi a conexao. Tentando de novo em {wait}s..."
+        notice = f"Senhor, perdi a conexão. Tento de novo em {wait} s…"
         print(f"(Jarvis: {notice})")
         self.observer.on_state("offline")
         self.observer.on_transcript("sistema", notice)
@@ -299,7 +299,7 @@ class LiveAssistant:
         for call in tool_call.function_calls or []:
             name = call.name or ""
             result = await self._execute(name, call.args or {})
-            print(f"  [acao] {name}({call.args or ''}) -> {result}")
+            print(f"  [ação] {name}({call.args or ''}) -> {result}")
             responses.append(
                 types.FunctionResponse(
                     id=call.id,
@@ -323,7 +323,7 @@ class LiveAssistant:
         if func is None:
             logger.warning("acao nao permitida pedida pelo modelo: %s", name)
             self._notify_tool(name, ok=False)
-            return "Acao nao permitida."
+            return "Ação não permitida."
         try:
             result = await asyncio.wait_for(
                 asyncio.to_thread(func, **args),
@@ -345,7 +345,7 @@ class LiveAssistant:
     @staticmethod
     def _print_turn(user_text: str, jarvis_text: str) -> None:
         if user_text.strip():
-            print("Voce:", user_text.strip())
+            print("Você:", user_text.strip())
         if jarvis_text.strip():
             print("Jarvis:", jarvis_text.strip())
 

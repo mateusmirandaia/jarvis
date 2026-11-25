@@ -15,13 +15,13 @@ FOLDERS = {"area de trabalho": Path("/casa/Desktop")}
 def test_persona_generica_sem_nome() -> None:
     texto = build_system_prompt(FOLDERS, ["calculadora"])
     assert "seu assistente pessoal" in texto
-    assert "assistente pessoal do" not in texto
+    assert "assistente pessoal de" not in texto
     assert '"senhor"' in texto
 
 
 def test_persona_com_nome() -> None:
     texto = build_system_prompt(FOLDERS, ["calculadora"], user_name="  Carlos   Silva ")
-    assert "assistente pessoal do Carlos Silva" in texto
+    assert "assistente pessoal de Carlos Silva" in texto
     assert '"senhor"' in texto
 
 

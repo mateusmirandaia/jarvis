@@ -152,10 +152,6 @@ def montar_html(
     return pagina
 
 
-# Nome antigo mantido por compatibilidade: a API agora fica em jarvis.ui.api_config.
-_ApiJs = ApiJs
-
-
 class OrbWindow:
     """Janela do orb (1280x760, minimo 900x600). Implementa o ``AssistantObserver``.
 
@@ -297,6 +293,9 @@ class OrbWindow:
 
     def _dispatch_loop(self) -> None:
         """Thread que envia os comandos a janela: estados/legendas em ordem, volume mais recente."""
+        # Ate a pagina carregar, os comandos ficam na fila (nao sao descartados): o aviso de
+        # chave recusada pode chegar antes de o WebView2 terminar de carregar a pagina.
+        self._ready.wait()
         while True:
             self._wake.wait()
             self._wake.clear()

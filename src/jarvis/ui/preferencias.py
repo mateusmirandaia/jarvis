@@ -81,7 +81,7 @@ def carregar(caminho: Path | None = None) -> dict[str, Any]:
         arquivo = caminho or caminho_preferencias()
         if not arquivo.exists():
             return {}
-        dados = json.loads(arquivo.read_text(encoding="utf-8"))
+        dados = json.loads(arquivo.read_text(encoding="utf-8-sig"))  # aceita BOM (Bloco de Notas)
     except (OSError, ValueError, RuntimeError):
         logger.warning("nao consegui ler as preferencias; usando o padrao", exc_info=True)
         return {}
@@ -102,8 +102,11 @@ def nome_valido(nome: object) -> bool:
     limpo = nome.strip()
     if len(limpo) > NOME_MAX:
         return False
+    # "Cs": metade de emoji (o texto foi cortado no meio). O ZWJ (U+200D) e Cf, mas so junta
+    # emojis (ex.: familia), entao e aceito.
     return not any(
-        unicodedata.category(caractere) in {"Cc", "Cf", "Zl", "Zp"} for caractere in limpo
+        unicodedata.category(caractere) in {"Cc", "Cf", "Cs", "Zl", "Zp"} and caractere != "\u200d"
+        for caractere in limpo
     )
 
 

@@ -41,11 +41,11 @@ def test_config_tem_todas_as_ferramentas(assistant: LiveAssistant) -> None:
 
 
 def test_config_usa_nome_do_usuario(assistant: LiveAssistant) -> None:
-    assert "assistente pessoal do Carlos" in str(assistant.config.system_instruction)
+    assert "assistente pessoal de Carlos" in str(assistant.config.system_instruction)
 
 
 def test_acao_fora_da_lista_e_recusada(assistant: LiveAssistant) -> None:
-    assert asyncio.run(assistant._execute("run_command", {"cmd": "del"})) == "Acao nao permitida."
+    assert asyncio.run(assistant._execute("run_command", {"cmd": "del"})) == "Ação não permitida."
 
 
 def test_argumento_errado_vira_frase(assistant: LiveAssistant) -> None:

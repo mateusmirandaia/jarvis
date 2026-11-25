@@ -10,21 +10,23 @@ from __future__ import annotations
 import base64
 import logging
 from pathlib import Path
+from typing import TypeGuard
 
 from jarvis.config import pasta_pacote
 
 logger = logging.getLogger(__name__)
 
 # (id, descricao curta) na ordem dos cartoes.
+# Genero conferido na documentacao oficial do Gemini TTS (Google Cloud, tabela de vozes).
 VOZES: tuple[tuple[str, str], ...] = (
-    ("Charon", "Grave e calma (padrão)"),
-    ("Puck", "Animada"),
-    ("Kore", "Firme"),
-    ("Fenrir", "Empolgada"),
-    ("Aoede", "Leve"),
-    ("Leda", "Jovem"),
-    ("Orus", "Firme e grave"),
-    ("Zephyr", "Clara"),
+    ("Charon", "Masculina, grave e calma (padrão)"),
+    ("Puck", "Masculina, animada"),
+    ("Kore", "Feminina, firme"),
+    ("Fenrir", "Masculina, empolgada"),
+    ("Aoede", "Feminina, leve"),
+    ("Leda", "Feminina, jovem"),
+    ("Orus", "Masculina, firme"),
+    ("Zephyr", "Feminina, clara"),
 )
 VOZ_PADRAO = "Charon"
 IDS: tuple[str, ...] = tuple(id_voz for id_voz, _ in VOZES)
@@ -34,7 +36,7 @@ AMOSTRA_MAX_BYTES = 3_000_000  # amostra de ~3 s em WAV e bem menor; acima disso
 FRASE_AMOSTRA = "Olá, senhor. Eu sou o Jarvis, seu assistente pessoal."
 
 
-def voz_valida(id_voz: object) -> bool:
+def voz_valida(id_voz: object) -> TypeGuard[str]:
     """Diz se ``id_voz`` e um dos ids da lista fixa (com a mesma grafia)."""
     return isinstance(id_voz, str) and id_voz in DESCRICOES
 

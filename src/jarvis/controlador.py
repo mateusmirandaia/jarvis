@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import sys
 import threading
 from collections.abc import Callable, Coroutine
 from dataclasses import dataclass, field
@@ -31,6 +32,7 @@ MSG_CHAVE_PAROU = (
 )
 MSG_FALHA = "Senhor, algo deu errado e precisei parar. Os detalhes ficaram no log."
 ESPERA_PARAR_S = 5.0
+ESPERA_EXECUTOR_S = 3.0  # tempo maximo esperando as threads do to_thread ao fechar o loop
 
 
 class Assistente(Protocol):
@@ -86,6 +88,9 @@ class Controlador:
         self._comando = threading.Lock()
         self._estado = threading.Lock()
         self._atual: _Execucao | None = None
+        # Thread de uma rodada que nao parou a tempo: enquanto viver, nao comeca outra (seriam
+        # dois assistentes com o mesmo microfone e duas conexoes com o Google).
+        self._velha: threading.Thread | None = None
 
     @property
     def rodando(self) -> bool:
@@ -120,6 +125,13 @@ class Controlador:
             return self._iniciar()
 
     def _iniciar(self) -> bool:
+        velha = self._velha
+        if velha is not None:
+            velha.join(ESPERA_PARAR_S)  # fora da trava: a thread velha pode precisar dela
+            if velha.is_alive():
+                logger.warning("nao iniciei: o assistente anterior ainda nao terminou de parar")
+                return False
+            self._velha = None
         with self._estado:
             if self.rodando:
                 return True
@@ -161,6 +173,7 @@ class Controlador:
         thread.join(espera_s)
         parou = not thread.is_alive()
         if not parou:
+            self._velha = thread
             logger.warning("o assistente demorou para parar")
         else:
             logger.info("assistente parado")
@@ -228,9 +241,36 @@ def _fechar_loop(loop: asyncio.AbstractEventLoop) -> None:
         if pendentes:
             loop.run_until_complete(asyncio.gather(*pendentes, return_exceptions=True))
         loop.run_until_complete(loop.shutdown_asyncgens())
-        loop.run_until_complete(loop.shutdown_default_executor(timeout=3))
+        _desligar_executor(loop, ESPERA_EXECUTOR_S)
     except Exception:  # noqa: BLE001
         logger.debug("falha ao fechar o loop do assistente", exc_info=True)
     finally:
         asyncio.set_event_loop(None)
         loop.close()
+
+
+def _desligar_executor(loop: asyncio.AbstractEventLoop, timeout: float) -> None:
+    """Espera as threads do ``to_thread`` por no maximo ``timeout`` segundos.
+
+    ``shutdown_default_executor(timeout=...)`` so existe a partir do Python 3.12. No 3.11 a
+    versao sem ``timeout`` espera para sempre (e um ``wait_for`` nao resolve: ela faz
+    ``thread.join()`` no ``finally``). Por isso, no 3.11, fazemos o mesmo que o 3.12 faz por
+    dentro: desligamos o executor numa thread auxiliar e esperamos no maximo ``timeout``.
+    Uma thread presa (ex.: lendo o microfone) termina sozinha depois; o loop fecha mesmo assim.
+    """
+    if sys.version_info >= (3, 12):
+        # typeshed do AbstractEventLoop ainda nao tem o parametro (o BaseEventLoop tem).
+        loop.run_until_complete(
+            loop.shutdown_default_executor(timeout=timeout)  # type: ignore[call-arg]
+        )
+        return
+    executor = getattr(loop, "_default_executor", None)
+    if executor is None:
+        return
+    ajudante = threading.Thread(
+        target=executor.shutdown, kwargs={"wait": True}, name="jarvis-fecha-executor", daemon=True
+    )
+    ajudante.start()
+    ajudante.join(timeout)
+    if ajudante.is_alive():
+        logger.warning("as threads do assistente demoraram mais de %.0f s para terminar", timeout)

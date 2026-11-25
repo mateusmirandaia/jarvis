@@ -16,7 +16,8 @@ Arquivos envolvidos (pasta `packaging/`):
 ## Pré-requisitos (só na máquina que GERA o instalador)
 
 - **Windows 10/11 64 bits.**
-- **Python 3.12** ([python.org](https://www.python.org/downloads/), marque "Add Python to PATH").
+- **Python 3.12** ([python.org/downloads/release/python-31210](https://www.python.org/downloads/release/python-31210/),
+  "Windows installer (64-bit)"; marque "Add python.exe to PATH").
   O `build.ps1` usa `py -3.12` (ou `python`, se o lançador `py` não existir).
 - **Inno Setup 6** ([jrsoftware.org/isdl.php](https://jrsoftware.org/isdl.php)) ou
   `winget install JRSoftware.InnoSetup`. O script acha o `ISCC.exe` no PATH ou nas pastas padrão.

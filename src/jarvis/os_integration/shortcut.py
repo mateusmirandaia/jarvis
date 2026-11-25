@@ -54,7 +54,7 @@ def create_desktop_shortcut(project_root: Path, icon: Path | None = None) -> str
         Mensagem em portugues dizendo onde o atalho ficou ou por que nao foi criado.
     """
     if not IS_WINDOWS:
-        return "O atalho na Area de Trabalho so pode ser criado no Windows."
+        return "O atalho na Área de Trabalho só pode ser criado no Windows."
     env = os.environ | {
         "JARVIS_LNK_NAME": SHORTCUT_NAME,
         "JARVIS_LNK_TARGET": str(gui_python()),
@@ -73,11 +73,11 @@ def create_desktop_shortcut(project_root: Path, icon: Path | None = None) -> str
     status, _, where = result.stdout.strip().partition("|")
     if status == "CRIADO":
         logger.info("atalho criado em %s", where)
-        return f"Atalho criado: {where}. De dois cliques nele para abrir o Jarvis."
+        return f"Atalho criado: {where}. Dê dois cliques nele para abrir o Jarvis."
     if status == "EXISTE":
         return (
-            f"Ja existe um atalho em {where}. Nao sobrescrevi. "
+            f"Já existe um atalho em {where}. Não sobrescrevi. "
             "Se quiser recriar, apague o antigo e rode o comando de novo."
         )
     logger.error("falha ao criar atalho: %s %s", result.stdout, result.stderr)
-    return "Nao consegui criar o atalho. Os detalhes ficaram em logs/jarvis.log."
+    return "Não consegui criar o atalho. Os detalhes ficaram no log do Jarvis."

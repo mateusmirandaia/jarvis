@@ -63,18 +63,18 @@ def _build_parser() -> argparse.ArgumentParser:
         "--modo",
         choices=("orb", "voz", "texto"),
         default="orb",
-        help="orb (janela animada + voz, padrao), voz (so terminal) ou texto (chat).",
+        help="orb (janela animada + voz, padrão), voz (só terminal) ou texto (chat).",
     )
     parser.add_argument(
         "--criar-atalho",
         action="store_true",
-        help="cria o atalho 'Jarvis' na Area de Trabalho e sai.",
+        help="cria o atalho 'Jarvis' na Área de Trabalho e sai.",
     )
     parser.add_argument(
         "--versao",
         action="version",
         version=f"%(prog)s {__version__}",
-        help="mostra a versao e sai.",
+        help="mostra a versão e sai.",
     )
     return parser
 
@@ -124,7 +124,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         _tell_user(str(exc))
         return 1
     except KeyboardInterrupt:
-        _print_safe("\nAte logo, senhor.")
+        _print_safe("\nAté logo, senhor.")
         return 0
     except Exception:  # noqa: BLE001 - ultima rede de seguranca: sem traceback na tela
         logger.exception("falha inesperada ao rodar o Jarvis")
@@ -153,7 +153,7 @@ def _run_orb(settings: Settings) -> None:
     from jarvis.ui.orb_window import OrbWindow
 
     if not acquire_single_instance("Local\\JarvisSemHype.Orb"):
-        _tell_user("O Jarvis ja esta aberto, senhor.")
+        _tell_user("O Jarvis já está aberto, senhor. Procure a janela dele na barra de tarefas.")
         return
     api = ApiJs(carregar_settings=_carregar_settings_orb)
     window = OrbWindow(settings, api=api)  # visual inicial: JARVIS_VISUAL ou a preferencia salva

@@ -113,5 +113,7 @@ def as_windows(monkeypatch: pytest.MonkeyPatch) -> None:
     import jarvis.tools.file_tools as file_tools
 
     monkeypatch.setattr(windows, "IS_WINDOWS", True)
+    # Disco interno (com Lixeira); os testes de pendrive/rede trocam este valor.
+    monkeypatch.setattr(windows, "drive_type", lambda _path: windows.DRIVE_FIXED)
     if hasattr(file_tools, "IS_WINDOWS"):
         monkeypatch.setattr(file_tools, "IS_WINDOWS", True)
