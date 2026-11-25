@@ -10,6 +10,10 @@ em [docs/DIARIO.md](docs/DIARIO.md).
 
 ### Corrigido
 
+- **Chave nova do Google recusada.** As chaves criadas agora no Google AI Studio têm um ponto
+  no meio e não começam com `AIza`; a tela de configuração dizia "Essa chave não parece
+  completa" para todas elas. O formato novo é aceito (o antigo continua valendo) e também é
+  apagado do log.
 - **Jarvis mudo com o ElevenLabs.** Se o senhor interrompesse no meio de uma frase (ou o
   cliente do ElevenLabs desse um erro inesperado), a fila de áudio da frase nunca terminava e
   o Jarvis parava de falar até reiniciar. Agora a fila sempre fecha; erro inesperado cai para
@@ -20,6 +24,8 @@ em [docs/DIARIO.md](docs/DIARIO.md).
 
 ### Alterado
 
+- README: seção **Permissões da chave do ElevenLabs** (Text to Speech e Voices: read, como
+  liberar numa chave nova ou já existente) e três linhas novas em Problemas comuns.
 - Mensagens que aparecem para a pessoa com acento e mais claras: perda de conexão ("Senhor,
   perdi a conexão. Tento de novo em 4 s…"), troca para a voz do Google, "O Jarvis já está
   aberto", chave ausente e criação do atalho.

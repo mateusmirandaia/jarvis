@@ -20,6 +20,7 @@ _FORMAT = "%(asctime)s %(levelname)s %(name)s: %(message)s"
 
 _PADROES_SEGREDO: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"AIza[0-9A-Za-z_\-]{10,}"), "AIza…"),  # chave do Google
+    (re.compile(r"\bAQ\.[0-9A-Za-z_\-.]{10,}"), "AQ.…"),  # chave do Google (formato novo)
     (re.compile(r"\bsk_[0-9A-Za-z]{10,}"), "sk_…"),  # chave do ElevenLabs
     (re.compile(r"([?&](?:key|api_key|access_token)=)[^&\s'\"]+", re.IGNORECASE), r"\1…"),
     (re.compile(r"((?:xi-api-key|x-goog-api-key)['\"]?\s*[:=]\s*['\"]?)[^'\"\s,}]+", re.I), r"\1…"),

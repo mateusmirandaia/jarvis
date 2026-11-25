@@ -1318,3 +1318,35 @@ def test_ponte_js_so_expoe_o_contrato() -> None:
     assert not hasattr(ponte, "__dict__")
     assert ponte.salvar_visual("galaxia") is True
     assert chamadas == [("salvar_visual", ("galaxia",))]
+
+
+# ---------------------------------------------------------- chave do Google (formato novo)
+_CHAVE_NOVA_FALSA = "AQ.Ab8RN6Lfake_chave_de_teste-0123456789abcdefghijklmn"
+
+
+@pytest.mark.parametrize(
+    "chave",
+    ["AIzaSyBOA_falsa_0123456789abcdefghijklmn", _CHAVE_NOVA_FALSA],
+)
+def test_chave_google_plausivel_aceita_formato_antigo_e_novo(chave: str) -> None:
+    assert verificacao.chave_google_plausivel(chave)
+
+
+@pytest.mark.parametrize(
+    "chave",
+    [
+        "",
+        "curta",
+        ".AQAb8RN6Lfake_chave_de_teste_01234",
+        "AQ.Ab8RN6Lfake_chave_de_teste_0123.",
+        "AQ.Ab8 RN6Lfake_chave_de_teste_0123",
+        "AQ.Ab8/RN6Lfake_chave_de_teste_0123",
+    ],
+)
+def test_chave_google_plausivel_recusa_formatos_ruins(chave: str) -> None:
+    assert not verificacao.chave_google_plausivel(chave)
+
+
+def test_redigir_apaga_chave_google_formato_novo() -> None:
+    saida = redigir(f"erro com a chave {_CHAVE_NOVA_FALSA} no pedido")
+    assert "Ab8RN6L" not in saida

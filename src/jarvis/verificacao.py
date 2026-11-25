@@ -31,9 +31,10 @@ FRASE_TESTE_ELEVENLABS = "Olá, senhor. Esta é a minha nova voz."
 MAX_VOZES = 300
 MAX_AUDIO_TESTE_BYTES = 24_000 * 2 * 15  # 15 s de PCM 24 kHz: bem mais que a frase de teste
 
-# Formatos plausiveis. A chave do Google costuma ser "AIza" + 35 caracteres, mas o formato
-# pode mudar: aceitamos qualquer texto longo so com letras, numeros, "_" e "-".
-_FORMATO_CHAVE_GOOGLE = re.compile(r"[A-Za-z0-9_\-]{20,200}")
+# Formatos plausiveis. A chave antiga do Google e "AIza" + 35 caracteres; a nova (2026) tem
+# um ponto no meio (ex.: "AQ.Ab8..."). Aceitamos texto longo com letras, numeros, "_", "-"
+# e ".", sem comecar nem terminar com ponto.
+_FORMATO_CHAVE_GOOGLE = re.compile(r"[A-Za-z0-9_\-][A-Za-z0-9_\-.]{18,198}[A-Za-z0-9_\-]")
 _FORMATO_CHAVE_ELEVENLABS = re.compile(r"[A-Za-z0-9_\-]{16,200}")
 _FORMATO_VOZ_ELEVENLABS = re.compile(r"[A-Za-z0-9]{8,64}")
 

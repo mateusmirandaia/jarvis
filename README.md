@@ -250,8 +250,8 @@ Para trocar: engrenagem > **Geral** > escolha a voz > **Salvar e aplicar**.
 Se você tem conta no ElevenLabs, o Jarvis pode falar com uma voz de lá (a sua, ou uma voz
 criada do zero). O Gemini continua sendo o ouvido e o cérebro; só a fala muda.
 
-1. No ElevenLabs, crie uma chave (API key) marcando as permissões **Text to Speech** e
-   **Voices: read**.
+1. No ElevenLabs, crie uma chave (API key) com as **duas permissões** abaixo (veja
+   [Permissões da chave do ElevenLabs](#permissões-da-chave-do-elevenlabs)).
 2. No Jarvis, abra a engrenagem > aba **Voz personalizada (ElevenLabs)** e cole a chave.
 3. Clique em **Buscar minhas vozes** e escolha uma (ou **Prefiro colar o ID da voz**, se a sua
    chave não puder listar as vozes).
@@ -260,6 +260,30 @@ criada do zero). O Gemini continua sendo o ouvido e o cérebro; só a fala muda.
 
 Para voltar à voz grátis: aba Voz personalizada > **Voltar para a voz do Google**, ou em
 **Geral** marque **Voz do Google**.
+
+#### Permissões da chave do ElevenLabs
+
+O ElevenLabs deixa escolher o que cada chave pode fazer. O Jarvis precisa de duas permissões:
+
+| Permissão | Para quê | Sem ela |
+|---|---|---|
+| **Text to Speech** (acesso) | Falar com a voz escolhida | O Jarvis não consegue falar com o ElevenLabs e volta para a voz do Google. |
+| **Voices** (leitura / *read*) | Listar as suas vozes no botão **Buscar minhas vozes** | Aparece o aviso de que falta a permissão "Voices: read". A voz ainda funciona se você colar o **ID da voz** à mão. |
+
+Como fazer no site do ElevenLabs:
+
+1. Entre na sua conta e abra a área de **API Keys** (em *Developers*).
+2. Clique para criar uma chave nova. Se a opção de **restringir a chave** estiver ligada, marque
+   **Text to Speech** e **Voices: read**. As outras permissões podem ficar desligadas, porque o
+   Jarvis não usa.
+3. Copie a chave e cole no Jarvis.
+
+Se você já tem uma chave e só faltava uma permissão, dá para **editar as permissões dessa
+chave** na mesma área de API Keys, sem criar outra. Depois, volte ao Jarvis e clique de novo em
+**Buscar minhas vozes**.
+
+> Dica: liberar só essas duas permissões é mais seguro. Se a chave vazar, ela não serve para
+> mexer no resto da sua conta.
 
 O que muda na prática:
 
@@ -482,6 +506,9 @@ passar pelo `PathGuard`.
 | `jarvis` não é reconhecido | Ative o ambiente (`.venv\Scripts\activate`) ou use `python -m jarvis`. |
 | O assistente de configuração não apareceu | Já existe uma chave em algum lugar: no `.env` da pasta do projeto ou numa variável `GEMINI_API_KEY`. Para usar a janela, apague essa linha/variável. |
 | Troquei a voz (ou o fone) na engrenagem e nada mudou | O `.env` do projeto tem `JARVIS_VOZ` (ou `JARVIS_FONE`, `JARVIS_NOME_USUARIO`) e ele ganha da janela. Apague a linha do `.env`. |
+| "Essa chave não parece completa" com uma chave nova do Google | As chaves novas do Google têm um ponto no meio e não começam com `AIza`. Versões antigas do Jarvis recusavam esse formato: instale a versão mais nova e cole a chave de novo. |
+| "Sua chave não tem a permissão Voices: read" (ElevenLabs) | Libere a permissão **Voices: read** na chave (veja [Permissões da chave do ElevenLabs](#permissões-da-chave-do-elevenlabs)) ou cole o ID da voz à mão. |
+| "Sua chave não tem a permissão Text to Speech" (ElevenLabs) | Libere a permissão **Text to Speech** na chave. Sem ela o Jarvis não consegue usar a voz do ElevenLabs. |
 | "A chave do Google parou de funcionar" | Clique em **Atualizar chave** (ou engrenagem > **Chave do Google**), crie uma chave nova e cole. |
 | Ele não me ouve | Confira o microfone padrão do Windows (Configurações > Sistema > Som > Entrada) e a permissão em Configurações > Privacidade > Microfone. |
 | Ele responde a si mesmo / se interrompe | Use fone de ouvido e marque **"Estou usando fone de ouvido"** na engrenagem (aba Geral). Sem fone, deixe essa caixinha **desmarcada**. |
