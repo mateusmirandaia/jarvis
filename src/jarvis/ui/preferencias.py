@@ -1,8 +1,8 @@
 """Preferencias do Jarvis guardadas fora da pasta do projeto (nada secreto fica aqui).
 
-Chaves: ``visual``, ``voz``, ``nome``, ``fone`` (bool), ``configurado`` (bool) e
-``elevenlabs_voz_nome``. As chaves de API ficam no ``.env`` da mesma pasta (veja
-``jarvis.armazenamento``).
+Chaves: ``visual``, ``voz``, ``nome``, ``fone`` (bool), ``configurado`` (bool),
+``elevenlabs_voz_nome``, ``fonte_voz`` e ``permissoes`` (veja ``jarvis.tools.permissoes``).
+As chaves de API ficam no ``.env`` da mesma pasta (veja ``jarvis.armazenamento``).
 
 O arquivo fica em ``%APPDATA%\\Jarvis\\preferencias.json`` no Windows e em
 ``~/.config/jarvis/preferencias.json`` nos outros sistemas. Ele e pequeno, em JSON, e pode
@@ -43,6 +43,7 @@ VISUAIS: tuple[str, ...] = (
 VISUAL_PADRAO = "galaxia"
 
 ARQUIVO = "preferencias.json"
+ARQUIVO_MAX_BYTES = 256 * 1024  # o normal e menos de 1 KB
 CHAVE_VISUAL = "visual"
 CHAVE_VOZ = "voz"
 CHAVE_NOME = "nome"
@@ -51,6 +52,7 @@ CHAVE_CONFIGURADO = "configurado"
 CHAVE_ELEVENLABS_VOZ_NOME = "elevenlabs_voz_nome"
 CHAVE_FONTE_VOZ = "fonte_voz"
 FONTES_VOZ: tuple[str, ...] = ("google", "elevenlabs")
+CHAVE_PERMISSOES = "permissoes"
 NOME_MAX = 40
 
 
@@ -81,7 +83,13 @@ def carregar(caminho: Path | None = None) -> dict[str, Any]:
         arquivo = caminho or caminho_preferencias()
         if not arquivo.exists():
             return {}
-        dados = json.loads(arquivo.read_text(encoding="utf-8-sig"))  # aceita BOM (Bloco de Notas)
+        # E lido a cada acao (permissoes): arquivo enorme vale como corrompido, sem ler tudo.
+        with arquivo.open("rb") as entrada:
+            bruto = entrada.read(ARQUIVO_MAX_BYTES + 1)
+        if len(bruto) > ARQUIVO_MAX_BYTES:
+            logger.warning("arquivo de preferencias grande demais; usando o padrao")
+            return {}
+        dados = json.loads(bruto.decode("utf-8-sig"))  # aceita BOM (Bloco de Notas)
     except (OSError, ValueError, RuntimeError):
         logger.warning("nao consegui ler as preferencias; usando o padrao", exc_info=True)
         return {}
@@ -193,3 +201,39 @@ def visual_inicial(forcado: str = "", caminho: Path | None = None) -> str | None
         logger.warning("JARVIS_VISUAL=%r nao existe; opcoes: %s", forcado, ", ".join(VISUAIS))
     salvo = carregar(caminho).get(CHAVE_VISUAL)
     return salvo if visual_valido(salvo) else None
+
+
+def carregar_permissoes(caminho: Path | None = None) -> dict[str, Any]:
+    """Permissoes atuais, sempre completas e validas (sem chave/corrompido = tudo desligado).
+
+    Le o arquivo a cada chamada: a checagem das ferramentas usa esta funcao NA HORA da
+    chamada, entao mudar no painel vale na hora.
+
+    Args:
+        caminho: arquivo de preferencias; None usa ``caminho_preferencias()``.
+    """
+    from jarvis.tools import permissoes
+
+    return permissoes.normalizar(carregar(caminho).get(CHAVE_PERMISSOES))
+
+
+def salvar_permissoes(dados: object, caminho: Path | None = None) -> bool:
+    """Valida e grava as permissoes (gravacao atomica, preservando as outras chaves).
+
+    Args:
+        dados: modelo de ``jarvis.tools.permissoes`` (valor invalido = nao salva).
+        caminho: arquivo a gravar; None usa ``caminho_preferencias()``.
+
+    Returns:
+        True se salvou; False se os dados forem invalidos ou a gravacao falhar.
+    """
+    from jarvis.tools import permissoes
+
+    validas = permissoes.validar(dados)
+    if validas is None:
+        logger.warning("permissoes invalidas, nao salvei")
+        return False
+    if not atualizar({CHAVE_PERMISSOES: validas}, caminho):
+        return False
+    logger.info("permissoes salvas: %s", validas)
+    return True

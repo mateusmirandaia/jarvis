@@ -333,7 +333,12 @@ def test_primeira_vez_completa_e_segunda_abertura(
     assert m.ate("true", 300) and m.microfone.abertos == 0
     m.pg.fill("#assist-nome", "João 🇧🇷")
     m.pg.click("#assist-vozes .cartao-voz:nth-child(3) label")  # Kore
-    m.pg.click("#assist-avancar")  # 4 -> 5
+    m.pg.click("#assist-avancar")  # 4 -> 5: permissoes (tudo desligado)
+    assert m.texto("assist-passo") == "Passo 5 de 6"
+    assert m.pg.is_checked("#assist-perm-arquivos-nenhum")
+    assert m.visivel("#assist-pular")
+    m.pg.click("#assist-pular")  # 5 -> 6: pular mantem tudo desligado
+    assert not m.visivel("#assist-pular")
     assert "João 🇧🇷" in m.texto("assist-pronto-nome")
     m.pg.click("#assist-avancar")  # Comecar a usar
     assert m.ate("document.getElementById('assistente').hidden", 6000)
@@ -343,6 +348,13 @@ def test_primeira_vez_completa_e_segunda_abertura(
     prefs = preferencias.carregar()
     assert prefs["configurado"] is True and prefs["voz"] == "Kore" and prefs["fone"] is True
     assert prefs["nome"] == "João 🇧🇷"
+    assert prefs["permissoes"] == {
+        "arquivos": "nenhum",
+        "apps": False,
+        "internet": False,
+        "email": False,
+        "outros_drives": False,
+    }
     _sem_erros(m)
     m.fechar()
 
@@ -430,7 +442,7 @@ def test_engrenagem_abas_salvar_e_aplicar(abrir: Any, pastas: dict[str, Path]) -
     assert m.ate("window.document.getElementById('pilula-texto').textContent !== ''")
     inicios = len(_Assistente.log)
     m.pg.click("#btn-config")
-    for aba in ("geral", "chave", "elevenlabs", "sobre"):
+    for aba in ("geral", "permissoes", "chave", "elevenlabs", "sobre"):
         m.pg.click(f"#cfg-aba-{aba}")
         assert m.visivel(f"#cfg-painel-{aba}")
     m.pg.click("#cfg-aba-geral")

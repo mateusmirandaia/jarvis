@@ -17,6 +17,7 @@ import logging
 import os
 import re
 import unicodedata
+from collections.abc import Callable
 from pathlib import Path, PureWindowsPath
 
 logger = logging.getLogger(__name__)
@@ -227,6 +228,9 @@ _CLSID = re.compile(r"\{[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]
 
 MSG_REDE = "Senhor, nao mexo em pastas de rede nem em caminhos especiais do Windows."
 MSG_NOME = "Senhor, esse nome de arquivo nao e seguro. Use um nome comum, sem ponto no fim."
+MSG_OUTROS_DRIVES = "Acesso a outros discos (como D: ou pendrive) está desligado nas permissões."
+# Variaveis que o OneDrive cria no Windows (pessoal e de trabalho/escola).
+_ONEDRIVE_VARS: tuple[str, ...] = ("OneDrive", "OneDriveConsumer", "OneDriveCommercial")
 
 
 class CaminhoRecusado(ValueError):
@@ -315,6 +319,10 @@ class PathGuard:
         project_root: pasta do projeto Jarvis (protegida, pois guarda a chave).
         home: pasta do usuario; padrao ``Path.home()`` (injetavel para testes).
         extra_protected: outras pastas protegidas (ex.: ``%APPDATA%\\Jarvis``, com as chaves).
+        outros_drives: funcao chamada A CADA ``resolve()`` que diz se a permissao "Outros
+            discos" esta ligada. Desligada (ou erro): so caminhos dentro das pastas pessoais
+            (home e OneDrive) passam. None = sem essa restricao (o ``ToolRegistry`` sempre
+            injeta a funcao; None fica para usos internos e testes antigos).
     """
 
     def __init__(
@@ -322,9 +330,17 @@ class PathGuard:
         project_root: Path,
         home: Path | None = None,
         extra_protected: list[Path] | None = None,
+        outros_drives: Callable[[], bool] | None = None,
     ) -> None:
         self._project_root = Path(project_root)
         self._home = Path(home) if home is not None else Path.home()
+        self._outros_drives = outros_drives
+        self._pessoais = [self._home, self._home / "OneDrive"]
+        if home is None:  # OneDrive fora do home (o Windows guarda o caminho nestas variaveis)
+            for nome in _ONEDRIVE_VARS:
+                valor = os.environ.get(nome, "").strip()
+                if valor and Path(valor).is_absolute() and not _is_network_or_device(valor):
+                    self._pessoais.append(Path(valor))
         extras = [Path(pasta) for pasta in extra_protected or []]
         appdata = os.environ.get("APPDATA")
         home_protected = [self._home / nome for nome in _HOME_PROTECTED]
@@ -354,6 +370,32 @@ class PathGuard:
     def protected_folders(self) -> list[Path]:
         """Pastas protegidas (copia), na ordem em que sao checadas."""
         return list(self._protected)
+
+    @property
+    def personal_roots(self) -> list[Path]:
+        """Pastas pessoais (home e OneDrive): o limite quando "Outros discos" esta desligado."""
+        return list(self._pessoais)
+
+    def outros_drives_ligado(self) -> bool:
+        """Consulta a permissao "Outros discos" agora (erro ou valor estranho = desligado)."""
+        if self._outros_drives is None:
+            return True
+        try:
+            return self._outros_drives() is True
+        except Exception:  # noqa: BLE001 - permissao ilegivel vale como desligada
+            logger.warning("nao consegui ler a permissao de outros discos", exc_info=True)
+            return False
+
+    def is_personal(self, path: Path) -> bool:
+        """True se ``path`` (ja resolvido, seguindo links) fica dentro do home ou do OneDrive."""
+        alvo = _safe_resolve(Path(path))
+        return any(alvo.is_relative_to(_safe_resolve(base)) for base in self._pessoais)
+
+    def _checar_disco(self, path: Path) -> Path:
+        if not self.outros_drives_ligado() and not self.is_personal(path):
+            logger.info("outro disco recusado (permissao desligada): %s", path)
+            raise CaminhoRecusado(MSG_OUTROS_DRIVES)
+        return path
 
     def _documents_candidates(self) -> list[Path]:
         home = self._home
@@ -415,16 +457,20 @@ class PathGuard:
         alvo = _safe_resolve(Path(path))
         return any(_safe_resolve(p).is_relative_to(alvo) for p in self._protected)
 
-    def resolve(self, text: str) -> Path:
+    def resolve(self, text: str, base: Path | None = None) -> Path:
         """Aceita caminho completo, "C:" (vira "C:\\") ou atalhos como "area de trabalho\\x".
 
         Nao expande variaveis (%APPDATA%, $HOME): o texto vem da IA e pode ter sido injetado.
 
         Args:
             text: caminho dito pelo usuario ou escolhido pela IA.
+            base: pasta para caminho RELATIVO (ex.: Documentos no Word). Sem ``base``, o
+                relativo fica relativo (a pasta atual do processo). A regra de "Outros discos"
+                e conferida no caminho FINAL, ja juntado a ``base``.
 
         Raises:
-            CaminhoRecusado: caminho de rede, de dispositivo ou com nome perigoso.
+            CaminhoRecusado: caminho de rede, de dispositivo, com nome perigoso ou (com a
+                permissao "Outros discos" desligada) fora das pastas pessoais.
         """
         raw = str(text).strip().strip('"').strip()
         if _is_network_or_device(raw):
@@ -436,12 +482,14 @@ class PathGuard:
                 rest = raw[len(alias) :].lstrip("\\/")
                 path = folder / rest if rest else folder
                 check_syntax(path)
-                return path
+                return self._checar_disco(path)
         if len(raw) == 2 and raw[1] == ":":
             raw += "\\"
         path = Path(os.path.expanduser(raw)) if raw.startswith("~") else Path(raw)
+        if base is not None and not path.is_absolute() and not path.anchor:
+            path = Path(base) / path
         check_syntax(path)
-        return path
+        return self._checar_disco(path)
 
     def is_protected(self, path: Path) -> bool:
         """True para a raiz do disco, pastas do sistema, do projeto e das chaves (e o de dentro).

@@ -19,8 +19,9 @@ Feito para quem está começando: tudo explicado passo a passo, sem pagar nada
 ## O que ele faz
 
 - **Conversa por voz em tempo real** usando o Gemini Live (ouvido e boca da IA).
-- **Configura tudo pela janela**: na primeira vez, um assistente de 5 passos pede a chave
-  grátis do Google, testa o microfone e deixa você escolher a voz, o nome e o visual.
+- **Configura tudo pela janela**: na primeira vez, um assistente de 6 passos pede a chave
+  grátis do Google, testa o microfone, deixa você escolher a voz, o nome e o visual, e
+  mostra as **permissões** (tudo começa desligado).
   Depois, tudo muda pela **engrenagem** no canto de cima. Não precisa editar arquivo nenhum.
 - **8 vozes do Google** para escolher (com botão **Ouvir**) ou, se quiser, uma voz sua do
   ElevenLabs (opcional e paga).
@@ -34,9 +35,18 @@ Feito para quem está começando: tudo explicado passo a passo, sem pagar nada
   - abrir sites e fazer pesquisas no Google;
   - criar, listar, localizar, abrir, mover, renomear e copiar arquivos e pastas;
   - criar arquivos de texto (`.txt` ou `.md`);
+  - **ler arquivos** (`.txt`, `.md`, `.csv`, `.json`, PDF com texto, Word `.docx` e Excel
+    `.xlsx`) para resumir ou responder perguntas sobre eles;
+  - **escrever um documento do Word** (um `.docx` novo) e abrir no Word;
+  - **deixar um e-mail pronto** no seu programa de e-mail, para você revisar e enviar (ele
+    nunca envia sozinho);
   - mandar arquivos para a **Lixeira** — só depois que **você** clica em "Sim" numa janela.
+- **Você decide o que ele pode fazer**: na aba **Permissões** você liga só o que quiser.
+  **Tudo começa desligado.** Veja [Permissões](#permissões).
 - **Nunca trava por causa de um erro**: se uma ação falhar, ele avisa em uma frase simples
-  e o detalhe técnico vai para o arquivo de log.
+  e o detalhe técnico vai para o arquivo de log. Se o Google não responder em 12 segundos
+  ou a internet cair, ele avisa com uma fala já gravada (funciona até sem internet) e
+  reconecta sozinho.
 
 ## Do que você precisa
 
@@ -159,7 +169,7 @@ Aparece o ícone **Jarvis** na Área de Trabalho. Dois cliques nele abrem a jane
 ### Primeira abertura: o assistente de configuração
 
 Quando o Jarvis não encontra nenhuma chave do Google, a janela mostra um assistente de
-**5 passos**:
+**6 passos**:
 
 1. **Boas-vindas.** Clique em **Começar**.
 2. **Sua chave do Google.** Clique em **Criar minha chave grátis** (abre o Google AI Studio no
@@ -169,17 +179,20 @@ Quando o Jarvis não encontra nenhuma chave do Google, a janela mostra um assist
    ouvido"** se estiver de fone.
 4. **Personalizar.** Diga como ele deve te chamar (opcional), escolha uma das 8 vozes
    (botão **Ouvir** para escutar) e, se quiser, o visual.
-5. **Tudo pronto.** Clique em **Começar a usar** e fale: "Jarvis, que horas são?"
+5. **Permissões.** Por segurança, tudo começa desligado. Ligue só o que quiser (ou clique em
+   **Pular**). Dá para mudar depois na engrenagem. Veja [Permissões](#permissões).
+6. **Tudo pronto.** Clique em **Começar a usar** e fale: "Jarvis, que horas são?"
 
 Nas próximas vezes ele abre direto no visual e já começa a ouvir.
 
 ## A engrenagem (configurações)
 
-O botão de **engrenagem**, no canto superior direito, abre as configurações em 4 abas:
+O botão de **engrenagem**, no canto superior direito, abre as configurações em 5 abas:
 
 | Aba | O que tem |
 |---|---|
 | **Geral** | Como ele te chama, **Qual voz eu uso?** (Google ou ElevenLabs), a voz do Google (com **Ouvir**), a caixinha **"Estou usando fone de ouvido"** e o visual. |
+| **Permissões** | O que o Jarvis pode fazer no seu computador. Tudo começa desligado. Veja [Permissões](#permissões). |
 | **Chave do Google** | Mostra só o final da chave salva (`…abcd`), botão para criar uma chave nova, campo para colar e **Testar**. |
 | **Voz personalizada (ElevenLabs)** | Liga uma voz do ElevenLabs (opcional e paga). Veja [Voz do ElevenLabs](#voz-do-elevenlabs-opcional-e-paga). |
 | **Sobre** | Versão, link do repositório e botões para abrir a pasta das configurações e a pasta dos logs. |
@@ -187,6 +200,33 @@ O botão de **engrenagem**, no canto superior direito, abre as configurações e
 Clique em **Salvar e aplicar**: o Jarvis reinicia a voz com as escolhas novas, sem fechar a janela.
 
 Se a chave do Google parar de funcionar, aparece um aviso com o botão **Atualizar chave**.
+
+## Permissões
+
+Na engrenagem, aba **Permissões**, você escolhe o que o Jarvis pode fazer. **Tudo começa
+desligado**, então, logo depois de instalar, ele só conversa e diz as horas. Se você pedir algo
+desligado, ele avisa: "Essa ação está desligada nas permissões." A mudança vale na hora, sem
+reiniciar.
+
+| Permissão | O que libera |
+|---|---|
+| **Arquivos: Nenhum** | Nada com arquivos. |
+| **Arquivos: Só ler** | Procurar, listar, abrir e **ler** arquivos. |
+| **Arquivos: Ler e gravar** | O de cima, mais criar pastas, criar arquivos de texto e documentos do Word, mover, renomear e copiar. Nunca sobrescreve nada. |
+| **Arquivos: Ler, gravar e excluir** | O de cima, mais mandar arquivos para a Lixeira. **Mesmo assim ele sempre pergunta antes de apagar**, numa janela em que só o seu clique vale. |
+| **Abrir e fechar programas** | Abrir, listar e fechar aplicativos. |
+| **Abrir sites e pesquisar** | Abrir endereços e pesquisar no Google. |
+| **Preparar e-mails** | Deixar um e-mail pronto no seu programa de e-mail. **Ele nunca envia**: quem clica em Enviar é você. |
+| **Outros discos** | Mexer fora das suas pastas pessoais (por exemplo no disco `D:` ou num pendrive). Desligado, ele só mexe na sua pasta de usuário (Área de Trabalho, Documentos, Downloads...) e no OneDrive. |
+
+E tem o que fica **sempre bloqueado**, sem chave para ligar: arquivos de chave e senha
+(como o `.env`), as pastas do Windows, Arquivos de Programas e ProgramData, a raiz dos discos,
+a pasta do próprio Jarvis e das configurações dele, terminal, PowerShell, Prompt de Comando,
+Editor de Registro, executáveis, scripts e pastas de rede.
+
+> **Privacidade:** quando o Jarvis lê um arquivo para você, o texto dele vai para o Google
+> (é assim que a IA entende o conteúdo). Não peça para ele ler documentos que você não quer
+> enviar para a IA.
 
 ## Como usar
 
@@ -217,6 +257,11 @@ eles usam a chave que você já salvou pela janela (ou a do `.env`). Sem chave, 
 - "Move o arquivo foto.jpg da área de trabalho para a pasta Fotos."
 - "Cria um arquivo lista de compras na área de trabalho com arroz, feijão e café."
 - "Manda o arquivo rascunho.txt para a Lixeira." (vai abrir uma janela pedindo sua confirmação)
+- "Procura o arquivo depósito nos documentos e lê para mim." / "Resume esse PDF."
+- "Transcreve esse texto num documento do Word." (cria um `.docx` novo e abre no Word)
+- "Escreve um e-mail para joao@exemplo.com avisando que chego às 10h. Deixa pronto para enviar."
+
+Cada um desses só funciona com a permissão certa ligada (veja [Permissões](#permissões)).
 
 ## Vozes
 
@@ -403,6 +448,9 @@ O Jarvis foi feito para ser seguro para qualquer pessoa que baixar:
 
 - **Lista fechada de ações.** A IA só escolhe entre as ferramentas do projeto. Ela nunca
   roda comandos livres de terminal.
+- **Permissões começam desligadas.** Você liga só o que quiser, e a regra vale na hora da ação
+  (não dá para a IA contornar). Veja [Permissões](#permissões).
+- **E-mail nunca é enviado pelo Jarvis.** Ele só deixa pronto; quem envia é você.
 - **Apagar só com clique manual.** Abre uma janela do Windows e só o seu clique em "Sim"
   autoriza. A IA não consegue confirmar sozinha. A janela fecha sozinha depois de um tempo
   (vale como "Não"). E o arquivo vai para a **Lixeira** (dá para recuperar).
@@ -515,6 +563,9 @@ passar pelo `PathGuard`.
 | O botão "Ouvir" diz "amostra indisponível" | Faltam as amostras de voz (só acontece no caminho 2). A voz funciona normalmente; para ter as amostras, veja [docs/INSTALADOR.md](docs/INSTALADOR.md). |
 | Quero escolher o visual de novo | Clique em "Trocar visual" na janela (ou apague o `preferencias.json`, veja [Onde ficam](#onde-ficam-as-configurações-e-os-logs)). |
 | A janela não abre | Instale o **WebView2** (já vem no Windows 11). No caminho 2, rode `jarvis --modo voz` para ver a mensagem. |
+| Ele diz "Essa ação está desligada nas permissões" | É de propósito: tudo começa desligado. Abra a engrenagem > **Permissões** e ligue o que quiser. |
+| Ele diz "Acesso a outros discos está desligado" | O arquivo está fora da sua pasta de usuário (ex.: disco `D:`). Ligue **Outros discos** na aba Permissões. |
+| Ele diz "Desculpe, estou tendo problemas com a sua internet" | O Google não respondeu em 12 s ou a conexão caiu. Ele reconecta sozinho; espere um pouco e fale de novo. Se repetir sempre, confira a internet. |
 | Qualquer outro problema | Veja o log (engrenagem > Sobre > Logs > **Abrir pasta**): o erro completo fica registrado lá. |
 
 ## Limites conhecidos
@@ -524,6 +575,11 @@ passar pelo `PathGuard`.
   tenta o modelo reserva; no modo voz ele reconecta sozinho.
 - **As ações no computador só funcionam no Windows.** Em outros sistemas ele conversa,
   mas avisa que não consegue executar.
+- **Ele só lê PDF com texto.** PDF escaneado (que é uma foto das páginas) ele não consegue
+  ler e avisa. Arquivos muito grandes: ele lê só o começo (até 20 mil caracteres) e avisa.
+- **E-mail:** ele abre o e-mail pronto no seu programa de e-mail padrão. Textos longos viram um
+  rascunho `.eml` em `Documentos\Jarvis\Rascunhos`, que o Outlook clássico abre pronto para
+  enviar; o Outlook novo pode não abrir esse arquivo como rascunho.
 - O modelo Live é "preview": o nome pode mudar. Se parar de funcionar, confira o nome
   atual no Google AI Studio e ajuste `GEMINI_LIVE_MODEL` (veja [Avançado](#avançado-desenvolvedores)).
 

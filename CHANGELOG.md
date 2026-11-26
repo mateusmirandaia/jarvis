@@ -8,7 +8,41 @@ em [docs/DIARIO.md](docs/DIARIO.md).
 
 ## [Não publicado]
 
+## [0.9.0] - 2026-11-26
+
+### Adicionado
+
+- **Permissões.** Aba nova **Permissões** na engrenagem e um passo novo no assistente da
+  primeira vez (agora são 6). **Tudo começa desligado**, inclusive para quem já usava o Jarvis.
+  Arquivos em 4 níveis (Nenhum / Só ler / Ler e gravar / Ler, gravar e excluir — apagar continua
+  pedindo o clique em "Sim"), mais Abrir e fechar programas, Abrir sites e pesquisar, Preparar
+  e-mails e Outros discos. A checagem é feita na hora de cada ação e vale sem reiniciar. Lista
+  "Sempre bloqueado" visível no painel.
+- **Ler arquivos** (`read_file`): `.txt`, `.md`, `.csv`, `.log`, `.json`, PDF com texto, Word
+  `.docx` e Excel `.xlsx`, até 25 MB e 20 mil caracteres. PDF escaneado é avisado.
+- **Documento do Word** (`write_word_document`): cria um `.docx` novo (nunca sobrescreve) e
+  abre no Word.
+- **E-mail pronto para enviar** (`draft_email`): abre no programa de e-mail padrão ou como
+  rascunho `.eml`. O Jarvis nunca envia.
+- **Nunca fica mudo esperando:** se o Google não responder em 12 s depois da fala, ou a internet
+  cair, o Jarvis toca uma fala já gravada ("Desculpe, estou tendo problemas com a sua
+  internet...") na voz escolhida, no máximo uma vez a cada 30 s, e reconecta sozinho. Funciona
+  sem internet. Se o ElevenLabs falhar, avisa com uma fala gravada e continua na voz do Google.
+- Script `scripts/gerar_avisos_voz.py` para gerar as falas de aviso.
+
 ### Corrigido
+
+- O Jarvis podia travar ao fechar microfone ou alto-falante com o driver preso; reabrir deixava o
+  aparelho anterior aberto; um `print` com emoji em terminal sem UTF-8 derrubava a sessão; erro
+  na janela durante uma queda matava o laço; conectar não tinha tempo máximo; ferramenta com erro
+  inesperado não devolvia resposta à IA; reconexão podia entrar em laço rápido sem fim.
+- Segurança (teste de ataque da rodada): PDF malicioso pequeno que prendia a CPU (agora a
+  leitura tem prazo próprio e para de verdade); Word por caminho relativo podia escapar de
+  "Outros discos"; texto de arquivo lido não pode mais mandar o Jarvis abrir dezenas de sites ou
+  vazar conteúdo pelo endereço (sites só http/https, endereço e pesquisa com limite, no máximo 8
+  ações por pedido, e a IA é instruída a tratar texto de arquivo como informação, nunca como ordem).
+
+### Corrigido também
 
 - **Chave nova do Google recusada.** As chaves criadas agora no Google AI Studio têm um ponto
   no meio e não começam com `AIza`; a tela de configuração dizia "Essa chave não parece

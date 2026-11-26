@@ -15,6 +15,22 @@ mundo que baixar o projeto, seja pelo instalador, seja pelo código.
 - As regras detalhadas de cada ferramenta de arquivo e de aplicativo estão na seção
   [Regras das ferramentas](#regras-das-ferramentas).
 
+## 1.1 Permissões (tudo começa desligado)
+
+Por cima da lista fechada, a pessoa escolhe na aba **Permissões** o que o Jarvis pode fazer.
+O padrão é **tudo desligado** (vale também para quem já usava uma versão anterior). A checagem
+acontece **na hora de cada chamada**, dentro do `ToolRegistry`, lendo as preferências atuais:
+a IA não consegue contornar, e mudar no painel vale na hora. Ferramenta que não está no mapa
+de exigências fica bloqueada. Se as permissões não puderem ser lidas, tudo conta como
+desligado. Com **Outros discos** desligado, o `PathGuard` recusa qualquer caminho fora da
+pasta do usuário e do OneDrive (depois de seguir links e `..`).
+
+Ler arquivos (`read_file`) segue as mesmas regras de `open_file` (lista positiva de
+extensões, sem `.env`/segredos, sem pastas protegidas, sem rede), com limite de tamanho e de
+descompactação para `.docx`/`.xlsx`. O texto lido vai para o Google, e isso está avisado no
+README. E-mail (`draft_email`) **nunca é enviado**: o Jarvis só abre o e-mail pronto (`mailto:`
+ou `.eml` com `X-Unsent: 1`); quebra de linha em destinatário ou assunto é recusada.
+
 ## 2. Apagar exige ação manual
 
 - `delete_to_trash` abre uma **janela do Windows** ("Jarvis - confirmação manual") com

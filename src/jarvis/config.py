@@ -173,6 +173,16 @@ class _Fontes:
             return padrao
         return max(minimo, min(maximo, valor))
 
+    def decimal(self, nome: str, padrao: float, minimo: float, maximo: float) -> float:
+        """Le um numero (aceita virgula); valor invalido usa o padrao; fora da faixa e ajustado."""
+        try:
+            valor = float(self.valor(nome, str(padrao)).replace(",", "."))
+        except ValueError:
+            return padrao
+        if valor != valor:  # NaN
+            return padrao
+        return max(minimo, min(maximo, valor))
+
 
 def _fontes(env_file: Path | None, env_usuario: Path | None) -> _Fontes:
     if env_file is not None:
@@ -211,6 +221,13 @@ class Settings:
     # Visual da janela do orb forcado pelo .env (ex.: "reator"); vazio = usa a preferencia salva.
     visual: str = ""
     tool_timeout_s: float = 20.0
+    # Depois que o senhor termina de falar: sem NADA do modelo nesse tempo = aviso de internet
+    # e reconexao (acao em andamento nao conta como silencio).
+    resposta_timeout_s: float = 12.0
+    # Log detalhado (o que o senhor disse, o que ele respondeu, cada acao com argumentos,
+    # resultado e tempo). Ligado ao rodar pelo codigo; no instalador so com
+    # JARVIS_LOG_DETALHADO=1.
+    log_detalhado: bool = False
     delete_timeout_s: float = 120.0
     project_root: Path = field(default_factory=raiz_projeto)
     log_file: Path = field(default_factory=_log_padrao)
@@ -284,6 +301,11 @@ class Settings:
             headphones=fone,
             elevenlabs_pausado=prefs.get(preferencias.CHAVE_FONTE_VOZ) == "google",
             visual=fontes.valor("JARVIS_VISUAL").lower().replace(" ", ""),
+            resposta_timeout_s=fontes.decimal(
+                "JARVIS_RESPOSTA_TIMEOUT_S", cls.resposta_timeout_s, 3.0, 120.0
+            ),
+            log_detalhado=fontes.valor("JARVIS_LOG_DETALHADO", "" if congelado() else "1")
+            in ("1", "true", "sim", "on"),
             api_key_source=origem,
         )
 

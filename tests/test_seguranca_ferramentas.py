@@ -365,10 +365,13 @@ def _proibido(valor: object, modulos_dicts: set[int]) -> str | None:
     return None
 
 
-def test_a1_getattr_encadeado_nao_alcanca_nada_alem_das_15_funcoes() -> None:
+def test_a1_getattr_encadeado_nao_alcanca_nada_alem_das_funcoes_publicas() -> None:
     """Varre TODOS os nomes "a.b.c.d" (dir() + dunders perigosos) a partir da ponte."""
     ponte, _ = _ponte()
-    modulos_dicts = {id(m.__dict__) for m in list(sys.modules.values()) if m is not None}
+    # Guarda os dicts vivos: alguns "modulos" (ex.: _openssl.lib da cryptography, que o
+    # pypdf carrega) criam um __dict__ novo a cada acesso; sem isso o id seria reusado.
+    dicts_vivos = [m.__dict__ for m in list(sys.modules.values()) if m is not None]
+    modulos_dicts = {id(d) for d in dicts_vivos}
     guardados: list[object] = []  # mantem vivos (ids nao se repetem)
     vistos: set[int] = set()
     fila: list[tuple[object, str]] = [(ponte, "")]
@@ -420,7 +423,7 @@ def test_a1_dunders_da_pywebview_nao_servem_para_nada() -> None:
     assert abertos == ["https://github.com/mateusmirandaia/jarvis"]
 
 
-def test_a1_pywebview_enxerga_exatamente_as_15_funcoes() -> None:
+def test_a1_pywebview_enxerga_exatamente_as_funcoes_publicas() -> None:
     """Replica do ``get_functions`` do pywebview: o que vira window.pywebview.api."""
     import inspect
 

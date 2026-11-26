@@ -44,7 +44,7 @@ MIN_SIZE = (900, 600)
 BACKGROUND = "#030605"
 LEVEL_INTERVAL_S = 1 / 30  # no maximo 30 atualizacoes de volume por segundo
 LEVEL_MIN_CHANGE = 0.02
-ABAS_CONFIG: tuple[str, ...] = ("geral", "chave", "elevenlabs", "sobre")
+ABAS_CONFIG: tuple[str, ...] = ("geral", "permissoes", "chave", "elevenlabs", "sobre")
 
 MARCADOR_CONFIG = "/*JARVIS_CONFIG*/"
 MARCADOR_VISUAIS = "<!--JARVIS_VISUAIS-->"

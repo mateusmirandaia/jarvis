@@ -5,7 +5,8 @@ Com ElevenLabs, o audio do Gemini fica guardado como reserva e o texto da respos
 falado pelo ElevenLabs, frase por frase. Cada frase e pedida ao ElevenLabs assim que
 fica pronta (em paralelo), e o audio toca na ordem certa: sem pausa entre as frases.
 Se o ElevenLabs falhar (sem creditos, chave errada, rede), o Jarvis avisa uma vez
-e volta para a voz do Gemini, sem travar.
+(texto na tela + o aviso gravado ``avisos/elevenlabs_Charon.wav``, se existir) e volta para a
+voz do Gemini, sem travar.
 """
 
 from __future__ import annotations
@@ -23,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 _END: Final = object()  # marca o fim do audio de uma frase
 FALLBACK_NOTICE = "Senhor, a voz do ElevenLabs falhou. Vou usar a voz do Google por enquanto."
+AVISO_PEDACO_BYTES = 4_800  # ~100 ms: o aviso gravado entra na fila em pedacos (interrompivel)
 
 
 def _fecha_fila(chunks: asyncio.Queue[object]) -> Callable[[asyncio.Task[None]], None]:
@@ -32,6 +34,14 @@ def _fecha_fila(chunks: asyncio.Queue[object]) -> Callable[[asyncio.Task[None]],
         chunks.put_nowait(_END)
 
     return fechar
+
+
+def _print_seguro(texto: str) -> None:
+    """``print`` que nunca levanta (console sem UTF-8, sem console no programa instalado)."""
+    try:
+        print(texto)
+    except Exception:  # noqa: BLE001
+        logger.debug("nao consegui escrever no terminal", exc_info=True)
 
 
 @dataclass(frozen=True)
@@ -49,10 +59,14 @@ class VoiceOutput:
         audio_queue: asyncio.Queue[bytes],
         observer: AssistantObserver,
         elevenlabs: ElevenLabsVoice | None = None,
+        aviso_elevenlabs: Callable[[], bytes | None] | None = None,
     ) -> None:
         self._audio_queue = audio_queue
         self._observer = observer
         self._elevenlabs = elevenlabs
+        # Devolve o PCM do aviso gravado "minha voz personalizada esta com problemas" (ou None).
+        self._aviso_elevenlabs = aviso_elevenlabs
+        self._avisou_falha = False  # o aviso de falha toca UMA vez
         self._sentences: asyncio.Queue[_Sentence] = asyncio.Queue()
         self._buffer = ""
         self._epoch = 0
@@ -188,17 +202,44 @@ class VoiceOutput:
         """Desliga o ElevenLabs nesta sessao e toca o audio reserva do Gemini."""
         logger.error("ElevenLabs falhou, usando a voz do Gemini: %s", error)
         voice, self._elevenlabs = self._elevenlabs, None
-        self._observer.on_transcript("sistema", FALLBACK_NOTICE)
-        print(f"(Jarvis: {FALLBACK_NOTICE})")
+        if not self._avisou_falha:
+            self._avisou_falha = True
+            try:
+                self._observer.on_transcript("sistema", FALLBACK_NOTICE)
+            except Exception:  # noqa: BLE001 - a interface nunca derruba a voz
+                logger.debug("observador falhou no aviso do ElevenLabs", exc_info=True)
+            _print_seguro(f"(Jarvis: {FALLBACK_NOTICE})")
+            self._tocar_aviso_gravado()
         if item.turn not in self._spoken_turns:  # nada foi falado ainda: toca a reserva
             for data in self._reserve.pop(item.turn, []):
                 self._audio_queue.put_nowait(data)
         self._reserve.clear()
         self._drop_pending()
         if voice is not None:
-            await voice.close()
+            try:
+                await voice.close()
+            except Exception:  # noqa: BLE001 - fechar nunca derruba a voz do Google
+                logger.debug("falha ao fechar o ElevenLabs", exc_info=True)
+
+    def _tocar_aviso_gravado(self) -> None:
+        """Poe o aviso gravado na fila do alto-falante (antes da reserva). Sem arquivo: nada."""
+        if self._aviso_elevenlabs is None:
+            return
+        try:
+            pcm = self._aviso_elevenlabs()
+        except Exception:  # noqa: BLE001 - aviso nunca derruba a voz
+            logger.warning("nao consegui carregar o aviso do ElevenLabs", exc_info=True)
+            return
+        if not pcm:
+            logger.warning("aviso do ElevenLabs sem audio gravado: so texto na tela")
+            return
+        for inicio in range(0, len(pcm), AVISO_PEDACO_BYTES):
+            self._audio_queue.put_nowait(pcm[inicio : inicio + AVISO_PEDACO_BYTES])
 
     async def close(self) -> None:
         """Fecha a conexao com o ElevenLabs, se houver."""
         if self._elevenlabs is not None:
-            await self._elevenlabs.close()
+            try:
+                await self._elevenlabs.close()
+            except Exception:  # noqa: BLE001 - fechar nunca quebra o encerramento
+                logger.debug("falha ao fechar o ElevenLabs", exc_info=True)

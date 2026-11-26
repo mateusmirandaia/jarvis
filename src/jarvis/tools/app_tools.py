@@ -429,8 +429,11 @@ class AppTools:
                 if _stem(w.process).replace(" ", "") == compact or _contem_frase(w.title, key)
             ]
         if not targets:
+            logger.info("close_app: '%s' nao encontrado entre %d janelas", key, len(open_windows))
             return f"Nao achei '{nome}' aberto. Abertos agora: {self.list_open_apps()}"
         processes = sorted({w.process for w in targets}, key=str.lower)
+        if forcar and windows.APP_MODERNO in processes:
+            forcar = False  # app moderno sem processo conhecido: so da para fechar a janela
         if forcar:
             if len({p.lower() for p in processes}) > 1:
                 return MSG_FORCA_VARIOS.format(nomes=", ".join(processes))

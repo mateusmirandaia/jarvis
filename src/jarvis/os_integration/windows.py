@@ -16,6 +16,7 @@ import subprocess
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -105,6 +106,10 @@ def list_windows(excluded_processes: Iterable[str] = ()) -> list[Window]:
         pid = wintypes.DWORD()
         user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
         process = names.get(pid.value, "?")
+        if process.lower() == _MOLDURA_UWP:
+            # Apps modernos (Calculadora, Configuracoes, Fotos...) moram dentro da moldura
+            # ApplicationFrameHost: o processo de verdade e o da janela filha.
+            process = _processo_do_app_moderno(user32, hwnd, pid.value, names)
         if process.lower() not in excluded and buffer.value != "Program Manager":
             windows.append(Window(process=process, title=buffer.value, hwnd=int(hwnd)))
         return True
@@ -112,6 +117,33 @@ def list_windows(excluded_processes: Iterable[str] = ()) -> list[Window]:
     user32.EnumWindows(visit, 0)
     logger.debug("list_windows encontrou %d janelas", len(windows))
     return windows
+
+
+_MOLDURA_UWP = "applicationframehost.exe"
+APP_MODERNO = "app do Windows"  # moldura sem o processo real (ex.: app minimizado)
+
+
+def _processo_do_app_moderno(user32: Any, hwnd: int, pid_moldura: int, names: dict) -> str:
+    """Acha o processo real (ex.: CalculatorApp.exe) dentro da moldura dos apps modernos."""
+    import ctypes
+    from ctypes import wintypes
+
+    achado: list[str] = []
+
+    @ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)  # type: ignore[attr-defined]
+    def filho(child: int, _lparam: int) -> bool:
+        pid = wintypes.DWORD()
+        user32.GetWindowThreadProcessId(child, ctypes.byref(pid))
+        if pid.value and pid.value != pid_moldura and pid.value in names:
+            achado.append(names[pid.value])
+            return False
+        return True
+
+    try:
+        user32.EnumChildWindows(hwnd, filho, 0)
+    except Exception:  # noqa: BLE001 - na duvida, trata como app moderno sem nome
+        logger.debug("nao consegui ler a janela filha do app moderno", exc_info=True)
+    return achado[0] if achado else APP_MODERNO
 
 
 def close_window(hwnd: int) -> None:

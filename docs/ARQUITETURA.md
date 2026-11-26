@@ -1,6 +1,6 @@
 # Arquitetura do Jarvis
 
-Este documento descreve a versão 0.8.0 e explica como as peças se conectam. Se você está começando, leia de cima
+Este documento descreve a versão 0.9.0 e explica como as peças se conectam. Se você está começando, leia de cima
 para baixo: primeiro o fluxo, depois o papel de cada arquivo.
 
 ## Fluxo do modo voz
@@ -314,23 +314,26 @@ lógica de voz.
 | `jarvis/os_integration/shortcut.py` | `create_desktop_shortcut()`: cria `Jarvis.lnk` na Área de Trabalho apontando para o `pythonw.exe` do ambiente (`-m jarvis --modo orb`). Nunca sobrescreve. (O instalador cria os próprios atalhos.) |
 | `jarvis/os_integration/windows.py` | Tudo que fala direto com o Windows: listar janelas do Alt+Tab, fechar janela (WM_CLOSE), encerrar processo, caixa de confirmação Sim/Não, caixa de mensagem, instância única, abrir com o programa padrão. Fora do Windows, devolve valores seguros. |
 | `jarvis/ui/orb_window.py` | `montar_config()` e `montar_html()` (injeção da configuração e dos visuais) e `OrbWindow`: janela do pywebview (WebView2, 1280x760, mínimo 900x600) que implementa o `AssistantObserver`, recebe `on_mic_teste`/`on_aviso_chave` e envia tudo pela fila. Nunca derruba o assistente se a janela falhar. |
-| `jarvis/ui/api_config.py` | `ApiJs` (os 15 métodos que a página chama), `estado_config()` (resumo sem chaves) e `ponte_js()` (a fachada que o pywebview recebe). |
-| `jarvis/ui/orb.html` | A "casca" da janela: assistente de 5 passos, engrenagem com 4 abas, tela de escolha com prévias, botão "Trocar visual", aviso "Atualizar chave", painel (conversa, volume, latência, camadas, atividade) e legenda. Sem bibliotecas nem internet. |
+| `jarvis/ui/api_config.py` | `ApiJs` (os 17 métodos que a página chama, incluindo `permissoes_estado` e `salvar_permissoes`), `estado_config()` (resumo sem chaves) e `ponte_js()` (a fachada que o pywebview recebe). |
+| `jarvis/ui/orb.html` | A "casca" da janela: assistente de 6 passos (com o passo Permissões), engrenagem com 5 abas (com a aba Permissões), tela de escolha com prévias, botão "Trocar visual", aviso "Atualizar chave", painel (conversa, volume, latência, camadas, atividade) e legenda. Sem bibliotecas nem internet. |
 | `jarvis/ui/visuais/*.js` | Um arquivo por visual (`galaxia`, `globo`, `cortex`, `reator`, `holograma`, `mapa`, `esfera`, `aura`, `cerebro`), em Canvas 2D puro. Cada um reage aos 5 estados e ao volume. |
-| `jarvis/ui/preferencias.py` | `preferencias.json`: `VISUAIS`, `VISUAL_PADRAO`, chaves `visual`, `voz`, `nome`, `fone`, `configurado`, `fonte_voz`, `elevenlabs_voz_nome`; `carregar()`, `atualizar()` e `salvar_visual()` (atômicos, nunca levantam), `nome_valido()`, `visual_inicial()`. Arquivo em `%APPDATA%\Jarvis\` no Windows ou `~/.config/jarvis/` nos outros. |
+| `jarvis/ui/preferencias.py` | `preferencias.json`: `VISUAIS`, `VISUAL_PADRAO`, chaves `visual`, `voz`, `nome`, `fone`, `configurado`, `fonte_voz`, `elevenlabs_voz_nome`, `permissoes`; `carregar()`, `atualizar()` e `salvar_visual()` (atômicos, nunca levantam), `nome_valido()`, `visual_inicial()`. Arquivo em `%APPDATA%\Jarvis\` no Windows ou `~/.config/jarvis/` nos outros. |
+| `jarvis/avisos.py` e `jarvis/avisos/` | Falas de aviso já gravadas (offline): `internet_<Voz>.wav` nas 8 vozes e `elevenlabs_Charon.wav`. `avisos.py` acha o arquivo certo (cai para Charon) e toca sem travar; o aviso de internet toca no máximo 1 vez a cada 30 s. Gerados por `scripts/gerar_avisos_voz.py`. |
 | `jarvis/ui/amostras/` | `<Voz>.wav` de cada voz do Google (geradas por `scripts/gerar_amostras_voz.py`). |
 | `jarvis/assistants/voice_output.py` | `VoiceOutput`: decide quem fala. Sem ElevenLabs, o áudio do Gemini toca direto; com ElevenLabs, o texto da resposta vira frases (`split_sentences`) faladas pelo ElevenLabs e o áudio do Gemini fica de reserva. Se o ElevenLabs falhar, volta para o Gemini sem travar. Interrupções descartam frases pendentes. |
 | `jarvis/assistants/elevenlabs_voice.py` | `ElevenLabsVoice`: streaming HTTP do ElevenLabs em PCM 24 kHz (mesmo formato do alto-falante), modelo Flash v2.5 por padrão. |
 | `jarvis/assistants/observer.py` | `AssistantObserver` (protocolo: estado, volume, falas, ações e latência), `NullObserver` e `pcm_level()` (volume do áudio). |
 | `jarvis/assistants/audio.py` | `AudioIO`: microfone 16 kHz e saída 24 kHz (PCM16 mono, blocos de 512). |
-| `jarvis/assistants/live_assistant.py` | `LiveAssistant`: sessão do Gemini Live, envio de áudio, fila de reprodução, chamadas de ferramenta em thread com tempo máximo, interrupção, transcrições e reconexão. Chave recusada levanta `ChaveInvalidaError` (reconectar não resolve). |
+| `jarvis/assistants/live_assistant.py` | `LiveAssistant`: sessão do Gemini Live, envio de áudio, fila de reprodução, chamadas de ferramenta em thread com tempo máximo, interrupção, transcrições e reconexão. Vigia o tempo de resposta: se o modelo não responder em `resposta_timeout_s` (12 s) depois da fala, toca o aviso de internet e reconecta. Conectar tem limite de 15 s; fechar microfone e alto-falante, de 1 s. Chave recusada levanta `ChaveInvalidaError` (reconectar não resolve). |
 | `jarvis/assistants/text_assistant.py` | `TextAssistant`: chat no terminal com as mesmas ferramentas e fallback de modelo. |
-| `jarvis/tools/__init__.py` | `ToolRegistry`: cria as classes, aplica o `safe_tool`, protege a pasta do projeto **e** a pasta do usuário (`%APPDATA%\Jarvis`), expõe `functions`, `names`, `get()`, `timeout_for()`. |
+| `jarvis/tools/__init__.py` | `ToolRegistry`: cria as classes, aplica o `safe_tool` e a **checagem de permissão na hora da chamada**, protege a pasta do projeto **e** a pasta do usuário (`%APPDATA%\Jarvis`), expõe `functions`, `names`, `get()`, `timeout_for()`. |
 | `jarvis/tools/security.py` | `PathGuard` (atalhos "área de trabalho", "documentos", "downloads"; pastas protegidas), processos protegidos, extensões executáveis, `normalize()`. |
+| `jarvis/tools/permissoes.py` | Modelo das permissões (`arquivos` em 4 níveis, `apps`, `internet`, `email`, `outros_drives`), padrão tudo desligado, mapa ferramenta → exigência (ferramenta fora do mapa = bloqueada), mensagens e a lista "Sempre bloqueado" do painel. |
+| `jarvis/tools/office_tools.py` | `draft_email`: `mailto:` quando cabe, senão `.eml` com `X-Unsent: 1` em `Documentos\Jarvis\Rascunhos`. Nunca envia. |
 | `jarvis/tools/system_tools.py` | `current_time`. |
 | `jarvis/tools/app_tools.py` | `list_open_apps`, `open_app`, `close_app`. |
 | `jarvis/tools/web_tools.py` | `open_website`, `web_search`. |
-| `jarvis/tools/file_tools.py` | `create_folder`, `list_folder`, `find_file`, `open_file`, `move_or_rename`, `copy_item`, `create_text_file`, `delete_to_trash`. |
+| `jarvis/tools/file_tools.py` | `create_folder`, `list_folder`, `find_file`, `open_file`, `move_or_rename`, `copy_item`, `create_text_file`, `read_file` (texto, PDF com texto, Word, Excel; até 25 MB e 20 mil caracteres), `write_word_document` (`.docx` novo, nunca sobrescreve), `delete_to_trash`. |
 | `scripts/gerar_amostras_voz.py` | Gera as amostras das 8 vozes com o TTS do Gemini (uma vez; pula as que existem; nunca mostra a chave). |
 | `packaging/` | `jarvis_entry.py` (ponto de entrada), `jarvis.spec` (PyInstaller), `jarvis.iss` (Inno Setup) e `build.ps1` (faz tudo e mostra o SHA-256). |
 

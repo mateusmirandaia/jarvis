@@ -381,7 +381,7 @@ def test_api_expoe_exatamente_os_metodos_do_contrato() -> None:
     api = _api()
     publicos = sorted(nome for nome in dir(api) if not nome.startswith("_"))
     assert publicos == sorted(METODOS_PUBLICOS)
-    assert len(METODOS_PUBLICOS) == 15
+    assert len(METODOS_PUBLICOS) == 17
     assert all(nome.startswith("_") for nome in vars(api))
 
 
@@ -398,7 +398,7 @@ def test_estado_config_sem_chave(pastas: dict[str, Path]) -> None:
         "chave_final": "",
     }
     assert estado["fonte_voz"] == "google"
-    assert estado["versao"] == "0.8.0"
+    assert estado["versao"] == "0.9.0"
     assert estado["pasta_config"] == str(pastas["usuario"])
     assert [v["id"] for v in estado["vozes"]] == list(vozes.IDS)
     assert set(estado) >= {

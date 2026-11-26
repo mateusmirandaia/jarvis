@@ -28,6 +28,7 @@ from jarvis import __version__, armazenamento, verificacao, vozes
 from jarvis.config import Settings
 from jarvis.logging_setup import registrar_segredos
 from jarvis.microfone import MSG_EM_USO, TesteMicrofone, tocar_pcm
+from jarvis.tools import permissoes
 from jarvis.ui import preferencias
 
 if TYPE_CHECKING:
@@ -63,7 +64,9 @@ METODOS_PUBLICOS: tuple[str, ...] = (
     "estado_config",
     "microfone_iniciar",
     "microfone_parar",
+    "permissoes_estado",
     "salvar_chave",
+    "salvar_permissoes",
     "salvar_preferencias",
     "salvar_visual",
     "testar_chave",
@@ -100,6 +103,8 @@ MSG_EL_PRESA = (
     "para usar a voz escolhida aqui."
 )
 MSG_NAO_INICIOU = "Não consegui iniciar o Jarvis. Veja o log."
+MSG_PERMISSOES = "Permissões inválidas. Feche e abra a engrenagem de novo."
+MSG_PERMISSOES_OK = "Permissões salvas. Já valem agora."
 
 
 class _Janela(Protocol):
@@ -180,6 +185,8 @@ def estado_config(settings: Settings, prefs: dict[str, Any] | None = None) -> di
             "voz_nome": voz_nome if isinstance(voz_nome, str) else "",
             "chave_final": armazenamento.final_da_chave(settings.elevenlabs_api_key),
         },
+        # Permissoes salvas (sem chave no arquivo = tudo desligado). Veja permissoes_estado().
+        "permissoes": permissoes.normalizar(prefs.get(preferencias.CHAVE_PERMISSOES)),
         "versao": __version__,
         "pasta_config": str(armazenamento.pasta_usuario()),
         "pasta_logs": str(settings.log_file.parent),
@@ -376,6 +383,31 @@ class ApiJs:
             return ""
         return MSG_PREFS_DO_ENV.format(variaveis=", ".join(presas))
 
+    # --------------------------------------------------------------- permissoes
+    @_seguro(lambda: {"ok": False, "mensagem": MSG_ERRO, "permissoes": dict(permissoes.PADRAO)})
+    def permissoes_estado(self) -> dict[str, Any]:
+        """``{ok, permissoes, niveis, chaves, sempre_bloqueado}`` para a aba Permissoes."""
+        return {
+            "ok": True,
+            "mensagem": "",
+            "permissoes": preferencias.carregar_permissoes(),
+            **permissoes.descricao_painel(),
+        }
+
+    @_seguro(_falha)
+    def salvar_permissoes(self, dados: object) -> dict[str, Any]:
+        """Salva o modelo COMPLETO de permissoes; vale na hora (sem reiniciar o assistente).
+
+        A checagem das ferramentas le o preferencias.json a cada chamada, entao nao precisa
+        reconectar. Qualquer valor fora do modelo recusa tudo e nada e gravado.
+        """
+        validas = permissoes.validar(dados)
+        if validas is None:
+            return {"ok": False, "mensagem": MSG_PERMISSOES}
+        if not preferencias.salvar_permissoes(validas):
+            return {"ok": False, "mensagem": MSG_SALVAR_FALHOU}
+        return {"ok": True, "mensagem": MSG_PERMISSOES_OK, "permissoes": validas}
+
     # --------------------------------------------------------------- assistente
     @_seguro(_falha)
     def concluir_configuracao(self) -> dict[str, Any]:
@@ -540,7 +572,7 @@ def _criar_chamada(metodo: Callable[..., Any], nome: str) -> Callable[..., Any]:
 
 
 def ponte_js(api: ApiJs) -> object:
-    """Objeto entregue ao pywebview: so as 15 funcoes do contrato, e nada mais.
+    """Objeto entregue ao pywebview: so as funcoes de ``METODOS_PUBLICOS``, e nada mais.
 
     O pywebview executa qualquer nome que a pagina mandar, inclusive "a.b.c" resolvido com
     getattr encadeado e nomes com ``_``/``__``. Por isso a janela nao recebe a ``ApiJs``, e
@@ -548,7 +580,7 @@ def ponte_js(api: ApiJs) -> object:
 
     - a classe nao tem nenhuma funcao Python (so ``__slots__``), entao ``__class__``,
       ``__init__``, ``__setattr__``... sao todos do proprio Python (sem ``__globals__``);
-    - cada uma das 15 funcoes fica num slot da instancia (nao vira metodo: sem ``__self__``
+    - cada uma das funcoes fica num slot da instancia (nao vira metodo: sem ``__self__``
       nem ``__func__``) e foi criada por ``_criar_chamada``: ``__globals__`` e um dicionario
       vazio e descartavel, e a ``ApiJs`` fica so na closure.
     """

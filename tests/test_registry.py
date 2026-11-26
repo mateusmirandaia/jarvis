@@ -30,6 +30,10 @@ EXPECTED_NAMES = [
     "copy_item",
     "create_text_file",
     "delete_to_trash",
+    "read_file",
+    "write_word_document",
+    # escritorio
+    "draft_email",
 ]
 
 
@@ -38,9 +42,24 @@ def settings(tmp_path: Path) -> Settings:
     return Settings(api_key="x", project_root=tmp_path)
 
 
+# Estes testes conferem as ferramentas em si: as permissoes ficam todas ligadas aqui (o
+# bloqueio por permissao e testado em test_permissoes*.py).
+TUDO_LIBERADO = {
+    "arquivos": "ler_gravar_excluir",
+    "apps": True,
+    "internet": True,
+    "email": True,
+    "outros_drives": True,
+}
+
+
+def _liberado() -> dict[str, object]:
+    return dict(TUDO_LIBERADO)
+
+
 @pytest.fixture
 def registry(settings: Settings) -> ToolRegistry:
-    return ToolRegistry(settings, confirm=lambda title, message: False)
+    return ToolRegistry(settings, confirm=lambda title, message: False, permissoes_atuais=_liberado)
 
 
 def test_nomes_esperados_na_ordem(registry: ToolRegistry) -> None:
@@ -83,6 +102,7 @@ def test_get_nome_invalido_retorna_none(registry: ToolRegistry, nome: str) -> No
 def test_ferramentas_embrulhadas_nunca_levantam(registry: ToolRegistry) -> None:
     resultado = registry.get("list_folder")("/caminho/que/nao/existe/mesmo")
     assert isinstance(resultado, str)
+    assert "permissões" not in resultado  # chegou a rodar a ferramenta de verdade
 
 
 def test_timeout_for(registry: ToolRegistry, settings: Settings) -> None:
@@ -130,7 +150,9 @@ def test_registry_sem_confirm_usa_janela_com_prazo(
     alvo = tmp_path.parent / f"{tmp_path.name}_livre" / "a.txt"
     alvo.parent.mkdir()
     alvo.write_text("x", encoding="utf-8")
-    resultado = ToolRegistry(settings).get("delete_to_trash")(str(alvo))
+    resultado = ToolRegistry(settings, permissoes_atuais=_liberado).get("delete_to_trash")(
+        str(alvo)
+    )
     assert chamadas == [confirm_timeout_for(settings)]
     assert alvo.exists()
     assert "Nada foi apagado" in resultado

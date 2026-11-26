@@ -1,7 +1,7 @@
 ﻿; Instalador do Jarvis (Inno Setup 6).
 ;
 ; Normalmente rodado pelo packaging\build.ps1, que passa a versao lida do pyproject.toml:
-;   ISCC.exe /DAppVersion=0.8.0 /DDistDir=<raiz>\dist\Jarvis packaging\jarvis.iss
+;   ISCC.exe /DAppVersion=0.9.0 /DDistDir=<raiz>\dist\Jarvis packaging\jarvis.iss
 ;
 ; Instala SEM pedir administrador, na pasta do usuario. A desinstalacao remove o programa,
 ; mas NAO apaga as configuracoes (%APPDATA%\Jarvis: chave, preferencias e logs) sem perguntar.

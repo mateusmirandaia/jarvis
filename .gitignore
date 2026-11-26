@@ -39,6 +39,7 @@ logs/
 *.log
 *.wav
 !src/jarvis/ui/amostras/*.wav
+!src/jarvis/avisos/*.wav
 *.mp3
 
 # --- Editores e sistema ---

@@ -19,6 +19,7 @@ ICONE = UI / "jarvis.ico"
 ORB_HTML = UI / "orb.html"
 VISUAIS = UI / "visuais"
 AMOSTRAS = UI / "amostras"
+AVISOS = SRC / "jarvis" / "avisos"  # avisos gravados (internet/ElevenLabs), tocados offline
 
 for obrigatorio in (ORB_HTML, ICONE, VISUAIS):
     if not obrigatorio.exists():
@@ -35,13 +36,27 @@ if not amostras:
 datas += [(str(wav), "jarvis/ui/amostras") for wav in amostras]
 if (AMOSTRAS / "LEIA.md").exists():
     datas.append((str(AMOSTRAS / "LEIA.md"), "jarvis/ui/amostras"))
+avisos = sorted(AVISOS.glob("*.wav"))
+if not avisos:
+    print("AVISO: nenhum aviso gravado em src/jarvis/avisos (rode scripts/gerar_avisos_voz.py).")
+datas += [(str(wav), "jarvis/avisos") for wav in avisos]
 
 binaries = []
 hiddenimports = collect_submodules("jarvis")
 
 # Pacotes com dados/submodulos carregados dinamicamente. Um pacote ausente (ex.: pywebview
 # no Linux, onde o build serve so para conferir o spec) nao derruba o build.
-for pacote in ("google.genai", "webview", "send2trash", "pyaudio", "clr_loader", "pythonnet"):
+for pacote in (
+    "google.genai",
+    "webview",
+    "send2trash",
+    "pyaudio",
+    "clr_loader",
+    "pythonnet",
+    "pypdf",
+    "docx",
+    "openpyxl",
+):
     try:
         d, b, h = collect_all(pacote)
     except Exception as erro:  # noqa: BLE001

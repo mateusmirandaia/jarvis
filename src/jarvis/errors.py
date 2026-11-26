@@ -6,7 +6,7 @@ import asyncio
 import functools
 import logging
 from collections.abc import Callable, Iterator
-from typing import Any
+from typing import Any, Literal
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +27,14 @@ class ChaveInvalidaError(ConfigError):
 
     O ``LiveAssistant`` levanta este erro em vez de ficar reconectando: sem chave valida,
     tentar de novo nunca resolve.
+    """
+
+
+class SemRespostaError(JarvisError):
+    """O modelo ficou mudo depois da fala do senhor (nem audio, nem texto, nem acao).
+
+    O ``LiveAssistant`` trata como problema de internet: toca o aviso, derruba a sessao e
+    reconecta.
     """
 
 
@@ -69,6 +77,9 @@ def safe_tool(func: Callable[..., Any]) -> Callable[..., str]:
         Funcao com a mesma assinatura que sempre devolve str.
     """
 
+    # Ferramenta que devolve texto longo (read_file) declara o proprio limite.
+    limite = int(getattr(func, "max_result_chars", MAX_RESULT_CHARS))
+
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> str:
         try:
@@ -76,8 +87,8 @@ def safe_tool(func: Callable[..., Any]) -> Callable[..., str]:
         except Exception as exc:
             logger.exception("Falha na ferramenta %s", getattr(func, "__name__", func))
             return friendly_message(exc)
-        if len(result) > MAX_RESULT_CHARS:
-            result = result[:MAX_RESULT_CHARS] + _CUT_SUFFIX
+        if len(result) > limite:
+            result = result[:limite] + _CUT_SUFFIX
         return result
 
     return wrapper
@@ -144,3 +155,86 @@ def erro_de_autenticacao(erro: BaseException) -> bool:
         if any(trecho in texto for trecho in _TEXTOS_CHAVE_RUIM):
             return True
     return False
+
+
+# ------------------------------------------------------------- tipo da queda da sessao
+TipoQueda = Literal["chave", "audio", "cota", "rede", "encerrada", "outro"]
+
+_ATRIBUTO_DISPOSITIVO = "jarvis_dispositivo"
+# Codigos de fechamento do WebSocket que indicam rede ruim ou servidor com problema.
+_CODIGOS_WS_REDE = frozenset({1006, 1011, 1012, 1013, 1014, 1015})
+# Fechamento normal (o Google encerra a sessao, ex.: tempo maximo de conexao).
+_CODIGOS_WS_FIM = frozenset({1000, 1001})
+_TEXTOS_COTA = ("resource_exhausted", "quota", "rate limit", "too many requests")
+
+
+def marcar_dispositivo(erro: BaseException, dispositivo: str) -> None:
+    """Marca o erro como vindo do audio ("microfone" ou "alto-falante"), sem trocar o tipo."""
+    try:
+        if getattr(erro, _ATRIBUTO_DISPOSITIVO, None) is None:
+            setattr(erro, _ATRIBUTO_DISPOSITIVO, dispositivo)
+    except Exception:  # noqa: BLE001 - excecao que nao aceita atributo: so nao marca
+        logger.debug("nao consegui marcar o erro de audio", exc_info=True)
+
+
+def dispositivo_do_erro(erro: BaseException) -> str | None:
+    """ "microfone"/"alto-falante" se o erro (ou uma causa dele) veio do audio; senao None."""
+    for atual in _cadeia(erro):
+        dispositivo = getattr(atual, _ATRIBUTO_DISPOSITIVO, None)
+        if isinstance(dispositivo, str):
+            return dispositivo
+    return None
+
+
+def _erro_de_rede(atual: BaseException) -> bool:
+    if isinstance(atual, SemRespostaError | ConnectionError | TimeoutError | asyncio.TimeoutError):
+        return True
+    try:
+        import httpx
+
+        if isinstance(atual, httpx.TransportError):
+            return True
+    except ImportError:  # pragma: no cover - depende do ambiente
+        pass
+    try:
+        from websockets import exceptions as ws_errors
+
+        if isinstance(atual, ws_errors.WebSocketException):
+            return True
+    except ImportError:  # pragma: no cover - depende do ambiente
+        pass
+    # gaierror, SSL, "rede inalcancavel"...: OSError que nao veio do audio
+    return isinstance(atual, OSError)
+
+
+def tipo_de_queda(erro: BaseException) -> TipoQueda:
+    """Classifica por que a sessao Live caiu (para escolher o aviso certo).
+
+    Ordem: chave recusada > audio (microfone/alto-falante) > cota (429) > rede (queda,
+    timeout, 5xx, modelo mudo) > outro. "encerrada" e o Google fechando a sessao do jeito
+    normal (codigo 1000/1001, ex.: tempo maximo da conexao): reconecta sem aviso de internet.
+    """
+    if erro_de_autenticacao(erro):
+        return "chave"
+    if dispositivo_do_erro(erro) is not None:
+        return "audio"
+    cadeia = list(_cadeia(erro))
+    try:
+        from google.genai import errors as genai_errors
+    except ImportError:  # pragma: no cover - depende do ambiente
+        genai_errors = None  # type: ignore[assignment]
+    apis = [a for a in cadeia if genai_errors is not None and isinstance(a, genai_errors.APIError)]
+    for atual in apis:
+        if _codigo(atual) == 429 or any(t in _texto(atual) for t in _TEXTOS_COTA):
+            return "cota"
+    for atual in apis:
+        codigo = _codigo(atual)
+        if codigo is not None and (500 <= codigo < 600 or codigo in _CODIGOS_WS_REDE):
+            return "rede"
+    # Antes da rede generica: o APIError 1000 carrega o ConnectionClosedOK como contexto.
+    for atual in apis:
+        if _codigo(atual) in _CODIGOS_WS_FIM:
+            return "encerrada"
+    if any(_erro_de_rede(atual) for atual in cadeia):
+        return "rede"
+    return "outro"

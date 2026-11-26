@@ -45,6 +45,8 @@ def test_tool_names() -> None:
         "copy_item",
         "create_text_file",
         "delete_to_trash",
+        "read_file",
+        "write_word_document",
     )
 
 
