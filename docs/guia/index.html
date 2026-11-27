@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guia do Jarvis</title>
+
+  <!-- Google Fonts: Bricolage Grotesque · DM Sans · JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+
+  <!--
+    CUSTOMIZE PER COURSE — change only the three accent variables below.
+    Options:
+      vermillion  #D94F30 / #C4432A / #FDEEE9 / #E8836C  (default)
+      coral       #E06B56 / #C85A47 / #FDECEA / #E89585
+      teal        #2A7B9B / #1F6280 / #E4F2F7 / #5A9DB8
+      amber       #D4A843 / #BF9530 / #FDF5E0 / #E0C070
+      forest      #2D8B55 / #226B41 / #E8F5EE / #5AAD7A
+  -->
+  <style>
+    :root {
+      --color-accent:       #E06B56;
+      --color-accent-hover: #C85A47;
+      --color-accent-light: #FDECEA;
+      --color-accent-muted: #E89585;
+    }
+  </style>
+
+  <script src="main.js" defer></script>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="progress-bar" id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="nav-inner">
+      <span class="nav-title">Guia do Jarvis</span>
+      <div class="nav-dots" id="nav-dots" role="tablist">
+        <!--
+          One <button> per module. Replace MODULE_N_NAME with the actual module title.
+
+          <button class="nav-dot" data-target="module-1" data-tooltip="MODULE_1_NAME" role="tab" aria-label="Module 1: MODULE_1_NAME"></button>
+          <button class="nav-dot" data-target="module-2" data-tooltip="MODULE_2_NAME" role="tab" aria-label="Module 2: MODULE_2_NAME"></button>
+          ...
+        -->
+        <button class="nav-dot" data-target="module-1" data-tooltip="Conheça o Jarvis" role="tab" aria-label="Parte 1: Conheça o Jarvis"></button>
+        <button class="nav-dot" data-target="module-2" data-tooltip="Instalando" role="tab" aria-label="Parte 2: Instalando"></button>
+        <button class="nav-dot" data-target="module-3" data-tooltip="Sua chave grátis do Google" role="tab" aria-label="Parte 3: Sua chave grátis do Google"></button>
+        <button class="nav-dot" data-target="module-4" data-tooltip="A primeira configuração" role="tab" aria-label="Parte 4: A primeira configuração"></button>
+        <button class="nav-dot" data-target="module-5" data-tooltip="Conversando com ele" role="tab" aria-label="Parte 5: Conversando com ele"></button>
+        <button class="nav-dot" data-target="module-6" data-tooltip="Se algo der errado" role="tab" aria-label="Parte 6: Se algo der errado"></button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+<section class="module" id="module-1" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">01</span>
+      <h1 class="module-title">Conheça o Jarvis</h1>
+      <p class="module-subtitle">Um mordomo de voz para o seu computador. Grátis, em português e sem precisar saber programar.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- TELA 1: o que ele faz -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Você fala, ele faz</h2>
+        <p>O Jarvis é um <span class="term" data-definition="Um programa que você usa falando, em vez de clicar ou digitar. Você conversa com ele como conversa com uma pessoa.">assistente de voz</span> grátis para o Windows. Você diz “Jarvis, abre a calculadora” e ele abre. Ele responde falando, em português, com o jeito educado de um mordomo.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🎙️</div>
+            <h4 class="pattern-title">Conversa por voz</h4>
+            <p class="pattern-desc">Diz a data e a hora, responde perguntas e faz contas de cabeça.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🪟</div>
+            <h4 class="pattern-title">Abre e fecha programas</h4>
+            <p class="pattern-desc">Calculadora, Bloco de Notas, Chrome, Word, Excel, Spotify…</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">🌐</div>
+            <h4 class="pattern-title">Sites e pesquisas</h4>
+            <p class="pattern-desc">“Pesquisa receita de bolo de cenoura.” Ele abre a pesquisa no Google.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">📁</div>
+            <h4 class="pattern-title">Arquivos e pastas</h4>
+            <p class="pattern-desc">Cria pastas, procura, move, renomeia e copia. Lê PDF, Word e Excel e resume para você.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">📝</div>
+            <h4 class="pattern-title">Word e e-mail</h4>
+            <p class="pattern-desc">Escreve um documento novo do Word e deixa um e-mail pronto para você revisar.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-accent)">
+            <div class="pattern-icon" style="background: var(--color-accent)">🌌</div>
+            <h4 class="pattern-title">8 vozes e 9 visuais</h4>
+            <p class="pattern-desc">Você escolhe a voz dele e a animação da janela: galáxia, cérebro, reator…</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 2: a metáfora + conversa de exemplo -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Um mordomo que acabou de chegar</h2>
+        <p>Pense num mordomo novo na sua casa. Ele é educado e rápido, mas no primeiro dia <strong>não entra em cômodo nenhum</strong> sem você liberar. No Jarvis é igual: logo depois de instalar, ele só conversa e diz as horas. O resto você libera nas <span class="term" data-definition="Chaves de liga/desliga dentro do Jarvis, uma para cada tipo de tarefa (arquivos, programas, sites, e-mails…). Todas começam desligadas. Você liga só o que quiser.">permissões</span>.</p>
+        <p>Veja uma conversa de exemplo (as palavras exatas dele mudam um pouco a cada vez):</p>
+
+        <div class="chat-window" id="g1-chat">
+          <div class="chat-messages">
+            <div class="chat-message" data-msg="0" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">🙋</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p>Jarvis, que horas são?</p></div>
+            </div>
+            <div class="chat-message" data-msg="1" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>São três e vinte da tarde, senhor.</p></div>
+            </div>
+            <div class="chat-message" data-msg="2" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">🙋</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p>Abre a calculadora.</p></div>
+            </div>
+            <div class="chat-message" data-msg="3" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Essa ação está desligada nas permissões (abrir programas). Para liberar, abra a engrenagem e vá em Permissões.</p></div>
+            </div>
+            <div class="chat-message" data-msg="4" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">🙋</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p><em>(liga “Abrir e fechar programas” na engrenagem)</em> Agora sim: abre a calculadora.</p></div>
+            </div>
+            <div class="chat-message" data-msg="5" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Abrindo, senhor.</p></div>
+            </div>
+            <div class="chat-message" data-msg="6" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Pronto, senhor, calculadora aberta.</p></div>
+            </div>
+          </div>
+
+          <div class="chat-typing" style="display:none">
+            <div class="chat-avatar" id="g1-chat-typing-avatar">?</div>
+            <div class="chat-typing-dots">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+            </div>
+          </div>
+
+          <div class="chat-controls">
+            <button class="btn chat-next-btn">Próxima mensagem</button>
+            <button class="btn chat-all-btn">Mostrar tudo</button>
+            <button class="btn chat-reset-btn">Recomeçar</button>
+            <span class="chat-progress"></span>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">“Desligada nas permissões” não é defeito</strong>
+            <p>É o mordomo pedindo a chave do cômodo. A mudança vale na hora, sem fechar o Jarvis. Na Parte 4 você vê o que ligar para cada tipo de uso.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 3: o que ele NÃO faz -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O que ele não faz (de propósito)</h2>
+        <p>Saber os limites evita susto. Alguns são para a sua segurança; outros são limites do programa.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">✉️</div>
+            <h4 class="pattern-title">Não envia e-mail</h4>
+            <p class="pattern-desc">Ele só deixa o e-mail pronto na tela. Quem clica em Enviar é sempre você.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">🗑️</div>
+            <h4 class="pattern-title">Não apaga sozinho</h4>
+            <p class="pattern-desc">Para mandar algo para a Lixeira, abre uma janela e só o <strong>seu</strong> clique em “Sim” vale.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">🛡️</div>
+            <h4 class="pattern-title">Não mexe no Windows</h4>
+            <p class="pattern-desc">As pastas do sistema, os programas instalados e os arquivos de senha ficam sempre bloqueados.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">📄</div>
+            <h4 class="pattern-title">Não escreve por cima</h4>
+            <p class="pattern-desc">Se já existe um arquivo com o mesmo nome, ele recusa. Nada é sobrescrito.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-text-muted)">
+            <div class="pattern-icon" style="background: var(--color-text-muted)">⌨️</div>
+            <h4 class="pattern-title">Não digita nos programas</h4>
+            <p class="pattern-desc">Ele abre a calculadora, mas não aperta as teclas dela. A conta, ele faz de cabeça e fala.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-text-muted)">
+            <div class="pattern-icon" style="background: var(--color-text-muted)">🖼️</div>
+            <h4 class="pattern-title">Não lê PDF escaneado</h4>
+            <p class="pattern-desc">PDF que é foto das páginas ele não consegue ler, e avisa. Arquivo muito grande: lê só o começo.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">📶</div>
+          <div class="callout-content">
+            <strong class="callout-title">Sem internet, sem conversa</strong>
+            <p>Quem entende o que você fala é a inteligência artificial do Google, pela internet. Se a conexão cair, ele avisa com uma fala já gravada e tenta reconectar sozinho.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 4: do que você precisa -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Do que você precisa</h2>
+        <p>Nada de programação. Confira a lista antes de começar:</p>
+
+        <div class="icon-rows">
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-2)">💻</div>
+            <div>
+              <strong>Windows 10 ou 11, de 64 bits</strong>
+              <p>Para saber se o seu é de <span class="term" data-definition="É o “tamanho” do Windows. Quase todo computador dos últimos anos é de 64 bits. Para conferir: Configurações → Sistema → Sobre → Tipo de sistema.">64 bits</span>: Configurações → Sistema → Sobre → “Tipo de sistema”.</p>
+            </div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-3)">📶</div>
+            <div>
+              <strong>Internet</strong>
+              <p>Para baixar o Jarvis e, depois, para ele conversar com você.</p>
+            </div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-1)">🎙️</div>
+            <div>
+              <strong>Um microfone</strong>
+              <p>Qualquer um serve, inclusive o que já vem no notebook.</p>
+            </div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-4)">🎧</div>
+            <div>
+              <strong>Caixa de som ou fone de ouvido</strong>
+              <p>O fone é <strong>recomendado</strong>: sem ele, o Jarvis pode ouvir a própria voz pela caixa de som e se interromper.</p>
+            </div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-5)">🔑</div>
+            <div>
+              <strong>Uma conta Google</strong>
+              <p>A mesma do Gmail. Com ela você cria a chave grátis (Parte 3).</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🙌</div>
+          <div class="callout-content">
+            <strong class="callout-title">Não precisa instalar mais nada</strong>
+            <p>O <span class="term" data-definition="O arquivo que você baixa e abre para colocar um programa no computador. Ele copia tudo para o lugar certo e cria os atalhos.">instalador</span> já leva tudo o que o Jarvis precisa. Você não precisa de <span class="term" data-definition="Uma linguagem de programação. O Jarvis foi escrito nela, mas o instalador já leva o que precisa: você não precisa instalar nem conhecer.">Python</span>, nem de senha de <span class="term" data-definition="O “dono” do computador, que pode instalar coisas para todo mundo. O instalador do Jarvis não pede essa senha: instala só para você.">administrador</span>.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 5: é grátis mesmo? -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">É grátis mesmo?</h2>
+        <p>Sim. O Jarvis é de <span class="term" data-definition="Quando o “miolo” do programa (o código) fica público na internet: qualquer pessoa pode ler, conferir e melhorar. Ninguém esconde nada.">código aberto</span> e não cobra nada. A inteligência que ele usa é o <span class="term" data-definition="A inteligência artificial do Google. É ela que ouve o que você fala, entende e responde.">Gemini</span>, do Google, no plano grátis.</p>
+
+        <div class="flow-steps">
+          <div class="flow-step"><div class="flow-step-num">✓</div><p><strong>Jarvis:</strong> grátis e aberto</p></div>
+          <div class="flow-arrow">+</div>
+          <div class="flow-step"><div class="flow-step-num">✓</div><p><strong>Chave do Google:</strong> grátis</p></div>
+          <div class="flow-arrow">=</div>
+          <div class="flow-step"><div class="flow-step-num">R$0</div><p>para usar no dia a dia</p></div>
+        </div>
+
+        <div class="badge-list">
+          <div class="badge-item">
+            <code class="badge-code">limite diário</code>
+            <span class="badge-desc">O plano grátis tem uma cota. Se usar muito num dia, o Google pode recusar por um tempo. É só esperar.</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">voz ElevenLabs</code>
+            <span class="badge-desc">Opcional e paga. Serve para quem quer uma voz personalizada. Este guia usa só as 8 vozes grátis do Google.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 6: privacidade -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O que fica com você e o que vai para o Google</h2>
+        <p>Para a IA entender, uma parte precisa viajar até o Google. Saber o que viaja ajuda você a decidir o que pedir.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="background: var(--color-surface); color: var(--color-text); font-family: var(--font-body); border-right: 1px solid var(--color-border-light);">
+            <span class="translation-label">FICA NO SEU PC</span>
+            <div style="display:flex; flex-direction:column; gap: var(--space-3); padding-top: var(--space-4);">
+              <p style="margin:0">🔑 <strong>A sua chave</strong>, guardada na pasta de configurações. A janela mostra só os 4 últimos caracteres.</p>
+              <p style="margin:0">⚙️ <strong>Suas escolhas</strong>: voz, nome, visual e permissões.</p>
+              <p style="margin:0">📒 <strong>O registro de erros</strong> (o <span class="term" data-definition="Log é um caderno de anotações do programa: ele escreve ali o que aconteceu e os erros, para ajudar a descobrir problemas. A sua chave nunca aparece nele.">log</span>), sem a sua chave.</p>
+            </div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">VAI PARA O GOOGLE</span>
+            <div class="translation-lines">
+              <p class="tl">🗣️ <strong>O que você fala</strong> com ele, para a IA entender e responder.</p>
+              <p class="tl">📄 <strong>O texto dos arquivos que ele lê</strong> para você (um PDF que você pediu para resumir, por exemplo).</p>
+              <p class="tl">🔑 A chave também vai, mas só para o Google saber que é você. Ela não vai para mais ninguém.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🔒</div>
+          <div class="callout-content">
+            <strong class="callout-title">Regra simples</strong>
+            <p>Não peça para ele ler um documento que você não mandaria para uma inteligência artificial.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 7: quiz -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">E se fosse com você?</h2>
+        <p>Quatro situações do dia a dia. Escolha o que você faria.</p>
+
+        <div class="quiz-container" id="g1-quiz">
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Ele nunca envia e-mail sozinho. Deixa tudo pronto na tela e espera você revisar e clicar em Enviar."
+               data-explanation-wrong="O Jarvis nunca envia e-mail. Ele só deixa o e-mail pronto no seu programa de e-mail, e quem clica em Enviar é você. Assim nada sai sem você ver.">
+            <h3 class="quiz-question">Você quer que o Jarvis mande um e-mail para a sua filha sem você tocar em nada. O que acontece?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Ele escreve e envia sozinho.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Ele deixa o e-mail pronto, e você confere e clica em Enviar.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Ele não sabe nada de e-mail.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="c"
+               data-explanation-right="Tudo começa desligado. Basta ligar “Abrir e fechar programas” na engrenagem, aba Permissões, e pedir de novo."
+               data-explanation-wrong="Não é defeito nem falta de pagamento. Logo depois de instalar, tudo começa desligado. Ligue “Abrir e fechar programas” na engrenagem, aba Permissões, e ele passa a abrir o Spotify.">
+            <h3 class="quiz-question">Acabou de instalar, pediu “abre o Spotify” e ele respondeu: “Essa ação está desligada nas permissões”. O que houve?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>A instalação deu errado. Melhor instalar de novo.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Abrir programas é uma função paga.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>É normal: falta ligar essa permissão na engrenagem.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="a"
+               data-explanation-right="Funciona com o microfone do notebook. O fone é só recomendado, para ele não ouvir a própria voz pela caixa de som."
+               data-explanation-wrong="Não precisa comprar nada. O microfone do notebook serve. O fone é recomendado porque, sem ele, o Jarvis pode ouvir a própria voz pela caixa de som e se interromper.">
+            <h3 class="quiz-question">Sua vizinha tem um notebook com Windows 11 e microfone embutido, mas não tem fone. Ela pode usar o Jarvis?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Pode. O fone ajuda, mas não é obrigatório.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Não. Precisa comprar um microfone profissional.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Só se ela souber programar.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="O texto dos arquivos que ele lê vai para o Google, para a IA entender. Se é algo que você não quer mandar para uma IA, não peça para ele ler."
+               data-explanation-wrong="Quando o Jarvis lê um arquivo, o texto dele vai para o Google, para a IA entender. Ele não fica só no seu computador. Em documentos sigilosos, o melhor é não pedir.">
+            <h3 class="quiz-question">Você tem um contrato com dados pessoais de um cliente e pensa em pedir: “Jarvis, resume esse PDF”. O que vale pensar antes?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Nada: o arquivo nunca sai do computador.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O texto do PDF vai para o Google. Se for sigiloso, melhor não pedir.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Ele vai apagar o PDF depois de ler.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('g1-quiz')">Verificar respostas</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('g1-quiz')">Tentar de novo</button>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">👉</div>
+          <div class="callout-content">
+            <strong class="callout-title">Próximo passo</strong>
+            <p>Já sabe o que ele faz e do que precisa. Na Parte 2, vamos baixar e instalar, com calma, inclusive aquele aviso azul do Windows que assusta todo mundo.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-2" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">02</span>
+      <h1 class="module-title">Instalando</h1>
+      <p class="module-subtitle">Um arquivo só, alguns cliques e um aviso azul que parece pior do que é.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- TELA 1: metáfora -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Como receber uma encomenda</h2>
+        <p>Instalar o Jarvis é parecido com receber uma encomenda em casa. Você compra na loja certa, o porteiro confere quem está entregando, você abre a caixa e guarda na prateleira.</p>
+
+        <div class="flow-steps">
+          <div class="flow-step"><div class="flow-step-num">1</div><p><strong>Baixar</strong><br>pegar na loja oficial</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">2</div><p><strong>Aviso azul</strong><br>o porteiro confere</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">3</div><p><strong>Instalar</strong><br>abrir a caixa</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">4</div><p><strong>Atalho</strong><br>guardar na prateleira</p></div>
+        </div>
+
+        <p>Leva poucos minutos. Não precisa de senha de <span class="term" data-definition="O “dono” do computador, que pode instalar coisas para todo mundo. O instalador do Jarvis não pede essa senha: instala só para o seu usuário.">administrador</span>.</p>
+      </section>
+
+      <!-- TELA 2: onde baixar -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">1. Baixe só da página oficial</h2>
+        <p>O Jarvis fica na página dele no <span class="term" data-definition="Um site onde programadores guardam e publicam os seus programas. É lá que mora o Jarvis, de graça e aberto para quem quiser conferir.">GitHub</span>, na parte chamada <span class="term" data-definition="“Lançamentos”, em inglês. É a prateleira da página do Jarvis no GitHub onde ficam os arquivos prontos para baixar, um para cada versão.">Releases</span>. Procure por este arquivo:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="background: #FFFFFF; color: #1F2328; font-family: var(--font-body); border: 1px solid var(--color-border);">
+            <span class="translation-label" style="color:#1F2328">TELA</span>
+            <div style="padding-top: var(--space-4);">
+              <p style="margin:0 0 var(--space-2); font-weight:700; font-size: var(--text-lg);">Jarvis 0.9.0 <span style="font-size: var(--text-xs); background:#1F883D; color:#fff; padding:2px 8px; border-radius:999px; vertical-align:middle;">Latest</span></p>
+              <p style="margin:0 0 var(--space-3); color:#59636E;">▾ Assets</p>
+              <div style="display:flex; justify-content:space-between; gap: var(--space-3); padding: var(--space-2) var(--space-3); border:1px solid #D1D9E0; border-radius:6px; background:#F6F8FA;">
+                <span style="color:#0969DA; font-weight:600;">📦 Jarvis-Setup-0.9.0.exe</span>
+                <span style="color:#59636E;">~24 MB</span>
+              </div>
+              <p style="margin: var(--space-3) 0 0; color:#59636E; font-size: var(--text-xs);">Junto dele: o SHA-256 e o link do VirusTotal.</p>
+            </div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">O QUE FAZER</span>
+            <div class="translation-lines">
+              <p class="tl">Na página do Jarvis no GitHub, entre em <strong>Releases</strong>.</p>
+              <p class="tl">Clique em <strong>Jarvis-Setup-0.9.0.exe</strong> (cerca de 24 MB). Ele vai para a pasta <strong>Downloads</strong>.</p>
+              <p class="tl">O final <span class="term" data-definition="A terminação do nome de um arquivo que diz o que ele é. “.exe” quer dizer “programa que roda”. Por isso só abra um .exe que veio de um lugar confiável.">.exe</span> quer dizer “programa”. É ele mesmo.</p>
+              <p class="tl">Quer conferir? Compare o <span class="term" data-definition="Uma espécie de impressão digital do arquivo: uma sequência de letras e números. Se um único pedacinho do arquivo mudar, a impressão digital muda toda. Igual = arquivo original.">SHA-256</span> e veja o resultado no <span class="term" data-definition="Um site grátis que passa o arquivo em dezenas de antivírus de uma vez e mostra o resultado.">VirusTotal</span>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🚩</div>
+          <div class="callout-content">
+            <strong class="callout-title">Desconfie de cópias</strong>
+            <p>Arquivo recebido no WhatsApp, em site de download ou com nome diferente (“Jarvis-PRO”, “Jarvis-crackeado”) não é o oficial. O Jarvis é grátis: ninguém precisa te cobrar nem te mandar “versão especial”.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 3: o aviso azul -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">2. O aviso azul: calma, é o porteiro</h2>
+        <p>Ao dar dois cliques no arquivo, pode aparecer uma tela azul. Ela não quer dizer que é vírus. Quer dizer que o Windows <strong>ainda não conhece</strong> quem fez o programa.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="background: #0067B8; color: #FFFFFF; font-family: 'Segoe UI', var(--font-body);">
+            <span class="translation-label" style="color:#fff">TELA</span>
+            <div style="padding-top: var(--space-4);">
+              <p style="margin:0 0 var(--space-3); font-size: var(--text-2xl); font-weight:300; line-height:1.2;">O Windows protegeu o computador</p>
+              <p style="margin:0 0 var(--space-3); font-size: var(--text-sm);">O Microsoft Defender SmartScreen impediu a inicialização de um aplicativo não reconhecido. A execução desse aplicativo pode colocar seu computador em risco.</p>
+              <p style="margin:0 0 var(--space-4); text-decoration: underline; font-weight:600;">Mais informações</p>
+              <div style="border-top:1px dashed rgba(255,255,255,0.5); padding-top: var(--space-3); font-size: var(--text-sm);">
+                <p style="margin:0">Aplicativo: Jarvis-Setup-0.9.0.exe</p>
+                <p style="margin:0 0 var(--space-3)">Fornecedor: Fornecedor desconhecido</p>
+                <div style="display:flex; gap: var(--space-2); justify-content:flex-end; flex-wrap:wrap;">
+                  <span style="border:2px solid #fff; padding:4px 12px;">Executar assim mesmo</span>
+                  <span style="background:#fff; color:#0067B8; padding:4px 12px; font-weight:600;">Não executar</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">O QUE FAZER</span>
+            <div class="translation-lines">
+              <p class="tl">No começo só aparece o botão “Não executar”. <strong>Não clique nele ainda.</strong></p>
+              <p class="tl">Clique no texto <strong>“Mais informações”</strong>. Aparece o nome do arquivo e um botão novo.</p>
+              <p class="tl">Confira: o aplicativo é <strong>Jarvis-Setup-0.9.0.exe</strong> e veio da página oficial?</p>
+              <p class="tl">Se sim, clique em <strong>“Executar assim mesmo”</strong>. Pronto, o instalador abre.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">✍️</div>
+            <h4 class="pattern-title">Por que aparece?</h4>
+            <p class="pattern-desc">O instalador não tem <span class="term" data-definition="Um selo pago, como uma firma reconhecida em cartório, que diz ao Windows quem fez o programa. Custa caro todo ano, e o Jarvis é grátis, então não tem.">assinatura digital</span>, que é um certificado pago. Sem ela, o Windows mostra o aviso.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🔍</div>
+            <h4 class="pattern-title">Dá para conferir</h4>
+            <p class="pattern-desc">O código do Jarvis é aberto: qualquer pessoa pode ler o que ele faz. Alguns antivírus podem reclamar por engano.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">🤚</div>
+            <h4 class="pattern-title">Quando parar</h4>
+            <p class="pattern-desc">Se o nome do arquivo for outro, ou se ele não veio da página oficial, clique em <strong>Não executar</strong> e apague.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 4: as telas do instalador -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">3. As telas do instalador</h2>
+        <p>O instalador é curtinho. Ele não pergunta pasta: coloca o Jarvis sozinho na sua pasta de usuário. Os nomes dos botões podem variar um pouco, mas o caminho é este:</p>
+
+        <div class="step-cards">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <strong>Contrato de licença</strong>
+              <p>Um texto em inglês: é a <span class="term" data-definition="A licença MIT é o “contrato” do Jarvis. Em resumo: você pode usar, copiar e compartilhar de graça.">licença MIT</span>, que diz que o Jarvis é livre e grátis. Marque que aceita e avance.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <strong>Atalho na área de trabalho</strong>
+              <p>Uma caixinha para criar o ícone do Jarvis na Área de Trabalho. Ela já vem marcada. Deixe assim se quiser o ícone na tela.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <strong>Pronto para instalar</strong>
+              <p>Clique em <strong>Instalar</strong> e espere a barrinha encher.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <strong>Concluir</strong>
+              <p>Na última tela, uma caixinha oferece abrir o Jarvis agora. Deixe marcada e clique em <strong>Concluir</strong>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🔁</div>
+          <div class="callout-content">
+            <strong class="callout-title">Vai atualizar um dia?</strong>
+            <p>É só rodar o instalador novo por cima. Se o Jarvis estiver aberto, ele pede para fechar antes. A sua chave e as suas escolhas continuam lá.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 5: onde fica o atalho -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">4. Onde fica o atalho</h2>
+        <p>Depois de instalado, você abre o Jarvis por um <span class="term" data-definition="Um ícone que abre o programa com dois cliques (ou um clique, no Menu Iniciar). Apagar o atalho não apaga o programa.">atalho</span>, como qualquer outro programa.</p>
+
+        <div class="icon-rows">
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-2)">⊞</div>
+            <div>
+              <strong>Menu Iniciar (sempre)</strong>
+              <p>Aperte a tecla do Windows, digite <strong>Jarvis</strong> e aperte Enter.</p>
+            </div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-4)">🖥️</div>
+            <div>
+              <strong>Área de Trabalho (se a caixinha ficou marcada)</strong>
+              <p>O ícone <strong>Jarvis</strong> aparece na tela. Dois cliques abrem a janela.</p>
+            </div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-1)">❌</div>
+            <div>
+              <strong>Para sair</strong>
+              <p>Feche a janela do Jarvis, como qualquer outra.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 6: animação do caminho todo -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O caminho todo, do download até a primeira conversa</h2>
+        <p>Clique em “Próximo passo” e acompanhe a viagem. As Partes 3 e 4 detalham o final dela.</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-g2-site","label":"Você entra na página oficial do Jarvis no GitHub, em Releases."},
+          {"highlight":"flow-g2-pc","label":"Baixa o Jarvis-Setup-0.9.0.exe (cerca de 24 MB). Ele cai na pasta Downloads.","packet":true,"from":"g2-site","to":"g2-pc"},
+          {"highlight":"flow-g2-aviso","label":"Dois cliques no arquivo. Se aparecer o aviso azul: “Mais informações” e depois “Executar assim mesmo”.","packet":true,"from":"g2-pc","to":"g2-aviso"},
+          {"highlight":"flow-g2-inst","label":"O instalador copia o Jarvis para a sua pasta de usuário, sem pedir senha de administrador.","packet":true,"from":"g2-aviso","to":"g2-inst"},
+          {"highlight":"flow-g2-inst","label":"Ele cria o atalho no Menu Iniciar e, se a caixinha ficou marcada, na Área de Trabalho."},
+          {"highlight":"flow-g2-janela","label":"Você abre o Jarvis. Na primeira vez aparece o assistente de 6 passos: Olá, eu sou o Jarvis.","packet":true,"from":"g2-inst","to":"g2-janela"},
+          {"highlight":"flow-g2-google","label":"No passo 2 você cria a chave grátis no Google AI Studio, cola e clica em Testar (Parte 3).","packet":true,"from":"g2-janela","to":"g2-google"},
+          {"highlight":"flow-g2-janela","label":"Chave funcionando. Depois vêm microfone, voz e nome, visual e permissões (Parte 4).","packet":true,"from":"g2-google","to":"g2-janela"},
+          {"highlight":"flow-g2-voce","label":"Tudo pronto! Você diz “Jarvis, que horas são?” e ele responde. Primeira conversa feita.","packet":true,"from":"g2-janela","to":"g2-voce"}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-g2-site">
+              <div class="flow-actor-icon">🌐</div>
+              <span>Página oficial</span>
+            </div>
+            <div class="flow-actor" id="flow-g2-pc">
+              <div class="flow-actor-icon">📥</div>
+              <span>Downloads</span>
+            </div>
+            <div class="flow-actor" id="flow-g2-aviso">
+              <div class="flow-actor-icon">🛡️</div>
+              <span>Aviso azul</span>
+            </div>
+            <div class="flow-actor" id="flow-g2-inst">
+              <div class="flow-actor-icon">📦</div>
+              <span>Instalador</span>
+            </div>
+            <div class="flow-actor" id="flow-g2-janela">
+              <div class="flow-actor-icon">🌌</div>
+              <span>Janela do Jarvis</span>
+            </div>
+            <div class="flow-actor" id="flow-g2-google">
+              <div class="flow-actor-icon">🔑</div>
+              <span>Chave do Google</span>
+            </div>
+            <div class="flow-actor" id="flow-g2-voce">
+              <div class="flow-actor-icon">🗣️</div>
+              <span>Você conversa</span>
+            </div>
+          </div>
+
+          <div class="flow-packet" id="g2-flow-packet"></div>
+
+          <div class="flow-step-label" id="g2-flow-label">Clique em “Próximo passo” para começar</div>
+
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Próximo passo</button>
+            <button class="btn flow-reset-btn">Recomeçar</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 7: quiz + conseguiu -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Apareceu isso, e agora?</h2>
+        <p>Situações reais de instalação. O que você faria?</p>
+
+        <div class="quiz-container" id="g2-quiz">
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Situação</span>
+              <p>Um conhecido mandou no WhatsApp um arquivo chamado “Jarvis-Setup-completo-PRO.exe”, dizendo que é “a versão liberada”.</p>
+            </div>
+            <div class="quiz-question-block"
+                 data-correct="c"
+                 data-explanation-right="O Jarvis só tem uma versão, grátis, e o arquivo oficial se chama Jarvis-Setup-0.9.0.exe. Baixe sempre da página oficial, em Releases."
+                 data-explanation-wrong="Arquivo de origem desconhecida e com nome diferente é sinal de alerta, mesmo vindo de alguém conhecido. Não existe “versão PRO”: baixe da página oficial do Jarvis no GitHub, em Releases.">
+              <h3 class="quiz-question">O que você faz?</h3>
+              <div class="quiz-options">
+                <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Abre, porque veio de alguém conhecido.</span></button>
+                <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Abre e clica em “Executar assim mesmo” se aparecer o aviso.</span></button>
+                <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Não abre. Baixa o Jarvis-Setup-0.9.0.exe da página oficial.</span></button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+          </div>
+
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Situação</span>
+              <p>Você baixou da página oficial. Apareceu a tela azul “O Windows protegeu o computador” e só tem um botão: “Não executar”.</p>
+            </div>
+            <div class="quiz-question-block"
+                 data-correct="b"
+                 data-explanation-right="O botão “Executar assim mesmo” fica escondido até você clicar em “Mais informações”."
+                 data-explanation-wrong="Não precisa desistir nem mexer no antivírus. Clique em “Mais informações”: aí aparece o botão “Executar assim mesmo”.">
+              <h3 class="quiz-question">Como seguir?</h3>
+              <div class="quiz-options">
+                <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Desligar o antivírus do computador.</span></button>
+                <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Clicar em “Mais informações” e depois em “Executar assim mesmo”.</span></button>
+                <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Desistir: não tem como instalar.</span></button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+          </div>
+
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Situação</span>
+              <p>No meio da instalação aparece uma janela pedindo a <strong>senha de administrador</strong> do computador.</p>
+            </div>
+            <div class="quiz-question-block"
+                 data-correct="a"
+                 data-explanation-right="O instalador oficial não pede senha de administrador. Se pediu, desconfie: confira de onde veio e o nome do arquivo."
+                 data-explanation-wrong="O instalador oficial do Jarvis instala só para o seu usuário e não pede senha de administrador. Uma janela pedindo isso é motivo para parar e conferir se o arquivo é o certo.">
+              <h3 class="quiz-question">O que isso indica?</h3>
+              <div class="quiz-options">
+                <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Algo estranho: o instalador oficial não pede essa senha.</span></button>
+                <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Normal: todo programa pede.</span></button>
+                <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Que a instalação terminou.</span></button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+          </div>
+
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Situação</span>
+              <p>A instalação terminou, você fechou tudo e não acha o ícone do Jarvis na Área de Trabalho.</p>
+            </div>
+            <div class="quiz-question-block"
+                 data-correct="c"
+                 data-explanation-right="O atalho do Menu Iniciar é criado sempre. O da Área de Trabalho só aparece se a caixinha ficou marcada."
+                 data-explanation-wrong="Não precisa reinstalar. Provavelmente a caixinha do atalho na área de trabalho ficou desmarcada. Aperte a tecla do Windows e digite Jarvis: ele está no Menu Iniciar.">
+              <h3 class="quiz-question">Qual é o jeito mais rápido de abrir?</h3>
+              <div class="quiz-options">
+                <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Instalar tudo de novo.</span></button>
+                <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Abrir o arquivo .exe da pasta Downloads toda vez.</span></button>
+                <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Tecla do Windows, digitar “Jarvis” e Enter.</span></button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('g2-quiz')">Verificar respostas</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('g2-quiz')">Tentar de novo</button>
+        </div>
+
+        <h3 class="screen-heading" style="margin-top: var(--space-10);">Conseguiu?</h3>
+        <div class="step-cards">
+          <details class="step-card" style="display:block;">
+            <summary style="cursor:pointer; font-weight:600;">✅ Sim: abriu uma janela dizendo “Olá, eu sou o Jarvis”</summary>
+            <p style="margin: var(--space-3) 0 0; color: var(--color-text-secondary);">Ótimo! É o assistente da primeira vez (Passo 1 de 6). Clique em <strong>Começar</strong> e siga para a Parte 3.</p>
+          </details>
+          <details class="step-card" style="display:block;">
+            <summary style="cursor:pointer; font-weight:600;">🤔 Ainda não: o instalador não abriu</summary>
+            <p style="margin: var(--space-3) 0 0; color: var(--color-text-secondary);">Dê dois cliques de novo no arquivo, na pasta Downloads. Se aparecer o aviso azul, clique em “Mais informações” e depois em “Executar assim mesmo”.</p>
+          </details>
+          <details class="step-card" style="display:block;">
+            <summary style="cursor:pointer; font-weight:600;">🤔 Instalou, mas a janela do Jarvis não abre</summary>
+            <p style="margin: var(--space-3) 0 0; color: var(--color-text-secondary);">Em alguns Windows 10 mais antigos falta um componente chamado <span class="term" data-definition="Uma peça do Windows que mostra páginas dentro de programas. O Jarvis usa ela para desenhar a janela. Já vem no Windows 11; no Windows 10 antigo pode faltar.">WebView2</span>. A Parte 6 mostra o que fazer.</p>
+          </details>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">👉</div>
+          <div class="callout-content">
+            <strong class="callout-title">Próximo passo</strong>
+            <p>O Jarvis está instalado. No passo 2 do assistente, ele pede uma chave do Google. Na Parte 3 você cria a sua, de graça, em um minuto.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-3" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">03</span>
+      <h1 class="module-title">Sua chave grátis do Google</h1>
+      <p class="module-subtitle">Uma carteirinha que deixa o Jarvis usar a inteligência do Google. Grátis, sua e de mais ninguém.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- TELA 1: o que é uma chave -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O que é essa “chave”?</h2>
+        <p>Pense na carteirinha da biblioteca do bairro. Ela é grátis, sai no seu nome e deixa você pegar livros, com um limite por dia. Se alguém pegar a sua carteirinha, pega livros no seu nome.</p>
+        <p>A <span class="term" data-definition="Chave de API é uma senha comprida que um programa usa para entrar num serviço. Aqui, é o que deixa o Jarvis usar a inteligência do Google em seu nome. Não é a senha do seu Gmail.">chave de API</span> do Google é essa carteirinha. O Jarvis mostra ela ao Google toda vez que precisa da <span class="term" data-definition="A inteligência artificial (IA) é o “cérebro” que entende o que você fala e decide o que responder. A do Jarvis é o Gemini, do Google.">inteligência artificial</span>.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="background: var(--color-surface); color: var(--color-text); font-family: var(--font-body); border-right: 1px solid var(--color-border-light);">
+            <span class="translation-label">CARTEIRINHA</span>
+            <div style="padding-top: var(--space-4); display:flex; flex-direction:column; gap: var(--space-3);">
+              <p style="margin:0">🆓 Grátis para fazer</p>
+              <p style="margin:0">🪪 Sai no seu nome</p>
+              <p style="margin:0">📚 Limite de livros por dia</p>
+              <p style="margin:0">🚨 Perdeu? Cancela e tira outra</p>
+            </div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">CHAVE DO GOOGLE</span>
+            <div class="translation-lines">
+              <p class="tl">Grátis, criada no <span class="term" data-definition="O site do Google para quem usa o Gemini. É lá que você cria a chave grátis, entrando com a sua conta Google.">Google AI Studio</span>.</p>
+              <p class="tl">Ligada à sua conta Google (a do Gmail).</p>
+              <p class="tl">O plano grátis tem um limite diário de uso.</p>
+              <p class="tl">Vazou? Apague no AI Studio e crie outra.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🔤</div>
+          <div class="callout-content">
+            <strong class="callout-title">Como ela se parece</strong>
+            <p>Uma linha comprida de letras e números, por exemplo <code>AQ.EXEMPLO-falso-nao-funciona-123</code> (essa é inventada). As chaves novas têm um <strong>ponto no meio</strong> e não começam com “AIza”, como as antigas. É normal.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 2: onde ela entra -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Onde ela entra no Jarvis</h2>
+        <p>Na primeira vez que você abre o Jarvis, o assistente chega no passo 2 e pede a chave. Esta é a tela:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="background: #0E1A1C; color: #E6EEEC; font-family: var(--font-body);">
+            <span class="translation-label">TELA</span>
+            <div style="padding-top: var(--space-4);">
+              <p style="margin:0 0 var(--space-2); font-size: var(--text-xs); letter-spacing:0.1em; text-transform:uppercase; color:#5FB3AC;">Passo 2 de 6</p>
+              <p style="margin:0 0 var(--space-2); font-size: var(--text-xl); font-weight:700;">Sua chave do Google</p>
+              <p style="margin:0 0 var(--space-3); font-size: var(--text-sm);">Eu uso o Gemini, a inteligência artificial do Google, para entender e responder. Para isso preciso de uma chave de acesso. <b>É grátis</b> e leva um minuto.</p>
+              <p style="margin:0 0 var(--space-3);"><span style="border:1px solid #5FB3AC; padding:3px 10px; border-radius:4px;">Criar minha chave grátis ↗</span> <span style="font-size: var(--text-xs); opacity:0.7;">abre no seu navegador</span></p>
+              <p style="margin:0 0 var(--space-1); font-size: var(--text-xs); opacity:0.8;">Cole a sua chave aqui</p>
+              <div style="display:flex; gap: var(--space-2); flex-wrap:wrap; align-items:center;">
+                <span style="flex:1; min-width:120px; border:1px solid #3B5457; padding:3px 8px; border-radius:4px; letter-spacing:0.2em;">••••••••••••</span>
+                <span style="border:1px solid #3B5457; padding:3px 10px; border-radius:4px;">Mostrar</span>
+                <span style="background:#5FB3AC; color:#0E1A1C; padding:3px 10px; border-radius:4px; font-weight:700;">Testar</span>
+              </div>
+            </div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">O QUE FAZER</span>
+            <div class="translation-lines">
+              <p class="tl"><strong>Criar minha chave grátis</strong> abre o site do Google no seu <span class="term" data-definition="O programa que você usa para entrar na internet: Chrome, Edge, Firefox…">navegador</span>, já na página certa.</p>
+              <p class="tl">O campo mostra bolinhas no lugar da chave, para ninguém ver por cima do seu ombro.</p>
+              <p class="tl"><strong>Mostrar</strong> deixa você conferir o que colou. Só use sozinho.</p>
+              <p class="tl"><strong>Testar</strong> confere com o Google se a chave funciona. Sem chave funcionando, o assistente não avança.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 3: criar no AI Studio -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Criando a chave, passo a passo</h2>
+        <p>Deixe a janela do Jarvis aberta. Você vai ao site do Google e volta com a chave copiada.</p>
+
+        <div class="step-cards">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <strong>Clique em “Criar minha chave grátis”</strong>
+              <p>O navegador abre o Google AI Studio, no endereço <strong>aistudio.google.com/apikey</strong>.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <strong>Entre com a sua conta Google</strong>
+              <p>O mesmo e-mail e senha do Gmail. Se o Google mostrar termos de uso na primeira vez, leia e aceite.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <strong>Clique em “Criar chave de API”</strong>
+              <p>Em inglês, aparece como <strong>Create API key</strong>. O site do Google muda de vez em quando: se a tela estiver diferente, procure esse botão.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <strong>Copie a chave inteira</strong>
+              <p>Use o botão de copiar ao lado dela. Se for selecionar com o mouse, pegue do primeiro ao último caractere, sem espaços.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <strong>Volte ao Jarvis, cole e clique em Testar</strong>
+              <p>Clique no campo “Cole a sua chave aqui” e aperte <span class="term" data-definition="Atalho do teclado para colar: segure a tecla Ctrl e aperte V. Também dá para clicar com o botão direito do mouse e escolher Colar.">Ctrl+V</span>. Depois, <strong>Testar</strong>.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 4: o resultado do teste -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O que o “Testar” pode responder</h2>
+        <p>Embaixo do campo aparece uma frase. Primeiro “Testando a chave… pode levar alguns segundos.” Depois, uma destas:</p>
+
+        <div class="badge-list">
+          <div class="badge-item">
+            <code class="badge-code" style="color:#A6E3A1;">Chave funcionando</code>
+            <span class="badge-desc">Deu certo! Clique em <strong>Avançar</strong> para ir ao microfone.</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">Essa chave não parece completa.</code>
+            <span class="badge-desc">Faltou um pedaço. Volte ao AI Studio, copie de novo a chave inteira e cole.</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">Chave inválida.</code>
+            <span class="badge-desc">Confira se copiou a chave inteira, sem espaços no começo ou no fim.</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">Sem internet (ou o Google não respondeu).</code>
+            <span class="badge-desc">Confira a conexão e clique em Testar de novo.</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">Limite da conta grátis atingido.</code>
+            <span class="badge-desc">Espere alguns minutos e tente de novo. Não precisa pagar nada.</span>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🚦</div>
+          <div class="callout-content">
+            <strong class="callout-title">Por que ele não deixa avançar?</strong>
+            <p>No rodapé aparece “Clique em Testar: só sigo com uma chave que funciona.” É de propósito: sem chave boa, ele não conseguiria conversar com você.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 5: cuidados -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Cuide dela como da sua carteirinha</h2>
+        <p>A chave é pessoal. Quem tem a sua chave usa o Google no seu nome e gasta o seu limite.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">🤐</div>
+            <h4 class="pattern-title">Nunca compartilhe</h4>
+            <p class="pattern-desc">Nem com quem diz ser “suporte” ou se oferece para configurar para você.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">📵</div>
+            <h4 class="pattern-title">Nada de print nem vídeo</h4>
+            <p class="pattern-desc">Cuidado ao gravar a tela, fazer live ou mandar print. Não aperte “Mostrar” com gente olhando.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">♻️</div>
+            <h4 class="pattern-title">Vazou? Troque</h4>
+            <p class="pattern-desc">Apague a chave no AI Studio e crie outra. No Jarvis: engrenagem → <strong>Chave do Google</strong> → cole → Testar → <strong>Salvar e aplicar</strong>.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🏠</div>
+            <h4 class="pattern-title">Fica no seu PC</h4>
+            <p class="pattern-desc">“A chave fica guardada só neste computador, na pasta das configurações.” Ela nunca aparece no log, e a janela mostra só o final dela.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🔔</div>
+          <div class="callout-content">
+            <strong class="callout-title">Se um dia ela parar de funcionar</strong>
+            <p>Aparece no topo da janela o aviso “A chave do Google parou de funcionar.” com o botão <strong>Atualizar chave</strong>. Crie uma chave nova, cole e teste.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 6: quiz + conseguiu -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">E se acontecer isto?</h2>
+        <p>Situações de verdade com a chave. Escolha o que fazer.</p>
+
+        <div class="quiz-container" id="g3-quiz">
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Ninguém precisa da sua chave para te ajudar. Com ela, a pessoa usaria o Google no seu nome e gastaria o seu limite."
+               data-explanation-wrong="A chave é como a sua carteirinha: quem tem, usa no seu nome. Ajuda de verdade não pede a sua chave. Você mesmo cola no Jarvis, seguindo este guia.">
+            <h3 class="quiz-question">Num comentário do Instagram, alguém oferece: “Me manda a sua chave que eu configuro o Jarvis pra você”. O que fazer?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Mandar, porque a pessoa está ajudando.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Não mandar. A chave é só sua.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Mandar só a metade da chave.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="c"
+               data-explanation-right="Apague a chave vazada no AI Studio, crie outra e troque na engrenagem, aba Chave do Google. A antiga deixa de valer."
+               data-explanation-wrong="Apagar o vídeo não basta: alguém pode ter visto ou copiado. Apague a chave no AI Studio, crie outra e cole na engrenagem, aba Chave do Google, com Testar e Salvar e aplicar.">
+            <h3 class="quiz-question">Você gravou a tela para mostrar a uma amiga e, sem querer, a chave apareceu no vídeo.</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Tudo bem, ninguém vai reparar.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Só apagar o vídeo resolve.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Apagar a chave no AI Studio, criar outra e trocar no Jarvis.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="a"
+               data-explanation-right="Quase sempre faltou um pedaço na hora de copiar. Use o botão de copiar do AI Studio e cole de novo."
+               data-explanation-wrong="Essa mensagem quer dizer que a chave colada está incompleta, geralmente porque faltou um pedaço ao copiar. Não precisa criar conta nova: copie a chave inteira de novo e cole.">
+            <h3 class="quiz-question">Você clicou em Testar e apareceu: “Essa chave não parece completa”. Qual é o próximo passo?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Copiar de novo a chave inteira no AI Studio e colar.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Criar outra conta Google.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Desinstalar o Jarvis.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="As chaves novas do Google têm um ponto no meio e não começam com AIza. Pode colar sem medo."
+               data-explanation-wrong="Não há nada de errado. As chaves novas do Google têm um ponto no meio e não começam com “AIza”, como as antigas. Cole e clique em Testar.">
+            <h3 class="quiz-question">A sua chave tem um ponto no meio e não começa com “AIza”, como você viu num vídeo antigo.</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Está errada. Apague e crie outra até começar com AIza.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>É normal. As chaves novas são assim.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Tire o ponto antes de colar.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('g3-quiz')">Verificar respostas</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('g3-quiz')">Tentar de novo</button>
+        </div>
+
+        <h3 class="screen-heading" style="margin-top: var(--space-10);">Conseguiu?</h3>
+        <div class="step-cards">
+          <details class="step-card" style="display:block;">
+            <summary style="cursor:pointer; font-weight:600;">✅ Sim: apareceu “Chave funcionando”</summary>
+            <p style="margin: var(--space-3) 0 0; color: var(--color-text-secondary);">Perfeito. Clique em <strong>Avançar</strong>. O próximo passo é o microfone, e a Parte 4 te acompanha a partir daqui.</p>
+          </details>
+          <details class="step-card" style="display:block;">
+            <summary style="cursor:pointer; font-weight:600;">🤔 Ainda não: apareceu outra mensagem</summary>
+            <p style="margin: var(--space-3) 0 0; color: var(--color-text-secondary);">Volte à tela “O que o Testar pode responder”, logo acima, e procure a frase que apareceu. Cada uma diz o que fazer.</p>
+          </details>
+          <details class="step-card" style="display:block;">
+            <summary style="cursor:pointer; font-weight:600;">🤔 O site do Google não abriu</summary>
+            <p style="margin: var(--space-3) 0 0; color: var(--color-text-secondary);">Abra o navegador você mesmo e digite <strong>aistudio.google.com/apikey</strong> na barra de endereço.</p>
+          </details>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">👉</div>
+          <div class="callout-content">
+            <strong class="callout-title">Próximo passo: a primeira configuração</strong>
+            <p>Com a chave funcionando, faltam 4 passos rapidinhos: microfone, personalizar (nome, voz e visual), permissões e “Tudo pronto”. Siga para a Parte 4.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-4" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">04</span>
+      <h1 class="module-title">A primeira configuração</h1>
+      <p class="module-subtitle">Seis telinhas, uma de cada vez: a chave, o microfone, a voz, o nome, o visual e o que ele pode fazer no seu computador.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- TELA 1 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Como ligar um celular novo</h2>
+        <p>Você já instalou o Jarvis e já criou a sua chave grátis do Google. Agora é só abrir o atalho <strong>Jarvis</strong>: na primeira vez, aparece um <span class="term" data-definition="Um assistente de configuração é uma sequência de telinhas que aparece só na primeira vez, perguntando uma coisa de cada vez. Você vai clicando em Avançar até o fim, como no caixa eletrônico.">assistente de configuração</span> de 6 passos.</p>
+        <p>Lembra da primeira vez que você ligou um celular novo? Ele pergunta uma coisa de cada vez: idioma, internet, conta... Aqui é igual: a chave, o microfone, o jeito dele falar e, por último, <strong>o que ele pode fazer no seu computador</strong>.</p>
+
+        <div class="flow-steps">
+          <div class="flow-step"><div class="flow-step-num">1</div><p>Boas-vindas</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">2</div><p>Sua chave do Google</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">3</div><p>Microfone</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">4</div><p>Personalizar</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">5</div><p>Permissões</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">6</div><p>Tudo pronto!</p></div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🧭</div>
+          <div class="callout-content">
+            <strong class="callout-title">Você nunca se perde</strong>
+            <p>No alto de cada tela aparece "Passo 1 de 6", "Passo 2 de 6"... e uns risquinhos que vão acendendo. Embaixo, à esquerda, o botão <strong>Voltar</strong> leva para a tela anterior sem perder nada.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 2 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Passos 1 e 2: o "olá" e a chave</h2>
+        <p>À esquerda, o que aparece na janela do Jarvis. À direita, o que você faz.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="font-family:var(--font-body)">
+            <span class="translation-label">TELA DO JARVIS</span>
+            <div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;opacity:.6;margin-bottom:10px">Passo 1 de 6</div>
+            <div style="font-family:var(--font-display);font-size:1.35rem;color:#F0EEE9;margin-bottom:8px">Olá, eu sou o Jarvis</div>
+            <div style="opacity:.85;margin-bottom:14px">Sou o seu assistente pessoal de voz. Vamos deixar tudo pronto em poucos minutos: a chave do Google, o microfone e o meu jeito de falar.</div>
+            <div style="text-align:right"><span style="display:inline-block;padding:4px 14px;border-radius:4px;background:#5FC8BE;color:#1E1E2E;font-weight:600">Começar</span></div>
+            <hr style="border:none;border-top:1px dashed rgba(255,255,255,.2);margin:18px 0">
+            <div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;opacity:.6;margin-bottom:10px">Passo 2 de 6</div>
+            <div style="font-family:var(--font-display);font-size:1.35rem;color:#F0EEE9;margin-bottom:8px">Sua chave do Google</div>
+            <div style="margin-bottom:10px"><span style="display:inline-block;padding:4px 12px;border:1px solid #5FC8BE;border-radius:4px;color:#5FC8BE">Criar minha chave grátis ↗</span></div>
+            <div style="font-size:13px;opacity:.75;margin-bottom:4px">Cole a sua chave aqui</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+              <span style="flex:1;min-width:120px;padding:4px 8px;border:1px solid rgba(255,255,255,.25);border-radius:4px;letter-spacing:.2em">••••••••••••</span>
+              <span style="padding:4px 10px;border:1px solid rgba(255,255,255,.3);border-radius:4px">Mostrar</span>
+              <span style="padding:4px 12px;border-radius:4px;background:#5FC8BE;color:#1E1E2E;font-weight:600">Testar</span>
+            </div>
+            <div style="margin-top:8px;color:#7BE0A0">✔ Chave funcionando</div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">O QUE FAZER</span>
+            <div class="translation-lines">
+              <p class="tl"><strong>Passo 1:</strong> só uma apresentação. Clique em <strong>Começar</strong>.</p>
+              <p class="tl"><strong>Passo 2:</strong> cole a chave que você criou na parte 3 (clique com o botão direito no campo e escolha <em>Colar</em>, ou aperte Ctrl+V).</p>
+              <p class="tl">As bolinhas escondem a chave, de propósito. <strong>Mostrar</strong> deixa ver, se quiser conferir.</p>
+              <p class="tl">Clique em <strong>Testar</strong>. Quando aparecer "Chave funcionando", clique em <strong>Avançar</strong>.</p>
+              <p class="tl">Ainda não criou a chave? O botão <strong>Criar minha chave grátis</strong> abre o site do Google no navegador.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🔒</div>
+          <div class="callout-content">
+            <strong class="callout-title">Ele só segue com uma chave que funciona</strong>
+            <p>Se você clicar em Avançar sem testar, aparece embaixo: "Clique em Testar: só sigo com uma chave que funciona." É só testar. Se aparecer "Chave inválida", copie a chave inteira de novo, sem espaços, e cole outra vez.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 3 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Passo 3: ele está te ouvindo?</h2>
+        <p>Aqui o Jarvis testa o seu <span class="term" data-definition="O microfone padrão é aquele que o Windows usa quando um programa pede para ouvir. Se você tem dois (o do notebook e o do fone, por exemplo), o Windows escolhe um deles como o principal.">microfone padrão</span>. Fale qualquer coisa, como "Oi, Jarvis".</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="font-family:var(--font-body)">
+            <span class="translation-label">TELA DO JARVIS</span>
+            <div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;opacity:.6;margin-bottom:10px">Passo 3 de 6</div>
+            <div style="font-family:var(--font-display);font-size:1.35rem;color:#F0EEE9;margin-bottom:8px">Microfone</div>
+            <div style="opacity:.85;margin-bottom:10px">Fale alguma coisa, por exemplo “Oi, Jarvis”. A barra tem que se mexer com a sua voz.</div>
+            <div style="height:10px;border-radius:5px;background:rgba(255,255,255,.12);overflow:hidden;margin-bottom:8px"><div style="width:62%;height:100%;background:#5FC8BE"></div></div>
+            <div style="color:#7BE0A0;margin-bottom:12px">Estou ouvindo você.</div>
+            <div style="font-size:13px;opacity:.75;border-left:2px solid #5FC8BE;padding-left:8px;margin-bottom:10px">Use fone de ouvido: assim eu não escuto a minha própria voz pela caixa de som e não me interrompo sozinho.</div>
+            <div>☐ Estou usando fone de ouvido</div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">O QUE FAZER</span>
+            <div class="translation-lines">
+              <p class="tl">Fale normalmente. A barrinha deve andar junto com a sua voz.</p>
+              <p class="tl">Apareceu "Estou ouvindo você."? Perfeito, o microfone está certo.</p>
+              <p class="tl">Está de fone? Marque <strong>Estou usando fone de ouvido</strong>. Sem fone, deixe <strong>desmarcado</strong>.</p>
+              <p class="tl">A barra não mexe? Dá para seguir assim mesmo e ajustar depois (veja a parte 6).</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🎧</div>
+            <h4 class="pattern-title">Com fone</h4>
+            <p class="pattern-desc">Marque a caixinha. Ele não escuta a própria voz e você pode até interromper ele no meio de uma frase.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">🔊</div>
+            <h4 class="pattern-title">Na caixa de som</h4>
+            <p class="pattern-desc">Deixe desmarcada. Enquanto ele fala, ele "tapa os ouvidos" para não responder a si mesmo. Espere ele terminar para falar.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 4 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Passo 4: nome, voz e visual</h2>
+        <p>Três escolhas, e nenhuma é obrigatória. Tudo pode ser trocado depois.</p>
+
+        <div class="icon-rows">
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-1)">🙂</div>
+            <div>
+              <strong>"Como devo te chamar?" (opcional)</strong>
+              <p>Escreva seu nome, por exemplo Ana. Ele aparece na última tela ("Tudo pronto, Ana!") e o Jarvis passa a se apresentar como o seu assistente. Na conversa, no estilo mordomo, ele trata você por "senhor".</p>
+            </div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🗣️</div>
+            <div>
+              <strong>Minha voz: 8 vozes grátis do Google</strong>
+              <p>Cada cartão tem o botão <strong>Ouvir</strong>: clique para escutar uma amostra (vira <strong>Parar</strong> enquanto toca). Depois marque a que mais gostou.</p>
+            </div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-3)">🌌</div>
+            <div>
+              <strong>Visual: a animação da janela</strong>
+              <p>Clique em <strong>Escolher visual</strong>. Abre a tela "Escolha o visual do Jarvis", com 9 opções animadas. Clique na que preferir. Se não quiser trocar, <strong>Voltar</strong> (ou a tecla Esc) fecha sem mudar nada.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="badge-list">
+          <div class="badge-item"><code class="badge-code">Charon</code><span class="badge-desc">Masculina, grave e calma (é a que já vem marcada)</span></div>
+          <div class="badge-item"><code class="badge-code">Puck</code><span class="badge-desc">Masculina, animada</span></div>
+          <div class="badge-item"><code class="badge-code">Kore</code><span class="badge-desc">Feminina, firme</span></div>
+          <div class="badge-item"><code class="badge-code">Fenrir</code><span class="badge-desc">Masculina, empolgada</span></div>
+          <div class="badge-item"><code class="badge-code">Aoede</code><span class="badge-desc">Feminina, leve</span></div>
+          <div class="badge-item"><code class="badge-code">Leda</code><span class="badge-desc">Feminina, jovem</span></div>
+          <div class="badge-item"><code class="badge-code">Orus</code><span class="badge-desc">Masculina, firme</span></div>
+          <div class="badge-item"><code class="badge-code">Zephyr</code><span class="badge-desc">Feminina, clara</span></div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Quer uma voz diferente dessas oito?</strong>
+            <p>Existe uma opção de voz personalizada pelo <span class="term" data-definition="ElevenLabs é um site pago que cria vozes artificiais, inclusive uma cópia da sua própria voz. É totalmente opcional: o Jarvis funciona de graça sem ele.">ElevenLabs</span>, mas ela é <strong>opcional e paga</strong>. Este guia fica no uso grátis: as vozes do Google já funcionam muito bem.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 5 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Passo 5: o quadro de luz</h2>
+        <p>Pense no quadro de luz da casa, aquele cheio de disjuntores: cada um liga um pedaço da casa. Aqui, cada <span class="term" data-definition="Uma permissão é uma autorização que você dá ao Jarvis para um tipo de tarefa. Desligada, ele não faz aquilo de jeito nenhum, mesmo que você peça.">permissão</span> é um interruptor desses, e você liga só os que vai usar. <strong>Por segurança, tudo começa desligado.</strong></p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="font-family:var(--font-body)">
+            <span class="translation-label">TELA DO JARVIS</span>
+            <div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;opacity:.6;margin-bottom:10px">Passo 5 de 6</div>
+            <div style="font-family:var(--font-display);font-size:1.35rem;color:#F0EEE9;margin-bottom:6px">Permissões</div>
+            <div style="opacity:.85;margin-bottom:12px">Por segurança, tudo começa desligado. Ligue só o que quiser — dá para mudar depois na engrenagem.</div>
+            <div style="color:#5FC8BE;font-weight:600;margin-bottom:4px">Arquivos e pastas</div>
+            <div style="font-size:13px;line-height:1.6;margin-bottom:12px">
+              ◉ Nenhum<br>
+              ○ Só ler<br>
+              ○ Ler e gravar<br>
+              ○ Ler, gravar e excluir
+            </div>
+            <div style="color:#5FC8BE;font-weight:600;margin-bottom:4px">O que mais eu posso fazer</div>
+            <div style="font-size:13px;line-height:1.6;margin-bottom:12px">
+              ⬜ Abrir e fechar programas<br>
+              ⬜ Abrir sites e pesquisar<br>
+              ⬜ Preparar e-mails<br>
+              ⬜ Outros discos
+            </div>
+            <div style="color:#FF8A9B;font-weight:600;margin-bottom:4px">Sempre bloqueado</div>
+            <div style="font-size:12px;opacity:.7;margin-bottom:12px">Isto eu nunca faço, com qualquer permissão: …</div>
+            <div style="display:flex;justify-content:flex-end;gap:6px">
+              <span style="padding:4px 12px;border:1px solid rgba(255,255,255,.3);border-radius:4px">Pular</span>
+              <span style="padding:4px 14px;border-radius:4px;background:#5FC8BE;color:#1E1E2E;font-weight:600">Avançar</span>
+            </div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">O QUE QUER DIZER</span>
+            <div class="translation-lines">
+              <p class="tl"><strong>Nenhum:</strong> não mexe em nenhum arquivo nem pasta.</p>
+              <p class="tl"><strong>Só ler:</strong> vê pastas, procura, abre e lê arquivos. Não muda nada.</p>
+              <p class="tl"><strong>Ler e gravar:</strong> também cria pastas e documentos (inclusive do Word), copia, move e renomeia. Nunca escreve por cima de nada.</p>
+              <p class="tl"><strong>Ler, gravar e excluir:</strong> também manda arquivos para a <strong>Lixeira</strong>. Mesmo assim, sempre pergunta antes.</p>
+              <p class="tl"><strong>Programas, sites, e-mails:</strong> cada um é um botão de liga e desliga.</p>
+              <p class="tl"><strong>Outros discos:</strong> mexer no disco D: ou num <span class="term" data-definition="Pendrive é aquele chaveirinho de plástico ou metal que você espeta na entrada USB do computador para levar arquivos de um lugar para outro.">pendrive</span>. Desligado, ele fica só nas suas pastas (Área de Trabalho, Documentos, Downloads...).</p>
+              <p class="tl"><strong>Pular</strong> deixa tudo desligado. Dá para ligar depois.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🗑️</div>
+            <h4 class="pattern-title">Apagar? Só com o seu clique</h4>
+            <p class="pattern-desc">Mesmo com "excluir" ligado, abre uma janela do Windows e só o <strong>seu</strong> clique em "Sim" vale. O arquivo vai para a Lixeira, dá para recuperar.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">✉️</div>
+            <h4 class="pattern-title">E-mail? Ele nunca envia</h4>
+            <p class="pattern-desc">Ele só deixa o e-mail pronto no seu programa de e-mail. Quem confere e clica em Enviar é você.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🚫</div>
+            <h4 class="pattern-title">O que nunca liga</h4>
+            <p class="pattern-desc">Arquivos de chave e senha, as pastas do Windows e de programas, a própria pasta do Jarvis, terminal, PowerShell, Prompt de Comando, Editor de Registro, arquivos executáveis e scripts, e pastas de rede. Não existe interruptor para isso.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">👁️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Privacidade: o que ele lê, o Google também lê</strong>
+            <p>Quando o Jarvis lê um arquivo para você, o texto vai para o Google (é assim que a IA entende o conteúdo). Não peça para ele ler documentos que você não quer mandar para a IA.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 6 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O que ligar para cada uso?</h2>
+        <p>Comece pequeno: ligue só o que você vai usar. Arraste cada interruptor para o pedido que ele libera.</p>
+
+        <div class="dnd-container" id="g4-dnd">
+          <div class="dnd-chips">
+            <div class="dnd-chip" draggable="true" data-answer="ler">Arquivos: Só ler</div>
+            <div class="dnd-chip" draggable="true" data-answer="gravar">Arquivos: Ler e gravar</div>
+            <div class="dnd-chip" draggable="true" data-answer="excluir">Arquivos: Ler, gravar e excluir</div>
+            <div class="dnd-chip" draggable="true" data-answer="apps">Abrir e fechar programas</div>
+            <div class="dnd-chip" draggable="true" data-answer="internet">Abrir sites e pesquisar</div>
+            <div class="dnd-chip" draggable="true" data-answer="email">Preparar e-mails</div>
+            <div class="dnd-chip" draggable="true" data-answer="discos">Outros discos</div>
+          </div>
+          <div class="dnd-zones">
+            <div class="dnd-zone" data-correct="ler">
+              <p class="dnd-zone-label">“Procura o boleto nos Downloads e lê para mim.”</p>
+              <div class="dnd-zone-target">Solte aqui</div>
+            </div>
+            <div class="dnd-zone" data-correct="gravar">
+              <p class="dnd-zone-label">“Transcreve esse texto num documento do Word.”</p>
+              <div class="dnd-zone-target">Solte aqui</div>
+            </div>
+            <div class="dnd-zone" data-correct="excluir">
+              <p class="dnd-zone-label">“Manda o arquivo rascunho.txt para a Lixeira.”</p>
+              <div class="dnd-zone-target">Solte aqui</div>
+            </div>
+            <div class="dnd-zone" data-correct="apps">
+              <p class="dnd-zone-label">“Abre a calculadora.”</p>
+              <div class="dnd-zone-target">Solte aqui</div>
+            </div>
+            <div class="dnd-zone" data-correct="internet">
+              <p class="dnd-zone-label">“Pesquisa receita de bolo de cenoura.”</p>
+              <div class="dnd-zone-target">Solte aqui</div>
+            </div>
+            <div class="dnd-zone" data-correct="email">
+              <p class="dnd-zone-label">“Escreve um e-mail para o João avisando que chego às 10h.”</p>
+              <div class="dnd-zone-target">Solte aqui</div>
+            </div>
+            <div class="dnd-zone" data-correct="discos">
+              <p class="dnd-zone-label">“O que tem no pendrive?” (além de Só ler, falta esta)</p>
+              <div class="dnd-zone-target">Solte aqui</div>
+            </div>
+          </div>
+          <button class="btn" onclick="checkDnD('g4-dnd')">Verificar</button>
+          <button class="btn" onclick="resetDnD('g4-dnd')">Recomeçar</button>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🪜</div>
+          <div class="callout-content">
+            <strong class="callout-title">Os níveis de Arquivos são uma escada</strong>
+            <p>Cada degrau inclui o de baixo. Quem escolhe "Ler e gravar" também pode ler; quem escolhe "Ler, gravar e excluir" pode tudo isso e ainda mandar para a Lixeira. Programas, sites, e-mails e outros discos são botões separados.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 7 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Passo 6: tudo pronto!</h2>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="font-family:var(--font-body)">
+            <span class="translation-label">TELA DO JARVIS</span>
+            <div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;opacity:.6;margin-bottom:10px">Passo 6 de 6</div>
+            <div style="font-family:var(--font-display);font-size:1.35rem;color:#F0EEE9;margin-bottom:8px">Tudo pronto, Ana!</div>
+            <div style="opacity:.85;margin-bottom:6px">Quando eu começar, é só falar comigo. Experimente dizer:</div>
+            <div style="font-size:1.1rem;color:#5FC8BE;margin-bottom:8px">“Jarvis, que horas são?”</div>
+            <div style="font-size:13px;opacity:.65;margin-bottom:12px">Para mudar a voz, a chave, o visual ou as permissões depois, use a engrenagem no canto de cima.</div>
+            <div style="text-align:right"><span style="display:inline-block;padding:4px 14px;border-radius:4px;background:#5FC8BE;color:#1E1E2E;font-weight:600">Começar a usar</span></div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">O QUE FAZER</span>
+            <div class="translation-lines">
+              <p class="tl">O nome que você escreveu no passo 4 aparece aqui no título.</p>
+              <p class="tl">Clique em <strong>Começar a usar</strong>. O botão mostra "Iniciando…" e depois "Aplicando… pode levar alguns segundos."</p>
+              <p class="tl">A tela some e aparece o visual animado. Agora diga: <em>"Jarvis, que horas são?"</em></p>
+              <p class="tl">Da próxima vez que abrir o atalho, ele vai direto para o visual e já começa a ouvir. Sem configurar de novo.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 8: QUIZ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">E se fosse com você?</h2>
+
+        <div class="quiz-container" id="g4-quiz">
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Isso. Criar um documento do Word é gravar algo novo, então precisa de Arquivos no nível Ler e gravar (ou acima). Não precisa liberar a exclusão para isso."
+               data-explanation-wrong="Pense na escada: criar um documento novo é gravar. Só ler não deixa criar nada, e excluir é mais do que você precisa.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você quer pedir: "Jarvis, escreve uma carta para a minha irmã no Word". O que precisa estar ligado?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Arquivos: Só ler</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Arquivos: Ler e gravar</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Abrir e fechar programas</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="a"
+               data-explanation-right="Exatamente. O assistente só deixa avançar do passo 2 com uma chave testada e funcionando. Clique em Testar e espere aparecer Chave funcionando."
+               data-explanation-wrong="Não precisa reinstalar nada. O assistente só deixa passar do passo 2 depois que você clica em Testar e a chave funciona.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você colou a chave e clicou em Avançar, mas nada aconteceu. Embaixo apareceu: "Clique em Testar: só sigo com uma chave que funciona." O que você faz?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Clico em Testar e espero aparecer "Chave funcionando".</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Desinstalo e instalo o Jarvis de novo.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Clico em Pular.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="c"
+               data-explanation-right="Boa escolha. Sem fone, a caixinha fica desmarcada: enquanto ele fala, ele não escuta, e assim não responde à própria voz. É só esperar ele terminar."
+               data-explanation-wrong="Marcar a caixinha sem estar de fone faz o Jarvis ouvir a própria voz saindo da caixa de som e se interromper. Sem fone, deixe desmarcada.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você vai usar o Jarvis no notebook, com o som saindo pela caixinha do próprio notebook, sem fone. E a caixinha "Estou usando fone de ouvido"?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Marco, para ele ouvir melhor.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Tanto faz.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Deixo desmarcada.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Certo. Pular deixa tudo desligado, e isso é seguro: ele só conversa e diz as horas. Quando quiser, ligue o que precisar na engrenagem, aba Permissões."
+               data-explanation-wrong="Na dúvida, pode clicar em Pular sem medo: tudo fica desligado e você liga depois, na engrenagem, aba Permissões.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você chegou no passo 5 e ficou na dúvida sobre o que ligar. O que acontece se clicar em Pular?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Ele liga tudo para facilitar.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Tudo continua desligado, e dá para ligar depois na engrenagem.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Nunca mais dá para mudar.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('g4-quiz')">Verificar respostas</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('g4-quiz')">Tentar de novo</button>
+        </div>
+      </section>
+
+      <!-- TELA 9: CONSEGUIU? -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Conseguiu?</h2>
+        <p>Marque o que já deu certo aí no seu computador.</p>
+        <div class="step-cards" id="g4-checklist">
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g4-check-1" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>A chave apareceu como "Chave funcionando"</strong><p>Passo 2 concluído.</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g4-check-2" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>A barra do microfone mexeu com a minha voz</strong><p>Se não mexeu, siga em frente; a parte 6 ajuda.</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g4-check-3" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Escolhi uma voz depois de clicar em Ouvir</strong><p>Pode trocar quando quiser.</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g4-check-4" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Liguei só as permissões que vou usar (ou cliquei em Pular)</strong><p>Menos coisa ligada, menos preocupação.</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g4-check-5" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Cliquei em "Começar a usar" e o visual apareceu</strong><p>Agora é conversar. Vamos para a parte 5.</p></div></label>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-5" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">05</span>
+      <h1 class="module-title">Conversando com ele</h1>
+      <p class="module-subtitle">Como falar, o que pedir, o que ele responde quando uma permissão está desligada e como trocar voz e visual depois.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- TELA 1 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A janela aberta é o ouvido ligado</h2>
+        <p>Abriu o atalho <strong>Jarvis</strong>? Ele já está ouvindo. Não tem botão para apertar antes de falar: é só conversar. Para ele parar de ouvir, <strong>feche a janela</strong>.</p>
+        <p>No alto da janela tem uma plaquinha que mostra o que ele está fazendo agora:</p>
+
+        <div class="icon-rows">
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-border)">💤</div>
+            <div><strong>em espera</strong><p>Ligado e aguardando você falar.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-2)">👂</div>
+            <div><strong>ouvindo</strong><p>Está prestando atenção no que você diz.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-3)">💭</div>
+            <div><strong>pensando</strong><p>Entendeu e está preparando a resposta (ou fazendo o que você pediu).</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-4)">🗣️</div>
+            <div><strong>falando</strong><p>Está respondendo. A animação pulsa no ritmo da voz dele.</p></div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🎩</div>
+          <div class="callout-content">
+            <strong class="callout-title">O jeitão dele</strong>
+            <p>O Jarvis fala como um mordomo educado: chama você de "senhor", responde curto (uma ou duas frases) e, antes de fazer algo, avisa ("Abrindo, senhor."). Depois confirma o que já aconteceu ("Pronto, senhor, calculadora aberta.").</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 2 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Walkie-talkie ou telefone?</h2>
+        <p>Sabe o walkie-talkie, em que um fala de cada vez? Sem fone de ouvido, o Jarvis funciona assim: enquanto ele fala, ele "tapa os ouvidos" para não escutar a própria voz saindo da caixa de som. Com fone, vira um telefone: dá para falar por cima e interromper.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🎧</div>
+            <h4 class="pattern-title">Use fone, se puder</h4>
+            <p class="pattern-desc">É o jeito mais confortável. Marque "Estou usando fone de ouvido" na engrenagem, aba Geral. Assim dá até para interromper ele no meio da frase.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🎤</div>
+            <h4 class="pattern-title">Fale perto do microfone</h4>
+            <p class="pattern-desc">No notebook, o microfone costuma ficar perto da câmera ou do teclado. Fale de frente para o computador, num tom normal, sem gritar.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">⏱️</div>
+            <h4 class="pattern-title">Diga a frase inteira</h4>
+            <p class="pattern-desc">Uma pausa de meio segundo já vale como "terminei". Pense no pedido antes e diga tudo de uma vez: "Abre a calculadora."</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">🔊</div>
+            <h4 class="pattern-title">Sem fone? Espere a vez</h4>
+            <p class="pattern-desc">Deixe a caixinha do fone desmarcada e espere a plaquinha sair de "falando" para fazer o próximo pedido.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 3: FLUXO -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O caminho de um pedido</h2>
+        <p>O que acontece entre você dizer "abre a calculadora" e ouvir a resposta? Clique em <strong>Próximo passo</strong> para acompanhar.</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-g5-voce","label":"Você fala: Jarvis, abre a calculadora. A plaquinha muda para ouvindo."},
+          {"highlight":"flow-g5-pc","label":"O Jarvis escuta pelo microfone do seu computador.","packet":true,"from":"g5-voce","to":"g5-pc"},
+          {"highlight":"flow-g5-google","label":"A sua voz vai pela internet para o Google, que é o cérebro: ele entende o que você pediu. Plaquinha: pensando.","packet":true,"from":"g5-pc","to":"g5-google"},
+          {"highlight":"flow-g5-pc","label":"O Google responde: para isso, preciso abrir um programa.","packet":true,"from":"g5-google","to":"g5-pc"},
+          {"highlight":"flow-g5-porteiro","label":"Antes de mexer em qualquer coisa, o Jarvis confere as suas permissões, aí no seu computador.","packet":true,"from":"g5-pc","to":"g5-porteiro"},
+          {"highlight":"flow-g5-porteiro","label":"Abrir e fechar programas está desligado? Ele não abre nada e avisa que a ação está desligada nas permissões."},
+          {"highlight":"flow-g5-pc","label":"Está ligado? A calculadora abre no seu computador.","packet":true,"from":"g5-porteiro","to":"g5-pc"},
+          {"highlight":"flow-g5-google","label":"O resultado volta para o Google, que monta a resposta falada.","packet":true,"from":"g5-pc","to":"g5-google"},
+          {"highlight":"flow-g5-voce","label":"Plaquinha: falando. Você ouve: Pronto, senhor, calculadora aberta.","packet":true,"from":"g5-pc","to":"g5-voce"}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-g5-voce"><div class="flow-actor-icon">🙋</div><span>Você</span></div>
+            <div class="flow-actor" id="flow-g5-pc"><div class="flow-actor-icon">🖥️</div><span>Jarvis no seu PC</span></div>
+            <div class="flow-actor" id="flow-g5-google"><div class="flow-actor-icon">🧠</div><span>Google (a IA)</span></div>
+            <div class="flow-actor" id="flow-g5-porteiro"><div class="flow-actor-icon">🔑</div><span>Suas permissões</span></div>
+          </div>
+          <div class="flow-packet" id="g5-flow-packet"></div>
+          <div class="flow-step-label" id="g5-flow-label">Clique em "Próximo passo" para começar</div>
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Próximo passo</button>
+            <button class="btn flow-reset-btn">Recomeçar</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Quem manda nas chaves é você</strong>
+            <p>O Google decide <em>o que</em> fazer, mas quem confere se pode é o seu computador, na hora da ação. Se a permissão está desligada, a IA não tem como "dar um jeitinho".</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 4 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O que pedir, chave por chave</h2>
+        <p>Cada pedido só funciona com a permissão certa ligada. Exemplos de frases que você pode dizer:</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🕒</div>
+            <h4 class="pattern-title">Sempre liberado</h4>
+            <p class="pattern-desc">"Que horas são?" Conversar e fazer contas de cabeça também: "Quanto é 15% de 80?"</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🧮</div>
+            <h4 class="pattern-title">Abrir e fechar programas</h4>
+            <p class="pattern-desc">"Abre a calculadora." "Abre o Spotify." "Quais aplicativos estão abertos?" "Fecha o bloco de notas."</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🌐</div>
+            <h4 class="pattern-title">Abrir sites e pesquisar</h4>
+            <p class="pattern-desc">"Abre o youtube.com." "Pesquisa receita de bolo de cenoura."</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">📂</div>
+            <h4 class="pattern-title">Arquivos: Só ler</h4>
+            <p class="pattern-desc">"O que tem na pasta Downloads?" "Procura o arquivo orçamento nos documentos." "Resume esse PDF."</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">📝</div>
+            <h4 class="pattern-title">Arquivos: Ler e gravar</h4>
+            <p class="pattern-desc">"Cria uma pasta chamada Projetos na área de trabalho." "Cria um arquivo lista de compras com arroz, feijão e café." "Transcreve esse texto num documento do Word."</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">🗑️</div>
+            <h4 class="pattern-title">Ler, gravar e excluir</h4>
+            <p class="pattern-desc">"Manda o arquivo rascunho.txt para a Lixeira." Vai abrir uma janela pedindo o seu "Sim".</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-info)">
+            <div class="pattern-icon" style="background: var(--color-info)">✉️</div>
+            <h4 class="pattern-title">Preparar e-mails</h4>
+            <p class="pattern-desc">"Escreve um e-mail para joao@exemplo.com avisando que chego às 10h. Deixa pronto para enviar."</p>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🚧</div>
+          <div class="callout-content">
+            <strong class="callout-title">O que ele não faz</strong>
+            <p>Ele não digita dentro de outros programas (nem na calculadora: a conta, ele faz de cabeça). Só lê PDF que tem texto: PDF escaneado, que é uma foto da página, ele não consegue. Arquivo muito grande, ele lê só o começo e avisa.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 5: CHAT -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Uma conversa de exemplo</h2>
+        <p>Veja como fica no dia a dia, inclusive quando você pede algo que ainda está desligado. As palavras do Jarvis mudam um pouco a cada vez (é a IA que fala), mas o sentido é este.</p>
+
+        <div class="chat-window" id="g5-chat">
+          <div class="chat-messages">
+            <div class="chat-message" data-msg="0" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">V</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p>Jarvis, que horas são?</p></div>
+            </div>
+            <div class="chat-message" data-msg="1" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>São duas e meia da tarde, senhor.</p></div>
+            </div>
+            <div class="chat-message" data-msg="2" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">V</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p>Abre a calculadora.</p></div>
+            </div>
+            <div class="chat-message" data-msg="3" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Senhor, essa ação está desligada nas permissões: abrir programas. Dá para ligar na engrenagem, em Permissões.</p></div>
+            </div>
+            <div class="chat-message" data-msg="4" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">V</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p><em>(clica na engrenagem › Permissões › liga "Abrir e fechar programas" › Salvar e aplicar)</em></p></div>
+            </div>
+            <div class="chat-message" data-msg="5" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">V</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p>Agora sim: abre a calculadora.</p></div>
+            </div>
+            <div class="chat-message" data-msg="6" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Abrindo, senhor.</p></div>
+            </div>
+            <div class="chat-message" data-msg="7" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Pronto, senhor, calculadora aberta.</p></div>
+            </div>
+            <div class="chat-message" data-msg="8" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">V</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p>Manda o arquivo rascunho.txt da área de trabalho para a Lixeira.</p></div>
+            </div>
+            <div class="chat-message" data-msg="9" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Achei o rascunho.txt na Área de Trabalho. Confirme na janela, senhor.</p></div>
+            </div>
+            <div class="chat-message" data-msg="10" data-sender="windows" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">W</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-3)">Janela do Windows: "Jarvis - confirmacao manual"</span><p>Mandar o arquivo para a Lixeira? &nbsp;[ Sim ] &nbsp;[ Não ]</p></div>
+            </div>
+            <div class="chat-message" data-msg="11" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">V</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p><em>(clica em Sim)</em></p></div>
+            </div>
+            <div class="chat-message" data-msg="12" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Pronto, senhor, o rascunho.txt foi para a Lixeira.</p></div>
+            </div>
+            <div class="chat-message" data-msg="13" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">V</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p>Escreve um e-mail para joao@exemplo.com avisando que chego às 10h. Deixa pronto para enviar.</p></div>
+            </div>
+            <div class="chat-message" data-msg="14" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Deixei o e-mail pronto no seu programa de e-mail, senhor. É só revisar e clicar em Enviar.</p></div>
+            </div>
+          </div>
+
+          <div class="chat-typing" style="display:none">
+            <div class="chat-avatar" id="g5-chat-typing-avatar">?</div>
+            <div class="chat-typing-dots">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+            </div>
+          </div>
+
+          <div class="chat-controls">
+            <button class="btn chat-next-btn">Próxima mensagem</button>
+            <button class="btn chat-all-btn">Mostrar tudo</button>
+            <button class="btn chat-reset-btn">Recomeçar</button>
+            <span class="chat-progress"></span>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🛡️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Repare em duas coisas</strong>
+            <p>Para apagar, só o seu clique em "Sim" vale; se você não clicar, a janela fecha sozinha depois de um tempo e conta como "Não". E o e-mail nunca sai sozinho: quem clica em Enviar é você. (Nesta conversa, a pessoa já tinha ligado Arquivos em "Ler, gravar e excluir" e "Preparar e-mails".)</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 6 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A engrenagem: o painel de ajustes</h2>
+        <p>Tudo o que você escolheu na primeira configuração muda depois pelo botão de <strong>engrenagem</strong> ⚙️, no canto de cima, à direita. Ele abre as Configurações, em 5 abas:</p>
+
+        <div class="icon-rows">
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-1)">🙂</div>
+            <div><strong>Geral</strong><p>Como ele te chama, qual voz ele usa (com o botão Ouvir), a caixinha "Estou usando fone de ouvido" e o visual.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🔑</div>
+            <div><strong>Permissões</strong><p>As mesmas chaves do passo 5. A mudança vale na hora.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-3)">🎫</div>
+            <div><strong>Chave do Google</strong><p>Mostra só o finalzinho da chave salva (algo como "…abcd"), para criar e colar uma chave nova.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-4)">🎙️</div>
+            <div><strong>Voz personalizada (ElevenLabs)</strong><p>Opcional e paga. Pode ignorar se quer usar só o grátis.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-5)">ℹ️</div>
+            <div><strong>Sobre</strong><p>A versão do Jarvis e botões para abrir a pasta das configurações e a pasta dos logs (a parte 6 explica).</p></div>
+          </div>
+        </div>
+
+        <div class="step-cards">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body"><strong>Trocar a voz</strong><p>Engrenagem › <strong>Geral</strong> › clique em <strong>Ouvir</strong> para escutar › marque a voz nova › <strong>Salvar e aplicar</strong>.</p></div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body"><strong>Trocar o visual</strong><p>Clique em <strong>Trocar visual</strong>, no canto de cima, à direita (ou Engrenagem › Geral › <strong>Escolher visual</strong>). Clique no cartão que preferir: muda na hora e fica salvo.</p></div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body"><strong>Ligar uma permissão</strong><p>Engrenagem › <strong>Permissões</strong> › ligue o que quiser › <strong>Salvar e aplicar</strong>.</p></div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💾</div>
+          <div class="callout-content">
+            <strong class="callout-title">Não esqueça o "Salvar e aplicar"</strong>
+            <p>Embaixo das Configurações aparece: "Salvo. O Jarvis está reconectando com as configurações novas." Ele religa a voz com as escolhas novas sem fechar a janela.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 7: QUIZ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">E se fosse com você?</h2>
+
+        <div class="quiz-container" id="g5-quiz">
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Isso. A frase quer dizer exatamente isso: está desligado nas permissões. Ligue Abrir sites e pesquisar na engrenagem e clique em Salvar e aplicar."
+               data-explanation-wrong="Não é defeito: é a segurança funcionando. Tudo começa desligado. Ligue Abrir sites e pesquisar na engrenagem, aba Permissões.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você pede "Pesquisa a previsão do tempo" e ele responde que essa ação está desligada nas permissões. O que você faz?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Repito o pedido mais alto.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Engrenagem › Permissões › ligo "Abrir sites e pesquisar" › Salvar e aplicar.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Desinstalo, porque ele está com defeito.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="c"
+               data-explanation-right="Exato. Sem fone, enquanto ele fala ele não ouve (para não responder à própria voz). Espere terminar, ou use fone e marque a caixinha para poder interromper."
+               data-explanation-wrong="Pense no walkie-talkie: sem fone, um fala de cada vez. Enquanto ele fala, ele não escuta você. Espere ele terminar, ou use fone e marque a caixinha.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você está sem fone, com a caixinha do fone desmarcada. O Jarvis começou uma resposta longa e você tentou interromper, mas ele continuou falando. Por quê?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O microfone quebrou.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>A internet caiu.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Sem fone, ele não escuta enquanto está falando.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="a"
+               data-explanation-right="Isso mesmo. O Jarvis nunca envia e-mail: ele só deixa pronto. Confira o texto e o destinatário e clique em Enviar você mesmo."
+               data-explanation-wrong="O Jarvis nunca envia e-mail sozinho. Ele só deixa pronto no seu programa de e-mail; quem confere e clica em Enviar é você.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você pediu um e-mail para a sua filha e ele disse que deixou pronto. O e-mail já chegou para ela?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Ainda não: eu reviso e clico em Enviar.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Sim, ele já mandou.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Só se "Outros discos" estiver ligado.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Perfeito. Uma pausa de meio segundo já conta como fim da frase. Diga o pedido inteiro de uma vez, sem parar no meio."
+               data-explanation-wrong="Ele entende que você terminou quando você fica quieto por cerca de meio segundo. Diga o pedido inteiro de uma vez, sem pausas no meio.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você diz "Cria uma pasta..." e para para pensar no nome. O Jarvis já responde, perguntando o nome da pasta. Como evitar isso da próxima vez?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Falo mais devagar, com pausas entre as palavras.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Penso antes e digo tudo de uma vez: "Cria uma pasta chamada Receitas na área de trabalho."</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Ligo "Outros discos".</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('g5-quiz')">Verificar respostas</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('g5-quiz')">Tentar de novo</button>
+        </div>
+      </section>
+
+      <!-- TELA 8: CONSEGUIU? -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Conseguiu?</h2>
+        <p>Teste aí, em voz alta, e marque o que funcionou.</p>
+        <div class="step-cards" id="g5-checklist">
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g5-check-1" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Perguntei "que horas são?" e ele respondeu</strong><p>Funciona com tudo desligado.</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g5-check-2" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Vi a plaquinha mudar: ouvindo, pensando, falando</strong><p>Fica no alto da janela.</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g5-check-3" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Liguei uma permissão e o pedido funcionou</strong><p>Por exemplo, "Abrir e fechar programas" e depois "Abre a calculadora".</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g5-check-4" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Troquei a voz ou o visual e cliquei em Salvar e aplicar</strong><p>O visual muda na hora; a voz, depois que ele reconecta.</p></div></label>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-6" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">06</span>
+      <h1 class="module-title">Se algo der errado</h1>
+      <p class="module-subtitle">O que cada aviso quer dizer, o que fazer quando a internet falha, onde fica o "diário" do Jarvis, como desinstalar e onde pedir ajuda.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- TELA 1 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">As luzinhas do painel</h2>
+        <p>Quando acende uma luz no painel do carro, ninguém joga o carro fora: cada luz diz o que conferir. Com o Jarvis é igual. Ele nunca trava por causa de um erro: ele <strong>avisa numa frase simples</strong>. Veja os avisos mais comuns e o que fazer:</p>
+
+        <div class="icon-rows">
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🔑</div>
+            <div><strong>"Essa ação está desligada nas permissões"</strong><p>É de propósito: tudo começa desligado. Abra a engrenagem › <strong>Permissões</strong>, ligue o que quiser e clique em <strong>Salvar e aplicar</strong>.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-3)">💽</div>
+            <div><strong>"Acesso a outros discos (como D: ou pendrive) está desligado nas permissões."</strong><p>O arquivo está fora das suas pastas pessoais. Ligue <strong>Outros discos</strong> na aba Permissões.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-1)">⚠️</div>
+            <div><strong>"A chave do Google parou de funcionar" (faixa no alto da janela)</strong><p>Clique em <strong>Atualizar chave</strong> (ou engrenagem › <strong>Chave do Google</strong>), crie uma chave nova no Google, cole e clique em <strong>Testar</strong>.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-4)">✂️</div>
+            <div><strong>"Chave inválida" ou "Essa chave não parece completa"</strong><p>Copie a chave inteira de novo, sem espaços, e cole. As chaves novas do Google podem ter um ponto no meio: é normal. Se mesmo assim aparecer "não parece completa", instale a versão mais nova do Jarvis e cole de novo.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-5)">⏳</div>
+            <div><strong>"Limite da conta grátis atingido" ou "o Google pediu para esperar um pouco (limite de uso)"</strong><p>A conta grátis tem um limite de uso por minuto e por dia. Não precisa fazer nada: espere alguns minutos, que volta a funcionar sozinho.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-info)">🛡️</div>
+            <div><strong>"O Windows protegeu o computador" (ao instalar)</strong><p>Clique em <strong>Mais informações</strong> e depois em <strong>Executar assim mesmo</strong>. A parte 2 explica por que isso aparece.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 2 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O aviso da internet</h2>
+        <p>O cérebro do Jarvis fica no Google, então ele precisa de internet para conversar. Se a conexão cai, ele não fica mudo: toca uma frase <strong>já gravada</strong>, que funciona até sem internet.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="font-family:var(--font-body)">
+            <span class="translation-label">O QUE VOCÊ OUVE</span>
+            <div style="font-size:2rem;margin-bottom:10px">🔊</div>
+            <div style="font-size:1.15rem;color:#F0EEE9;line-height:1.5">“Desculpe, estou tendo problemas com a sua internet. Aguarde um momento ou tente daqui a pouco.”</div>
+            <hr style="border:none;border-top:1px dashed rgba(255,255,255,.2);margin:18px 0">
+            <div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;opacity:.6;margin-bottom:6px">Na tela, às vezes</div>
+            <div style="opacity:.85">Senhor, perdi a conexão. Tento de novo em 2 s…</div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">O QUE ACONTECEU E O QUE FAZER</span>
+            <div class="translation-lines">
+              <p class="tl"><strong>Quando toca:</strong> a internet caiu, ou o Google ficou 12 segundos sem responder.</p>
+              <p class="tl"><strong>O que ele faz:</strong> reconecta sozinho. Você não precisa fechar nem abrir nada.</p>
+              <p class="tl"><strong>O que você faz:</strong> espere um pouquinho e fale de novo.</p>
+              <p class="tl"><strong>Repete toda hora?</strong> Confira a sua internet (o Wi-Fi está ligado? outros sites abrem?).</p>
+              <p class="tl">Para não ficar repetitivo, esse aviso toca no máximo uma vez a cada 30 segundos, na voz que você escolheu.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 3 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Quando o problema é o som (ou a janela)</h2>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🙉</div>
+            <h4 class="pattern-title">Ele não me ouve</h4>
+            <p class="pattern-desc">Confira o microfone em <strong>Configurações do Windows › Sistema › Som › Entrada</strong> e escolha o microfone certo. Depois veja <strong>Configurações › Privacidade › Microfone</strong> e deixe o acesso permitido.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🔁</div>
+            <h4 class="pattern-title">Ele responde a si mesmo ou se interrompe</h4>
+            <p class="pattern-desc">Ele está ouvindo a própria voz pela caixa de som. Use fone e marque <strong>"Estou usando fone de ouvido"</strong> (engrenagem › Geral). Sem fone, deixe a caixinha <strong>desmarcada</strong>.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">🪟</div>
+            <h4 class="pattern-title">A janela não abre</h4>
+            <p class="pattern-desc">Falta o <span class="term" data-definition="WebView2 é uma peça gratuita do Windows que deixa um programa mostrar uma tela feita como página da internet. O Jarvis desenha a janela dele com ela. No Windows 11 ela já vem instalada; em alguns Windows 10 mais antigos, falta.">WebView2</span>, uma peça do Windows que já vem no Windows 11. Em alguns Windows 10 antigos é preciso instalar.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">🎨</div>
+            <h4 class="pattern-title">Quero escolher o visual de novo</h4>
+            <p class="pattern-desc">Clique em <strong>Trocar visual</strong>, no canto de cima da janela. Se um visual der erro, a janela volta sozinha para o mais simples, o Globo.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🗺️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Lembrete: onde ele pode mexer</strong>
+            <p>Com "Outros discos" desligado, o Jarvis só mexe na sua pasta de usuário (Área de Trabalho, Documentos, Downloads...) e no <span class="term" data-definition="OneDrive é a pasta do Windows que guarda uma cópia dos seus arquivos na internet, para você acessar de outro computador ou celular.">OneDrive</span>. Se ele "não acha" um arquivo, talvez o arquivo esteja em outro disco ou num pendrive.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 4 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O diário de bordo</h2>
+        <p>Todo navio tem um diário de bordo onde o capitão anota o que aconteceu na viagem. O Jarvis também tem o dele: o <span class="term" data-definition="Log é um arquivo de anotações que o programa escreve sozinho, com data e hora: o que ele fez e os erros que teve. É o primeiro lugar para olhar quando algo dá errado.">log</span>. Para qualquer outro problema, o erro completo fica anotado lá.</p>
+
+        <div class="file-tree">
+          <div class="ft-folder"><span class="ft-name">Jarvis</span><span class="ft-desc">a pasta das suas configurações (fica fora da pasta do programa)</span>
+            <div class="ft-children">
+              <div class="ft-file"><span class="ft-name">.env</span><span class="ft-desc">a sua chave. Nunca mande este arquivo para ninguém.</span></div>
+              <div class="ft-file"><span class="ft-name">preferencias.json</span><span class="ft-desc">voz, nome, fone, visual e permissões</span></div>
+              <div class="ft-folder"><span class="ft-name">logs</span>
+                <div class="ft-children">
+                  <div class="ft-file"><span class="ft-name">jarvis.log</span><span class="ft-desc">o diário de bordo</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-cards">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body"><strong>Abra a engrenagem</strong><p>O botão ⚙️ no canto de cima, à direita.</p></div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body"><strong>Vá na aba Sobre</strong><p>Lá aparecem a versão do Jarvis e as pastas.</p></div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body"><strong>Em "Logs", clique em Abrir pasta</strong><p>Abre a pasta com o arquivo <strong>jarvis.log</strong>. Dá para abrir com o Bloco de Notas.</p></div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🧹</div>
+          <div class="callout-content">
+            <strong class="callout-title">O diário não guarda a sua chave</strong>
+            <p>O Jarvis apaga as chaves antes de escrever no log. Por isso dá para copiar um trecho do log quando for pedir ajuda. O arquivo <strong>.env</strong>, esse sim, nunca deve sair do seu computador.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 5 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Como desinstalar</h2>
+        <p>Quer tirar o Jarvis do computador? É como qualquer outro programa:</p>
+
+        <div class="flow-steps">
+          <div class="flow-step"><div class="flow-step-num">1</div><p>Configurações do Windows</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">2</div><p>Aplicativos</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">3</div><p>Jarvis</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">4</div><p>Desinstalar</p></div>
+        </div>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="font-family:var(--font-body)">
+            <span class="translation-label">A PERGUNTA NO FIM</span>
+            <div style="opacity:.9;line-height:1.6">Deseja apagar também as suas configurações do Jarvis?<br><br>Isso inclui a sua chave do Google, as preferências (voz, nome, visual) e os logs, em:<br><span style="opacity:.7">…\Jarvis</span><br><br>Escolha "Não" para mantê-las (útil se for instalar de novo).</div>
+            <div style="text-align:right;margin-top:12px">
+              <span style="display:inline-block;padding:4px 14px;border:1px solid rgba(255,255,255,.3);border-radius:4px">Sim</span>
+              <span style="display:inline-block;padding:4px 14px;border-radius:4px;background:#5FC8BE;color:#1E1E2E;font-weight:600">Não</span>
+            </div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">O QUE ESCOLHER</span>
+            <div class="translation-lines">
+              <p class="tl"><strong>Não</strong> (o botão já vem selecionado): o programa sai, mas a sua chave e as suas escolhas ficam guardadas. Se instalar de novo, ele já abre configurado.</p>
+              <p class="tl"><strong>Sim</strong>: apaga também a chave, as preferências e os logs.</p>
+              <p class="tl">Vai emprestar ou vender o computador? Escolha <strong>Sim</strong>.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 6 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Onde pedir ajuda</h2>
+
+        <div class="step-cards">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body"><strong>Confira os avisos desta parte</strong><p>A maioria dos problemas é uma permissão desligada, a chave ou o microfone.</p></div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body"><strong>Abra um pedido na página do Jarvis no GitHub</strong><p>Na página do Jarvis no GitHub (o endereço aparece na engrenagem › Sobre, em "Repositório"), vá em <span class="term" data-definition="No GitHub, Issues é a área de pedidos e reclamações de um projeto. Cada pedido é uma issue: você escreve o problema e quem cuida do projeto responde ali mesmo. Precisa de uma conta grátis no GitHub.">Issues</span> e escolha <strong>Problema (bug)</strong>. O formulário pergunta: o que aconteceu, o que você esperava, o passo a passo, como instalou, a versão (engrenagem › Sobre) e se é Windows 10 ou 11.</p></div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body"><strong>Ou mande uma mensagem no Instagram</strong><p>@mateusmirandaia.ia. Na aba Sobre tem o botão <strong>Seguir no Instagram</strong>.</p></div>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🚫</div>
+          <div class="callout-content">
+            <strong class="callout-title">Nunca, em lugar nenhum</strong>
+            <p>Não cole a sua chave do Google, nem o conteúdo do arquivo .env, num pedido de ajuda, numa mensagem, num print ou num vídeo. Ninguém de verdade vai pedir a sua chave. Se ela vazou, apague essa chave no Google AI Studio, crie outra e cole na engrenagem › Chave do Google.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 7: QUIZ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">E se fosse com você?</h2>
+
+        <div class="quiz-container" id="g6-quiz">
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Isso. Essa frase gravada toca quando a internet cai ou o Google demora mais de 12 segundos. Ele reconecta sozinho; espere e fale de novo."
+               data-explanation-wrong="Não precisa mexer em nada. Essa frase toca quando a internet cai ou o Google demora. Ele reconecta sozinho: espere um pouco e fale de novo. Se repetir sempre, confira a internet.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>No meio da conversa, ele diz: "Desculpe, estou tendo problemas com a sua internet. Aguarde um momento ou tente daqui a pouco." O que você faz?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Crio uma chave nova.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Espero um pouco e falo de novo; se repetir sempre, confiro a internet.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Desinstalo o Jarvis.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="c"
+               data-explanation-right="Certo. A barra que não mexe aponta para o microfone: confira qual está escolhido em Configurações › Sistema › Som › Entrada e se o acesso está permitido em Privacidade › Microfone."
+               data-explanation-wrong="Quando ele não reage à sua voz, o suspeito é o microfone. Confira em Configurações do Windows › Sistema › Som › Entrada e depois em Privacidade › Microfone.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você fala e fala, e a plaquinha nunca muda para "ouvindo". Onde você olha primeiro?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Na aba Permissões.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>No visual: troco por outro.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>No microfone, nas Configurações de som e de privacidade do Windows.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="a"
+               data-explanation-right="Exato. Conte o que aconteceu e mande, se quiser, um trecho do log (o log não guarda a chave). A chave e o .env nunca vão junto."
+               data-explanation-wrong="A chave e o arquivo .env nunca devem ser enviados para ninguém, nem para quem vai te ajudar. Mande a descrição do problema, a versão e, se quiser, um trecho do log.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você vai pedir ajuda no GitHub. O que pode ir junto na mensagem?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O que aconteceu, a versão do Jarvis, se é Windows 10 ou 11 e um trecho do log.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Um print da tela mostrando a minha chave, para provar que está certa.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O arquivo .env inteiro.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Boa. Respondendo Não, a pasta das configurações fica guardada: ao instalar de novo, ele já abre com a sua chave e as suas escolhas."
+               data-explanation-wrong="Sim apaga a chave e as preferências. Como você vai reinstalar, o melhor é responder Não: tudo fica guardado e ele abre configurado.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você vai desinstalar o Jarvis só para instalar a versão nova logo depois. Na pergunta "Deseja apagar também as suas configurações do Jarvis?", o que responde?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Sim.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Não.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Fecho a pergunta sem responder.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('g6-quiz')">Verificar respostas</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('g6-quiz')">Tentar de novo</button>
+        </div>
+      </section>
+
+      <!-- TELA 8: CONSEGUIU? + CRÉDITO -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Conseguiu?</h2>
+        <p>Se você marcou tudo, já sabe se virar sozinho com o Jarvis.</p>
+        <div class="step-cards" id="g6-checklist">
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g6-check-1" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Sei o que fazer quando ele diz que a ação está desligada</strong><p>Engrenagem › Permissões › Salvar e aplicar.</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g6-check-2" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Sei que o aviso da internet se resolve sozinho</strong><p>Espero e falo de novo.</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g6-check-3" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Achei a pasta dos logs</strong><p>Engrenagem › Sobre › Logs › Abrir pasta.</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g6-check-4" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Minha chave continua só comigo</strong><p>Nada de print, vídeo ou mensagem com ela.</p></div></label>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🤝</div>
+          <div class="callout-content">
+            <strong class="callout-title">Quem fez o Jarvis</strong>
+            <p>O Jarvis foi criado por <strong>Mateus Miranda</strong> (@mateusmirandaia.ia). É <strong>grátis</strong> e de <span class="term" data-definition="Código aberto quer dizer que a receita do programa fica à vista de todo mundo, na internet. Qualquer pessoa pode conferir o que ele faz, e ninguém precisa pagar para usar.">código aberto</span>: qualquer pessoa pode usar e conferir como ele funciona. Se ele te ajudou, conte para ele lá no Instagram.</p>
+          </div>
+        </div>
+
+        <p>Ficou curioso para saber o que acontece lá dentro quando você diz "Jarvis, abre a calculadora"? Tem um curso grátis, também sem precisar programar: <a href="../curso/index.html">Por dentro do Jarvis</a>.</p>
+      </section>
+
+    </div>
+  </div>
+</section>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,425 @@
+<section class="module" id="module-1" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">01</span>
+      <h1 class="module-title">O que acontece quando você fala</h1>
+      <p class="module-subtitle">Uma frase, oito peças e uma calculadora aberta. Vamos seguir o caminho inteiro.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- TELA 1: o produto -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O Jarvis em uma tela</h2>
+        <p>O Jarvis é um <span class="term" data-definition="Um programa que você controla falando, em vez de clicar ou digitar. Ele ouve, entende e responde com voz.">assistente de voz</span> grátis para Windows, feito em <span class="term" data-definition="Uma linguagem de programação popular e fácil de ler. É nela que está escrito o “cérebro” do Jarvis: os arquivos que terminam em .py.">Python</span> e de <span class="term" data-definition="Código aberto (open source) é quando o código do programa fica público: qualquer pessoa pode ler, copiar, corrigir e melhorar.">código aberto</span>. Você fala, ele entende, responde e faz coisas no seu computador.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🎙️</div>
+            <h4 class="pattern-title">Ouve e conversa</h4>
+            <p class="pattern-desc">Conversa em tempo real usando o <span class="term" data-definition="O serviço do Google que recebe a sua voz ao vivo, entende e já responde falando. É o “ouvido + cérebro + boca” do Jarvis, e fica na internet, não no seu PC.">Gemini Live</span>, com voz de mordomo britânico, em português.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🪟</div>
+            <h4 class="pattern-title">Abre e fecha programas</h4>
+            <p class="pattern-desc">Calculadora, Bloco de Notas, Chrome, Word, Spotify… e o que estiver no Menu Iniciar.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">📁</div>
+            <h4 class="pattern-title">Mexe em arquivos</h4>
+            <p class="pattern-desc">Cria pastas, lê PDFs e planilhas, escreve um Word. Só com a sua <span class="term" data-definition="Uma chave de liga/desliga que você controla na engrenagem do Jarvis. No Jarvis, todas começam DESLIGADAS: ele só faz o que você liberou.">permissão</span>, e tudo começa desligado.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">🌌</div>
+            <h4 class="pattern-title">9 visuais</h4>
+            <p class="pattern-desc">Galáxia, cérebro, reator, holograma… todos mudam quando ele ouve, pensa ou fala.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🆓</div>
+            <h4 class="pattern-title">Sem pagar nada</h4>
+            <p class="pattern-desc">Usa a <span class="term" data-definition="O plano grátis do Google para desenvolvedores: dá para usar o Gemini sem pagar, mas com limite de quantos pedidos por minuto e por dia.">camada gratuita</span> do Gemini. A voz do ElevenLabs é opcional (e paga).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 2: a metáfora -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Uma corrida de revezamento</h2>
+        <p>Pense numa prova de revezamento: ninguém corre a pista toda. Cada atleta corre o seu trecho e passa o <strong>bastão</strong> para o próximo. No Jarvis, o bastão é a sua frase.</p>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🏃</div>
+          <div class="callout-content">
+            <strong class="callout-title">O bastão desta corrida</strong>
+            <p style="font-size: 1.35rem; font-weight: 700; margin: 0;">“Jarvis, abre a calculadora.”</p>
+          </div>
+        </div>
+
+        <div class="flow-steps">
+          <div class="flow-step"><div class="flow-step-num">1</div><p>Seu microfone capta o som</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">2</div><p>O Google entende e decide</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">3</div><p>O Jarvis confere e age no Windows</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">4</div><p>A resposta volta falada</p></div>
+        </div>
+        <p>Cada trecho é um arquivo diferente do código. Se o bastão cair, saber <em>em qual trecho</em> caiu é meio caminho para consertar.</p>
+      </section>
+
+      <!-- TELA 3: animação de fluxo (hero) -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Siga o bastão, passo a passo</h2>
+        <p>Clique em <strong>Próximo passo</strong> e veja a frase passar de mão em mão.</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-m1-voce","label":"Você diz “Jarvis, abre a calculadora”. O microfone transforma sua voz em números."},
+          {"highlight":"flow-m1-audio","label":"audio.py lê o microfone em pedacinhos de 512 amostras, 16 mil amostras por segundo.","packet":true,"from":"m1-voce","to":"m1-audio"},
+          {"highlight":"flow-m1-live","label":"O LiveAssistant pega cada pedacinho assim que ele chega, sem esperar você terminar a frase.","packet":true,"from":"m1-audio","to":"m1-live"},
+          {"highlight":"flow-m1-gemini","label":"Ele manda o áudio ao vivo, pela internet, para o Gemini Live, no Google.","packet":true,"from":"m1-live","to":"m1-gemini"},
+          {"highlight":"flow-m1-gemini","label":"O Gemini entende a frase e decide: preciso da ferramenta open_app, com nome = calculadora."},
+          {"highlight":"flow-m1-live","label":"Em vez de texto, chega um pedido de ferramenta (tool call). O Jarvis não espera: segue ouvindo enquanto age.","packet":true,"from":"m1-gemini","to":"m1-live"},
+          {"highlight":"flow-m1-registro","label":"O LiveAssistant procura open_app na lista fechada do ToolRegistry. Nome fora da lista: ação não permitida.","packet":true,"from":"m1-live","to":"m1-registro"},
+          {"highlight":"flow-m1-registro","label":"Na hora da chamada, ele confere a permissão Programas. Desligada? Para aqui e devolve uma frase explicando."},
+          {"highlight":"flow-m1-app","label":"Liberado. open_app recusa caminhos e programas perigosos e acha a calculadora na lista: calc.exe.","packet":true,"from":"m1-registro","to":"m1-app"},
+          {"highlight":"flow-m1-windows","label":"windows.py pede ao Windows para abrir calc.exe. A calculadora aparece na tela.","packet":true,"from":"m1-app","to":"m1-windows"},
+          {"highlight":"flow-m1-live","label":"O resultado volta como um texto curto: “calculadora aberto.”","packet":true,"from":"m1-app","to":"m1-live"},
+          {"highlight":"flow-m1-gemini","label":"O LiveAssistant devolve esse texto ao Gemini, que monta a resposta falada.","packet":true,"from":"m1-live","to":"m1-gemini"},
+          {"highlight":"flow-m1-live","label":"Chega o áudio da resposta, “Abrindo, senhor.”, e entra numa fila para tocar.","packet":true,"from":"m1-gemini","to":"m1-live"},
+          {"highlight":"flow-m1-som","label":"A fila toca no alto-falante. Se você configurou o ElevenLabs, é a voz dele que fala.","packet":true,"from":"m1-live","to":"m1-som"}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-m1-voce">
+              <div class="flow-actor-icon">🎙️</div>
+              <span>Você + microfone</span>
+            </div>
+            <div class="flow-actor" id="flow-m1-audio">
+              <div class="flow-actor-icon">〰️</div>
+              <span>audio.py</span>
+            </div>
+            <div class="flow-actor" id="flow-m1-live">
+              <div class="flow-actor-icon">🎼</div>
+              <span>live_assistant.py</span>
+            </div>
+            <div class="flow-actor" id="flow-m1-gemini">
+              <div class="flow-actor-icon">☁️</div>
+              <span>Gemini Live</span>
+            </div>
+            <div class="flow-actor" id="flow-m1-registro">
+              <div class="flow-actor-icon">📋</div>
+              <span>ToolRegistry</span>
+            </div>
+            <div class="flow-actor" id="flow-m1-app">
+              <div class="flow-actor-icon">🧮</div>
+              <span>app_tools.py</span>
+            </div>
+            <div class="flow-actor" id="flow-m1-windows">
+              <div class="flow-actor-icon">🪟</div>
+              <span>windows.py</span>
+            </div>
+            <div class="flow-actor" id="flow-m1-som">
+              <div class="flow-actor-icon">🔊</div>
+              <span>Alto-falante</span>
+            </div>
+          </div>
+
+          <div class="flow-packet"></div>
+
+          <div class="flow-step-label">Clique em “Próximo passo” para começar</div>
+
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Próximo passo</button>
+            <button class="btn flow-reset-btn">Recomeçar</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">A IA não aperta botão nenhum</strong>
+            <p>O Gemini só <em>pede</em>: “chame open_app com calculadora”. Quem decide se pode e quem executa é o código no seu PC. Engenheiros chamam isso de <span class="term" data-definition="Function calling (chamada de ferramenta): a IA não executa nada sozinha. Ela devolve um pedido estruturado (“chame a função X com estes valores”) e o programa decide se roda. Ao falar com uma IA, diga “adicione uma tool nova”.">chamada de ferramenta</span>.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 4: trecho 1 em código -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Trecho 1: do microfone para o Google</h2>
+        <p>Este é o corredor da largada. Ele roda sem parar, num <span class="term" data-definition="Um laço (loop) é um pedaço de código que se repete. “while True” quer dizer “repita para sempre”, até alguém mandar parar.">laço</span> infinito: lê um pedacinho de som e manda, lê outro e manda.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/jarvis/assistants/live_assistant.py</span>
+            <pre><code><span class="code-line"><span class="code-keyword">while</span> <span class="code-keyword">True</span>:</span>
+<span class="code-line">    data = <span class="code-keyword">await</span> self.<span class="code-function">_mic_call</span>(self.audio.read_mic)</span>
+<span class="code-line">    <span class="code-comment"># Sem fone, enquanto ele fala o microfone manda SILENCIO no lugar da sua voz</span></span>
+<span class="code-line">    <span class="code-comment"># (senao ele ouve a si mesmo). O fluxo nunca para: o detector de fala do</span></span>
+<span class="code-line">    <span class="code-comment"># Gemini continua acompanhando e reconhece quando o senhor volta a falar.</span></span>
+<span class="code-line">    <span class="code-keyword">if</span> self.settings.headphones <span class="code-keyword">or</span> <span class="code-keyword">not</span> self.speaking:</span>
+<span class="code-line">        self.<span class="code-function">_notify_optional</span>(<span class="code-string">"on_level"</span>, <span class="code-function">pcm_level</span>(data) * MIC_LEVEL_FACTOR)</span>
+<span class="code-line">    <span class="code-keyword">else</span>:</span>
+<span class="code-line">        data = <span class="code-function">bytes</span>(<span class="code-function">len</span>(data))</span>
+<span class="code-line">    <span class="code-keyword">await</span> session.<span class="code-function">send_realtime_input</span>(</span>
+<span class="code-line">        <span class="code-property">audio</span>=types.<span class="code-function">Blob</span>(<span class="code-property">data</span>=data, <span class="code-property">mime_type</span>=MIC_MIME_TYPE)</span>
+<span class="code-line">    )</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Repita para sempre:</p>
+              <p class="tl">pegue o próximo pedacinho do microfone (<span class="term" data-definition="“await” quer dizer “espere isto terminar, mas deixe o resto do programa trabalhar enquanto isso”. É como pôr a roupa na máquina e ir fazer outra coisa enquanto ela bate.">await</span>: espera sem travar o resto).</p>
+              <p class="tl">Comentário do autor: sem fone, enquanto o Jarvis fala, o microfone manda silêncio…</p>
+              <p class="tl">…senão ele ouviria a própria voz. O envio nunca para…</p>
+              <p class="tl">…e o Google percebe quando você volta a falar.</p>
+              <p class="tl">Se você usa fone, ou se o Jarvis está calado:</p>
+              <p class="tl">avise a janela do volume, para a animação pulsar com a sua voz.</p>
+              <p class="tl">Senão (ele está falando e você não tem fone):</p>
+              <p class="tl">troque o som por zeros do mesmo tamanho: silêncio puro.</p>
+              <p class="tl">Mande o pedacinho ao vivo para a <span class="term" data-definition="Sessão é a conexão aberta com o Gemini Live durante a conversa. Enquanto ela está aberta, o áudio vai e volta sem precisar “ligar de novo”.">sessão</span> do Gemini…</p>
+              <p class="tl">…embalado com a etiqueta “áudio PCM, 16 mil amostras por segundo”.</p>
+              <p class="tl">Fim do envio. Volta para o começo do laço.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 5: trecho 2 em código -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Trecho 2: o pedido vira ação</h2>
+        <p>Quando o Google devolve um pedido de ferramenta, o Jarvis não fica parado esperando. Ele dispara a ação em paralelo e continua ouvindo.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/jarvis/assistants/live_assistant.py</span>
+            <pre><code><span class="code-line"><span class="code-keyword">if</span> message.tool_call:</span>
+<span class="code-line">    self.<span class="code-function">_notify_optional</span>(<span class="code-string">"on_state"</span>, <span class="code-string">"thinking"</span>)</span>
+<span class="code-line">    <span class="code-comment"># Nao espera a acao terminar: ele segue ouvindo e falando enquanto ela roda.</span></span>
+<span class="code-line">    task = asyncio.<span class="code-function">create_task</span>(self.<span class="code-function">_handle_tool_call</span>(session, message.tool_call))</span>
+<span class="code-line">    self._tool_tasks.<span class="code-function">add</span>(task)</span>
+<span class="code-line">    task.<span class="code-function">add_done_callback</span>(self._tool_tasks.discard)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Se a mensagem do Google é um pedido de ferramenta:</p>
+              <p class="tl">avise a janela: “estou pensando” (a animação muda).</p>
+              <p class="tl">Comentário: não fique esperando a ação acabar.</p>
+              <p class="tl">Crie uma <span class="term" data-definition="Uma tarefa (task) é um trabalho que corre “ao lado” dos outros. O programa pode ter várias ao mesmo tempo, como vários downloads baixando juntos. Você verá isso de perto no módulo 3.">tarefa</span> separada que vai executar o pedido.</p>
+              <p class="tl">Anote essa tarefa na lista de ações em andamento…</p>
+              <p class="tl">…e tire da lista sozinha quando ela terminar.</p>
+            </div>
+          </div>
+        </div>
+
+        <p>A tarefa chega ao <code>open_app</code>, em <code>app_tools.py</code>. Antes deste trecho, ele já recusou nomes com barra (caminhos), programas perigosos como o Prompt de Comando e nomes com menos de 3 letras.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/jarvis/tools/app_tools.py</span>
+            <pre><code><span class="code-line">command = APPS.<span class="code-function">get</span>(key, (<span class="code-keyword">None</span>, ()))[<span class="code-number">0</span>]</span>
+<span class="code-line"><span class="code-keyword">if</span> command <span class="code-keyword">is not</span> <span class="code-keyword">None</span>:</span>
+<span class="code-line">    <span class="code-keyword">try</span>:</span>
+<span class="code-line">        windows.<span class="code-function">open_with_shell</span>(command)</span>
+<span class="code-line">        <span class="code-keyword">return</span> <span class="code-string">f"{texto} aberto."</span></span>
+<span class="code-line">    <span class="code-keyword">except</span> OSError:</span>
+<span class="code-line">        logger.<span class="code-function">info</span>(<span class="code-string">"app conhecido %s nao abriu pelo nome; tentando o Menu Iniciar"</span>, key)</span>
+<span class="code-line"><span class="code-keyword">return</span> self.<span class="code-function">_abrir_atalho</span>(texto, key)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Procure o nome no <span class="term" data-definition="Um dicionário é uma tabela de “nome → valor”, como uma agenda: você procura “calculadora” e acha “calc.exe”. Em Python, aparece entre chaves { }.">dicionário</span> de apps conhecidos (“calculadora” → “calc.exe”).</p>
+              <p class="tl">Se achou um comando:</p>
+              <p class="tl">tente…</p>
+              <p class="tl">…pedir ao Windows que abra esse programa.</p>
+              <p class="tl">Deu certo: devolva o texto “calculadora aberto.”</p>
+              <p class="tl">Se o Windows disser que não achou o programa:</p>
+              <p class="tl">anote no <span class="term" data-definition="O log é um diário que o programa escreve enquanto roda (no Jarvis, logs/jarvis.log). Quando algo dá errado, é o primeiro lugar para olhar.">log</span> e siga para o plano B.</p>
+              <p class="tl">Plano B: procurar um atalho com esse nome no Menu Iniciar.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="badge-list">
+          <div class="badge-item">
+            <code class="badge-code">"calculadora": ("calc.exe", ("calculatorapp.exe", "calc.exe")),</code>
+            <span class="badge-desc">A linha da calculadora em <code>APPS</code> (app_tools.py): o comando para abrir e os nomes de <span class="term" data-definition="Processo é um programa rodando agora no Windows, como aparece no Gerenciador de Tarefas. Um app aberto = pelo menos um processo.">processo</span> que servem para fechar depois.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 6: a volta -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Trecho final: quem fala a resposta</h2>
+        <p>O texto “calculadora aberto.” volta ao Gemini, que responde em áudio. Aí entra uma peça que escolhe a boca: a voz do Google ou o <span class="term" data-definition="Um serviço pago de vozes artificiais muito naturais (e de clonar vozes). No Jarvis é opcional: sem ele, fala a voz do próprio Gemini.">ElevenLabs</span>.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/jarvis/assistants/voice_output.py</span>
+            <pre><code><span class="code-line"><span class="code-keyword">def</span> <span class="code-function">on_model_audio</span>(self, data: bytes) -&gt; <span class="code-keyword">None</span>:</span>
+<span class="code-line">    <span class="code-string">"""Audio nativo do Gemini: toca direto ou guarda como reserva."""</span></span>
+<span class="code-line">    <span class="code-keyword">if</span> self.uses_elevenlabs:</span>
+<span class="code-line">        self._reserve.<span class="code-function">setdefault</span>(self._turn, []).<span class="code-function">append</span>(data)</span>
+<span class="code-line">    <span class="code-keyword">else</span>:</span>
+<span class="code-line">        self._audio_queue.<span class="code-function">put_nowait</span>(data)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Esta <span class="term" data-definition="Uma função é um bloco de código com nome, que faz uma tarefa. “def” é a palavra que cria uma função em Python.">função</span> roda toda vez que chega um pedaço de áudio do Gemini.</p>
+              <p class="tl">Explicação do autor: toca direto ou guarda de reserva.</p>
+              <p class="tl">Se o ElevenLabs está ligado:</p>
+              <p class="tl">guarde o áudio do Google na gaveta de reserva (se o ElevenLabs falhar, usa este).</p>
+              <p class="tl">Senão:</p>
+              <p class="tl">ponha o áudio na <span class="term" data-definition="Uma fila (queue) é uma lista onde quem chega primeiro sai primeiro, como fila de banco. Um pedaço do programa coloca coisas; outro tira e usa, cada um no seu ritmo.">fila</span> do alto-falante, sem esperar.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-cards">
+          <div class="step-card">
+            <div class="step-num">A</div>
+            <div class="step-body">
+              <strong>Sem ElevenLabs</strong>
+              <p>O áudio do Gemini vai para a fila e toca. Simples e grátis.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">B</div>
+            <div class="step-body">
+              <strong>Com ElevenLabs</strong>
+              <p>O texto da resposta é cortado em frases, e cada frase é falada pelo ElevenLabs. Se ele falhar (sem créditos, chave errada, rede), o Jarvis avisa uma vez e volta para a voz do Google.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 7: quiz -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Teste o seu faro</h2>
+        <p>Nada de decorar nome de arquivo. Use o caminho do bastão para raciocinar.</p>
+
+        <div class="quiz-container" id="m1-quiz">
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="O Gemini ainda pede o open_app, mas o ToolRegistry confere a permissão na hora da chamada e devolve a frase de bloqueio sem executar nada. A IA pede; o código decide."
+               data-explanation-wrong="O Gemini só pede. Quem executa é o código no seu PC, e ele confere a permissão Programas antes de rodar. Desligada, a ação não acontece e o Jarvis explica onde liberar.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Você desligou a permissão <strong>Programas</strong> na engrenagem. Depois diz: “Jarvis, abre o Spotify”.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">O que acontece?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>O Spotify abre: quem decide é o Gemini, e ele entendeu o pedido.</span>
+              </button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>O Gemini pede a ferramenta, mas o Jarvis recusa antes de rodar e fala que essa ação está desligada.</span>
+              </button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>O Jarvis nem ouve a frase, porque o microfone fica bloqueado.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="c"
+               data-explanation-right="A fala chegou ao Google e voltou, então microfone, internet e alto-falante estão bem. O bastão caiu no trecho da ação: ferramenta, permissão ou o pedido ao Windows. É ali que o log mostra o que aconteceu."
+               data-explanation-wrong="Se ele respondeu falando, a ida até o Google e a volta para o alto-falante funcionaram. O trecho suspeito é o do meio: a ferramenta e o pedido ao Windows.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Você pede a calculadora. O Jarvis responde “Abrindo, senhor”, mas nenhuma calculadora aparece.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">Em qual trecho do revezamento você procuraria primeiro?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>No microfone: talvez ele não tenha ouvido direito.</span>
+              </button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>No alto-falante: a resposta saiu errada.</span>
+              </button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Na ação: o que open_app devolveu e o que o Windows fez com calc.exe.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="a"
+               data-explanation-right="Entender a frase acontece no Gemini, na internet. Sem conexão, o bastão não passa do segundo trecho. Por isso o Jarvis tem avisos gravados para essa hora (módulo 5)."
+               data-explanation-wrong="O “cérebro” que entende a sua fala não está no seu PC: é o Gemini Live, no Google. Sem internet, ninguém entende a frase, e nada depois disso acontece.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>A internet da sua casa cai no meio da tarde. Você diz “Jarvis, que horas são?”.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">O que deixa de funcionar?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>A conversa toda: quem entende a sua frase é o Google.</span>
+              </button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Nada: ver a hora é uma ação local, então ele responde normalmente.</span>
+              </button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Só a voz: ele mostra a hora escrita, mas não fala.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Com o ElevenLabs ligado, o áudio do Google fica guardado de reserva. Se o ElevenLabs falha, o Jarvis avisa uma vez e passa a usar a voz do Google, sem travar."
+               data-explanation-wrong="Lembra da gaveta de reserva? Mesmo com o ElevenLabs ligado, o áudio do Gemini continua chegando e fica guardado. Quando o ElevenLabs falha, o Jarvis avisa e troca para essa voz.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Você usa uma voz do ElevenLabs. No meio da conversa, os créditos acabam.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">O que você vai ouvir?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Silêncio: o Jarvis continua respondendo, mas sem som até você recarregar.</span>
+              </button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Um aviso, e depois a voz do Google no lugar.</span>
+              </button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Uma mensagem de erro e o Jarvis se fecha.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('m1-quiz')">Verificar respostas</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('m1-quiz')">Tentar de novo</button>
+        </div>
+
+        <p>Você viu a corrida inteira. No próximo módulo, conheça cada atleta: quem abre o programa, quem liga e desliga, quem guarda a chave.</p>
+      </section>
+
+    </div>
+  </div>
+</section>

@@ -61,8 +61,9 @@ Use um PC sem Python, ou uma máquina virtual / **Windows Sandbox** (Recursos do
 
 1. Copie o `Jarvis-Setup-<versão>.exe` e dê dois cliques. Não deve pedir senha de administrador.
 2. Confira: atalho **Jarvis** na Área de Trabalho e no Menu Iniciar, com o ícone.
-3. Abra: deve aparecer o assistente de configuração (boas-vindas → chave → microfone →
-   personalizar → pronto). Teste a chave, o microfone e o Ouvir de cada voz.
+3. Abra: deve aparecer o assistente de configuração em 6 passos (boas-vindas → chave →
+   microfone → personalizar → permissões, tudo desligado → pronto). Teste a chave, o microfone
+   e o Ouvir de cada voz.
 4. Feche e abra de novo: deve ir direto para o visual salvo, sem configuração.
 5. Rode o instalador de novo por cima (atualização): as configurações continuam.
 6. Desinstale (Configurações > Aplicativos): ele pergunta se quer apagar as configurações.

@@ -14,6 +14,13 @@ Feito para quem está começando: tudo explicado passo a passo, sem pagar nada
 
 > Série "Cobram pra te ensinar. Eu ensino de graça."
 
+**Por onde começar:**
+- Nunca programou? Abra o **[Guia do Jarvis](docs/guia/index.html)**: do download até a primeira
+  conversa, passo a passo.
+- Quer entender como ele funciona por dentro? Faça o curso
+  **[Por dentro do Jarvis](docs/curso/index.html)**.
+- É dev? Vá direto para [Instalação](#instalação) e [Ideias para contribuir](#ideias-para-contribuir).
+
 ---
 
 ## O que ele faz
@@ -48,6 +55,41 @@ Feito para quem está começando: tudo explicado passo a passo, sem pagar nada
   ou a internet cair, ele avisa com uma fala já gravada (funciona até sem internet) e
   reconecta sozinho.
 
+## Guia para quem não é programador
+
+Nunca programou? Comece pelo **Guia do Jarvis**: um passo a passo interativo, em português, que
+leva você do download até a primeira conversa, sem nenhum código:
+[`docs/guia/index.html`](docs/guia/index.html).
+
+1. Conheça o Jarvis
+2. Instalando (inclusive o aviso azul do Windows)
+3. Sua chave grátis do Google
+4. A primeira configuração
+5. Conversando com ele
+6. Se algo der errado
+
+Para abrir: baixe o repositório (botão verde **Code** → **Download ZIP**), descompacte e dê
+dois cliques em `docs/guia/index.html`.
+
+## Curso: como o Jarvis funciona por dentro
+
+Quer entender o que acontece quando você diz "Jarvis, abre a calculadora"? Tem um **curso
+interativo e grátis**, em português e para quem não programa, aqui no repositório:
+[`docs/curso/index.html`](docs/curso/index.html).
+
+São 6 módulos curtos, com animações, conversas entre as peças do sistema, trechos do código
+explicados em português simples e quizzes:
+
+1. O que acontece quando você fala
+2. Conheça a equipe (as peças do Jarvis)
+3. Como as peças conversam
+4. O mundo lá fora (Google, ElevenLabs e a sua chave)
+5. Os truques que deixam ele seguro
+6. Quando algo dá errado (logs e bugs reais)
+
+Para abrir: do mesmo jeito do guia, dê dois cliques em `docs/curso/index.html`. Abre direto no
+navegador, sem instalar nada.
+
 ## Do que você precisa
 
 | Item | Detalhe |
@@ -80,7 +122,8 @@ de configuração. Você **não** precisa criar nem editar arquivo `.env`.
    instalador não tem assinatura digital (um certificado pago). Clique em
    **"Mais informações"** e depois em **"Executar assim mesmo"**. Se quiser conferir que o
    arquivo é o original, compare o SHA-256 e veja o link do VirusTotal publicados junto com ele.
-4. Siga o instalador até o fim. Ele cria o atalho **Jarvis** na Área de Trabalho e no Menu Iniciar.
+4. Siga o instalador até o fim. Ele cria o atalho **Jarvis** no Menu Iniciar e, se a caixinha
+   "Criar um ícone na Área de Trabalho" ficar marcada (já vem marcada), também na Área de Trabalho.
 5. Abra o Jarvis pelo atalho. Na primeira vez aparece o **assistente de configuração**
    (veja [Primeira abertura](#primeira-abertura-o-assistente-de-configuração)).
 
@@ -380,11 +423,18 @@ atualiza o Jarvis). Na engrenagem > **Sobre** há botões para abrir essas pasta
 | O quê | Windows | Outros sistemas |
 |---|---|---|
 | Chaves (Google e ElevenLabs) | `%APPDATA%\Jarvis\.env` | `~/.config/jarvis/.env` |
-| Preferências (voz, nome, fone, visual) | `%APPDATA%\Jarvis\preferencias.json` | `~/.config/jarvis/preferencias.json` |
+| Preferências (voz, nome, fone, visual, permissões) | `%APPDATA%\Jarvis\preferencias.json` | `~/.config/jarvis/preferencias.json` |
 | Logs do programa instalado (caminho 1) | `%APPDATA%\Jarvis\logs\jarvis.log` | — |
 | Logs pelo código (caminho 2) | `logs\jarvis.log`, na pasta do projeto | `logs/jarvis.log` |
 
-Apagar o `preferencias.json` faz o Jarvis voltar a abrir na Galáxia Neural com a voz padrão.
+Apagar o `preferencias.json` faz o Jarvis voltar a abrir na Galáxia Neural com a voz padrão
+(e com todas as permissões desligadas).
+
+Rodando pelo código (caminho 2), o log é **detalhado**: mostra o que o Google entendeu da sua
+fala (`voce disse`), o que ele respondeu (`jarvis disse`) e cada ação com o resultado e o tempo
+(`acao pedida` / `acao ... terminou em`). É o melhor jeito de descobrir se o problema é o
+microfone, o entendimento ou a ação. No programa instalado isso fica desligado (ligue com
+`JARVIS_LOG_DETALHADO=1`). A chave nunca aparece no log.
 
 ## Avançado (desenvolvedores)
 
@@ -428,6 +478,8 @@ prender as escolhas da janela. Tire o `#` só das linhas que quiser forçar.
 | `GEMINI_MODEL_RESERVA` | Modelo reserva do modo texto (usado em erro 5xx) | `gemini-flash-lite-latest` |
 | `ELEVENLABS_API_KEY` / `ELEVENLABS_VOICE_ID` | Voz do ElevenLabs (opcional e paga) | vazio |
 | `ELEVENLABS_MODEL` | Modelo de voz do ElevenLabs | `eleven_flash_v2_5` |
+| `JARVIS_RESPOSTA_TIMEOUT_S` | Segundos sem resposta do Google até tocar o aviso de internet e reconectar (3 a 120) | `12` |
+| `JARVIS_LOG_DETALHADO` | `1` grava no log o que você disse, o que ele respondeu e cada ação (com tempo); `0` desliga | `1` pelo código, `0` no instalador |
 
 ### Gerar o instalador
 
@@ -484,6 +536,8 @@ jarvis/
 │   ├── errors.py             # erros amigáveis e o "safe_tool"
 │   ├── logging_setup.py      # log em arquivo (com as chaves apagadas)
 │   ├── persona.py            # personalidade (prompt de sistema)
+│   ├── avisos.py             # toca as falas de aviso já gravadas (sem internet)
+│   ├── avisos/               # internet_<Voz>.wav (8 vozes) e elevenlabs_Charon.wav
 │   ├── os_integration/
 │   │   ├── windows.py        # janelas, processos e caixa de confirmação do Windows
 │   │   └── shortcut.py       # atalho na Área de Trabalho
@@ -497,11 +551,13 @@ jarvis/
 │   │   └── jarvis.ico        # ícone
 │   ├── tools/                # a LISTA FECHADA de ações
 │   │   ├── __init__.py       # ToolRegistry (registro das ferramentas)
-│   │   ├── security.py       # PathGuard, pastas e processos protegidos
+│   │   ├── permissoes.py     # o que cada permissão libera (tudo começa desligado)
+│   │   ├── security.py       # PathGuard, pastas e processos protegidos, "outros discos"
 │   │   ├── system_tools.py   # data e hora
 │   │   ├── app_tools.py      # abrir, listar e fechar apps
 │   │   ├── web_tools.py      # sites e pesquisa
-│   │   └── file_tools.py     # arquivos e pastas
+│   │   ├── file_tools.py     # arquivos e pastas, ler arquivos, documento do Word
+│   │   └── office_tools.py   # deixar e-mail pronto (nunca envia)
 │   └── assistants/
 │       ├── observer.py       # eventos para a interface (estado, volume, legendas)
 │       ├── voice_output.py   # quem fala: voz do Google ou do ElevenLabs
@@ -511,7 +567,8 @@ jarvis/
 │       └── text_assistant.py # modo texto
 ├── packaging/                # instalador: PyInstaller (jarvis.spec), Inno Setup (jarvis.iss), build.ps1
 ├── scripts/
-│   └── gerar_amostras_voz.py # gera as amostras das 8 vozes (uma vez, antes do instalador)
+│   ├── gerar_amostras_voz.py # gera as amostras das 8 vozes (uma vez, antes do instalador)
+│   └── gerar_avisos_voz.py   # gera as falas de aviso (internet e ElevenLabs)
 ├── examples/
 │   └── 01_cerebro_texto.py   # versão didática: só o "cérebro" (usado nos vídeos)
 ├── tests/                    # testes automáticos (pytest)
@@ -520,7 +577,9 @@ jarvis/
     ├── ARQUITETURA.md
     ├── SEGURANCA.md
     ├── INSTALADOR.md
-    └── DIARIO.md
+    ├── DIARIO.md
+    ├── guia/                 # Guia do Jarvis para quem não programa (abra o index.html)
+    └── curso/                # curso "Por dentro do Jarvis" (abra o index.html)
 ```
 
 Mais detalhes em [docs/ARQUITETURA.md](docs/ARQUITETURA.md).
@@ -541,6 +600,44 @@ Para criar uma **ação nova**: escreva o método na classe de ferramentas certa
 `src/jarvis/tools/`, com docstring em português e seção `Args` (a IA lê essa descrição),
 acrescente o nome em `TOOL_NAMES` e escreva um teste. Ações que mexem em arquivos devem
 passar pelo `PathGuard`.
+
+## Ideias para contribuir
+
+O Jarvis é código aberto: quem quiser pode pegar uma destas ideias e mandar um pull request.
+Antes, vale passar pelo [curso por dentro do Jarvis](docs/curso/index.html): ele mostra onde
+fica cada peça.
+
+### 1. Modo local (sem internet e sem chave)
+
+Hoje o Jarvis usa o **Gemini Live**, que ouve, pensa, executa as ações e responde falando,
+tudo numa conexão só e em tempo real, com camada grátis. Um **modo local** rodaria tudo no
+próprio computador, sem mandar nada para a nuvem, juntando três peças abertas:
+
+| Etapa | Sugestão | O que faz |
+|---|---|---|
+| Ouvir | [Whisper](https://github.com/openai/whisper) (ou `faster-whisper`) | Transforma a sua fala em texto. |
+| Pensar | [Ollama](https://ollama.com) com **Qwen** ou **Llama** | Entende o pedido e escolhe a ferramenta. O Qwen vai bem em português e em chamada de função. |
+| Falar | [Piper](https://github.com/rhasspy/piper) ou Kokoro | Transforma a resposta em voz. |
+
+Onde encaixar no código:
+
+- **Pensar:** crie um assistente novo em `src/jarvis/assistants/` (por exemplo
+  `local_assistant.py`), no mesmo formato do `TextAssistant`. As ferramentas já estão prontas
+  em `registry.functions` (`src/jarvis/tools/__init__.py`): o Ollama aceita a lista de
+  funções e devolve qual chamar. Execute sempre pelo `ToolRegistry`, para manter as
+  **permissões** e o `PathGuard` valendo.
+- **Ouvir e falar:** reaproveite `assistants/audio.py` (microfone e alto-falante) e siga o
+  modelo de `assistants/voice_output.py`, que já troca a voz do Google pela do ElevenLabs.
+- **Escolher o modo:** uma opção nova em `jarvis --modo` (`src/jarvis/__main__.py`) e, se
+  quiser, uma escolha na engrenagem.
+
+Vantagens: grátis sem limite, funciona sem internet e nada sai do computador.
+Custos: precisa de placa de vídeo boa e bastante memória, o download passa de alguns gigas,
+responde mais devagar que o Gemini Live e as vozes locais em português ainda soam mais
+robóticas. Por isso a ideia é um modo **opcional para devs**, não o padrão.
+
+Regras para qualquer contribuição: testes passando (`pytest`), `ruff` limpo, nenhuma ação
+nova fora da lista fechada de ferramentas e nada de enfraquecer as permissões.
 
 ## Problemas comuns
 

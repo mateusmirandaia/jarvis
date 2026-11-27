@@ -8,6 +8,28 @@ em [docs/DIARIO.md](docs/DIARIO.md).
 
 ## [Não publicado]
 
+### Adicionado
+
+- **Guia do Jarvis** em `docs/guia/index.html`: passo a passo interativo para quem não programa,
+  do download até a primeira conversa (instalação, aviso do Windows, chave grátis, primeira
+  configuração, permissões, o que pedir e o que fazer se algo der errado).
+- **Curso "Por dentro do Jarvis"** em `docs/curso/index.html`: 6 módulos interativos, em
+  português e para quem não programa, mostrando como o Jarvis funciona por dentro (com
+  animações, conversas entre as peças, código explicado e quizzes).
+- README: seções "Curso: como o Jarvis funciona por dentro" e "Ideias para contribuir" (modo
+  local com Whisper, Ollama e Piper).
+- Log detalhado ao rodar pelo código: o que a pessoa disse, o que o Jarvis respondeu e cada ação
+  com argumentos, resultado e tempo (`JARVIS_LOG_DETALHADO`).
+
+### Corrigido
+
+- O Jarvis abria a Calculadora (e outros apps modernos do Windows) mas não a via para listar ou
+  fechar: a janela desses apps pertence ao `ApplicationFrameHost.exe`, que é protegido. Agora ele
+  acha o processo real dentro da moldura.
+- O Jarvis dizia "fechando" depois de já ter fechado; agora confirma no passado. Contas: ele faz
+  a conta e diz o resultado.
+- docs/ARQUITETURA.md: 17 métodos na ponte da janela, 6 passos no assistente e 5 abas.
+
 ## [0.9.0] - 2026-11-26
 
 ### Adicionado

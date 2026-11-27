@@ -1,0 +1,366 @@
+<section class="module" id="module-2" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">02</span>
+      <h1 class="module-title">Instalando</h1>
+      <p class="module-subtitle">Um arquivo só, alguns cliques e um aviso azul que parece pior do que é.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- TELA 1: metáfora -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Como receber uma encomenda</h2>
+        <p>Instalar o Jarvis é parecido com receber uma encomenda em casa. Você compra na loja certa, o porteiro confere quem está entregando, você abre a caixa e guarda na prateleira.</p>
+
+        <div class="flow-steps">
+          <div class="flow-step"><div class="flow-step-num">1</div><p><strong>Baixar</strong><br>pegar na loja oficial</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">2</div><p><strong>Aviso azul</strong><br>o porteiro confere</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">3</div><p><strong>Instalar</strong><br>abrir a caixa</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">4</div><p><strong>Atalho</strong><br>guardar na prateleira</p></div>
+        </div>
+
+        <p>Leva poucos minutos. Não precisa de senha de <span class="term" data-definition="O “dono” do computador, que pode instalar coisas para todo mundo. O instalador do Jarvis não pede essa senha: instala só para o seu usuário.">administrador</span>.</p>
+      </section>
+
+      <!-- TELA 2: onde baixar -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">1. Baixe só da página oficial</h2>
+        <p>O Jarvis fica na página dele no <span class="term" data-definition="Um site onde programadores guardam e publicam os seus programas. É lá que mora o Jarvis, de graça e aberto para quem quiser conferir.">GitHub</span>, na parte chamada <span class="term" data-definition="“Lançamentos”, em inglês. É a prateleira da página do Jarvis no GitHub onde ficam os arquivos prontos para baixar, um para cada versão.">Releases</span>. Procure por este arquivo:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="background: #FFFFFF; color: #1F2328; font-family: var(--font-body); border: 1px solid var(--color-border);">
+            <span class="translation-label" style="color:#1F2328">TELA</span>
+            <div style="padding-top: var(--space-4);">
+              <p style="margin:0 0 var(--space-2); font-weight:700; font-size: var(--text-lg);">Jarvis 0.9.0 <span style="font-size: var(--text-xs); background:#1F883D; color:#fff; padding:2px 8px; border-radius:999px; vertical-align:middle;">Latest</span></p>
+              <p style="margin:0 0 var(--space-3); color:#59636E;">▾ Assets</p>
+              <div style="display:flex; justify-content:space-between; gap: var(--space-3); padding: var(--space-2) var(--space-3); border:1px solid #D1D9E0; border-radius:6px; background:#F6F8FA;">
+                <span style="color:#0969DA; font-weight:600;">📦 Jarvis-Setup-0.9.0.exe</span>
+                <span style="color:#59636E;">~24 MB</span>
+              </div>
+              <p style="margin: var(--space-3) 0 0; color:#59636E; font-size: var(--text-xs);">Junto dele: o SHA-256 e o link do VirusTotal.</p>
+            </div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">O QUE FAZER</span>
+            <div class="translation-lines">
+              <p class="tl">Na página do Jarvis no GitHub, entre em <strong>Releases</strong>.</p>
+              <p class="tl">Clique em <strong>Jarvis-Setup-0.9.0.exe</strong> (cerca de 24 MB). Ele vai para a pasta <strong>Downloads</strong>.</p>
+              <p class="tl">O final <span class="term" data-definition="A terminação do nome de um arquivo que diz o que ele é. “.exe” quer dizer “programa que roda”. Por isso só abra um .exe que veio de um lugar confiável.">.exe</span> quer dizer “programa”. É ele mesmo.</p>
+              <p class="tl">Quer conferir? Compare o <span class="term" data-definition="Uma espécie de impressão digital do arquivo: uma sequência de letras e números. Se um único pedacinho do arquivo mudar, a impressão digital muda toda. Igual = arquivo original.">SHA-256</span> e veja o resultado no <span class="term" data-definition="Um site grátis que passa o arquivo em dezenas de antivírus de uma vez e mostra o resultado.">VirusTotal</span>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🚩</div>
+          <div class="callout-content">
+            <strong class="callout-title">Desconfie de cópias</strong>
+            <p>Arquivo recebido no WhatsApp, em site de download ou com nome diferente (“Jarvis-PRO”, “Jarvis-crackeado”) não é o oficial. O Jarvis é grátis: ninguém precisa te cobrar nem te mandar “versão especial”.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 3: o aviso azul -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">2. O aviso azul: calma, é o porteiro</h2>
+        <p>Ao dar dois cliques no arquivo, pode aparecer uma tela azul. Ela não quer dizer que é vírus. Quer dizer que o Windows <strong>ainda não conhece</strong> quem fez o programa.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="background: #0067B8; color: #FFFFFF; font-family: 'Segoe UI', var(--font-body);">
+            <span class="translation-label" style="color:#fff">TELA</span>
+            <div style="padding-top: var(--space-4);">
+              <p style="margin:0 0 var(--space-3); font-size: var(--text-2xl); font-weight:300; line-height:1.2;">O Windows protegeu o computador</p>
+              <p style="margin:0 0 var(--space-3); font-size: var(--text-sm);">O Microsoft Defender SmartScreen impediu a inicialização de um aplicativo não reconhecido. A execução desse aplicativo pode colocar seu computador em risco.</p>
+              <p style="margin:0 0 var(--space-4); text-decoration: underline; font-weight:600;">Mais informações</p>
+              <div style="border-top:1px dashed rgba(255,255,255,0.5); padding-top: var(--space-3); font-size: var(--text-sm);">
+                <p style="margin:0">Aplicativo: Jarvis-Setup-0.9.0.exe</p>
+                <p style="margin:0 0 var(--space-3)">Fornecedor: Fornecedor desconhecido</p>
+                <div style="display:flex; gap: var(--space-2); justify-content:flex-end; flex-wrap:wrap;">
+                  <span style="border:2px solid #fff; padding:4px 12px;">Executar assim mesmo</span>
+                  <span style="background:#fff; color:#0067B8; padding:4px 12px; font-weight:600;">Não executar</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">O QUE FAZER</span>
+            <div class="translation-lines">
+              <p class="tl">No começo só aparece o botão “Não executar”. <strong>Não clique nele ainda.</strong></p>
+              <p class="tl">Clique no texto <strong>“Mais informações”</strong>. Aparece o nome do arquivo e um botão novo.</p>
+              <p class="tl">Confira: o aplicativo é <strong>Jarvis-Setup-0.9.0.exe</strong> e veio da página oficial?</p>
+              <p class="tl">Se sim, clique em <strong>“Executar assim mesmo”</strong>. Pronto, o instalador abre.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">✍️</div>
+            <h4 class="pattern-title">Por que aparece?</h4>
+            <p class="pattern-desc">O instalador não tem <span class="term" data-definition="Um selo pago, como uma firma reconhecida em cartório, que diz ao Windows quem fez o programa. Custa caro todo ano, e o Jarvis é grátis, então não tem.">assinatura digital</span>, que é um certificado pago. Sem ela, o Windows mostra o aviso.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🔍</div>
+            <h4 class="pattern-title">Dá para conferir</h4>
+            <p class="pattern-desc">O código do Jarvis é aberto: qualquer pessoa pode ler o que ele faz. Alguns antivírus podem reclamar por engano.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">🤚</div>
+            <h4 class="pattern-title">Quando parar</h4>
+            <p class="pattern-desc">Se o nome do arquivo for outro, ou se ele não veio da página oficial, clique em <strong>Não executar</strong> e apague.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 4: as telas do instalador -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">3. As telas do instalador</h2>
+        <p>O instalador é curtinho. Ele não pergunta pasta: coloca o Jarvis sozinho na sua pasta de usuário. Os nomes dos botões podem variar um pouco, mas o caminho é este:</p>
+
+        <div class="step-cards">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <strong>Contrato de licença</strong>
+              <p>Um texto em inglês: é a <span class="term" data-definition="A licença MIT é o “contrato” do Jarvis. Em resumo: você pode usar, copiar e compartilhar de graça.">licença MIT</span>, que diz que o Jarvis é livre e grátis. Marque que aceita e avance.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <strong>Atalho na área de trabalho</strong>
+              <p>Uma caixinha para criar o ícone do Jarvis na Área de Trabalho. Ela já vem marcada. Deixe assim se quiser o ícone na tela.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <strong>Pronto para instalar</strong>
+              <p>Clique em <strong>Instalar</strong> e espere a barrinha encher.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <strong>Concluir</strong>
+              <p>Na última tela, uma caixinha oferece abrir o Jarvis agora. Deixe marcada e clique em <strong>Concluir</strong>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🔁</div>
+          <div class="callout-content">
+            <strong class="callout-title">Vai atualizar um dia?</strong>
+            <p>É só rodar o instalador novo por cima. Se o Jarvis estiver aberto, ele pede para fechar antes. A sua chave e as suas escolhas continuam lá.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 5: onde fica o atalho -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">4. Onde fica o atalho</h2>
+        <p>Depois de instalado, você abre o Jarvis por um <span class="term" data-definition="Um ícone que abre o programa com dois cliques (ou um clique, no Menu Iniciar). Apagar o atalho não apaga o programa.">atalho</span>, como qualquer outro programa.</p>
+
+        <div class="icon-rows">
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-2)">⊞</div>
+            <div>
+              <strong>Menu Iniciar (sempre)</strong>
+              <p>Aperte a tecla do Windows, digite <strong>Jarvis</strong> e aperte Enter.</p>
+            </div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-4)">🖥️</div>
+            <div>
+              <strong>Área de Trabalho (se a caixinha ficou marcada)</strong>
+              <p>O ícone <strong>Jarvis</strong> aparece na tela. Dois cliques abrem a janela.</p>
+            </div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-1)">❌</div>
+            <div>
+              <strong>Para sair</strong>
+              <p>Feche a janela do Jarvis, como qualquer outra.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 6: animação do caminho todo -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O caminho todo, do download até a primeira conversa</h2>
+        <p>Clique em “Próximo passo” e acompanhe a viagem. As Partes 3 e 4 detalham o final dela.</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-g2-site","label":"Você entra na página oficial do Jarvis no GitHub, em Releases."},
+          {"highlight":"flow-g2-pc","label":"Baixa o Jarvis-Setup-0.9.0.exe (cerca de 24 MB). Ele cai na pasta Downloads.","packet":true,"from":"g2-site","to":"g2-pc"},
+          {"highlight":"flow-g2-aviso","label":"Dois cliques no arquivo. Se aparecer o aviso azul: “Mais informações” e depois “Executar assim mesmo”.","packet":true,"from":"g2-pc","to":"g2-aviso"},
+          {"highlight":"flow-g2-inst","label":"O instalador copia o Jarvis para a sua pasta de usuário, sem pedir senha de administrador.","packet":true,"from":"g2-aviso","to":"g2-inst"},
+          {"highlight":"flow-g2-inst","label":"Ele cria o atalho no Menu Iniciar e, se a caixinha ficou marcada, na Área de Trabalho."},
+          {"highlight":"flow-g2-janela","label":"Você abre o Jarvis. Na primeira vez aparece o assistente de 6 passos: Olá, eu sou o Jarvis.","packet":true,"from":"g2-inst","to":"g2-janela"},
+          {"highlight":"flow-g2-google","label":"No passo 2 você cria a chave grátis no Google AI Studio, cola e clica em Testar (Parte 3).","packet":true,"from":"g2-janela","to":"g2-google"},
+          {"highlight":"flow-g2-janela","label":"Chave funcionando. Depois vêm microfone, voz e nome, visual e permissões (Parte 4).","packet":true,"from":"g2-google","to":"g2-janela"},
+          {"highlight":"flow-g2-voce","label":"Tudo pronto! Você diz “Jarvis, que horas são?” e ele responde. Primeira conversa feita.","packet":true,"from":"g2-janela","to":"g2-voce"}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-g2-site">
+              <div class="flow-actor-icon">🌐</div>
+              <span>Página oficial</span>
+            </div>
+            <div class="flow-actor" id="flow-g2-pc">
+              <div class="flow-actor-icon">📥</div>
+              <span>Downloads</span>
+            </div>
+            <div class="flow-actor" id="flow-g2-aviso">
+              <div class="flow-actor-icon">🛡️</div>
+              <span>Aviso azul</span>
+            </div>
+            <div class="flow-actor" id="flow-g2-inst">
+              <div class="flow-actor-icon">📦</div>
+              <span>Instalador</span>
+            </div>
+            <div class="flow-actor" id="flow-g2-janela">
+              <div class="flow-actor-icon">🌌</div>
+              <span>Janela do Jarvis</span>
+            </div>
+            <div class="flow-actor" id="flow-g2-google">
+              <div class="flow-actor-icon">🔑</div>
+              <span>Chave do Google</span>
+            </div>
+            <div class="flow-actor" id="flow-g2-voce">
+              <div class="flow-actor-icon">🗣️</div>
+              <span>Você conversa</span>
+            </div>
+          </div>
+
+          <div class="flow-packet" id="g2-flow-packet"></div>
+
+          <div class="flow-step-label" id="g2-flow-label">Clique em “Próximo passo” para começar</div>
+
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Próximo passo</button>
+            <button class="btn flow-reset-btn">Recomeçar</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 7: quiz + conseguiu -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Apareceu isso, e agora?</h2>
+        <p>Situações reais de instalação. O que você faria?</p>
+
+        <div class="quiz-container" id="g2-quiz">
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Situação</span>
+              <p>Um conhecido mandou no WhatsApp um arquivo chamado “Jarvis-Setup-completo-PRO.exe”, dizendo que é “a versão liberada”.</p>
+            </div>
+            <div class="quiz-question-block"
+                 data-correct="c"
+                 data-explanation-right="O Jarvis só tem uma versão, grátis, e o arquivo oficial se chama Jarvis-Setup-0.9.0.exe. Baixe sempre da página oficial, em Releases."
+                 data-explanation-wrong="Arquivo de origem desconhecida e com nome diferente é sinal de alerta, mesmo vindo de alguém conhecido. Não existe “versão PRO”: baixe da página oficial do Jarvis no GitHub, em Releases.">
+              <h3 class="quiz-question">O que você faz?</h3>
+              <div class="quiz-options">
+                <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Abre, porque veio de alguém conhecido.</span></button>
+                <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Abre e clica em “Executar assim mesmo” se aparecer o aviso.</span></button>
+                <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Não abre. Baixa o Jarvis-Setup-0.9.0.exe da página oficial.</span></button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+          </div>
+
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Situação</span>
+              <p>Você baixou da página oficial. Apareceu a tela azul “O Windows protegeu o computador” e só tem um botão: “Não executar”.</p>
+            </div>
+            <div class="quiz-question-block"
+                 data-correct="b"
+                 data-explanation-right="O botão “Executar assim mesmo” fica escondido até você clicar em “Mais informações”."
+                 data-explanation-wrong="Não precisa desistir nem mexer no antivírus. Clique em “Mais informações”: aí aparece o botão “Executar assim mesmo”.">
+              <h3 class="quiz-question">Como seguir?</h3>
+              <div class="quiz-options">
+                <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Desligar o antivírus do computador.</span></button>
+                <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Clicar em “Mais informações” e depois em “Executar assim mesmo”.</span></button>
+                <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Desistir: não tem como instalar.</span></button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+          </div>
+
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Situação</span>
+              <p>No meio da instalação aparece uma janela pedindo a <strong>senha de administrador</strong> do computador.</p>
+            </div>
+            <div class="quiz-question-block"
+                 data-correct="a"
+                 data-explanation-right="O instalador oficial não pede senha de administrador. Se pediu, desconfie: confira de onde veio e o nome do arquivo."
+                 data-explanation-wrong="O instalador oficial do Jarvis instala só para o seu usuário e não pede senha de administrador. Uma janela pedindo isso é motivo para parar e conferir se o arquivo é o certo.">
+              <h3 class="quiz-question">O que isso indica?</h3>
+              <div class="quiz-options">
+                <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Algo estranho: o instalador oficial não pede essa senha.</span></button>
+                <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Normal: todo programa pede.</span></button>
+                <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Que a instalação terminou.</span></button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+          </div>
+
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Situação</span>
+              <p>A instalação terminou, você fechou tudo e não acha o ícone do Jarvis na Área de Trabalho.</p>
+            </div>
+            <div class="quiz-question-block"
+                 data-correct="c"
+                 data-explanation-right="O atalho do Menu Iniciar é criado sempre. O da Área de Trabalho só aparece se a caixinha ficou marcada."
+                 data-explanation-wrong="Não precisa reinstalar. Provavelmente a caixinha do atalho na área de trabalho ficou desmarcada. Aperte a tecla do Windows e digite Jarvis: ele está no Menu Iniciar.">
+              <h3 class="quiz-question">Qual é o jeito mais rápido de abrir?</h3>
+              <div class="quiz-options">
+                <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Instalar tudo de novo.</span></button>
+                <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Abrir o arquivo .exe da pasta Downloads toda vez.</span></button>
+                <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Tecla do Windows, digitar “Jarvis” e Enter.</span></button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('g2-quiz')">Verificar respostas</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('g2-quiz')">Tentar de novo</button>
+        </div>
+
+        <h3 class="screen-heading" style="margin-top: var(--space-10);">Conseguiu?</h3>
+        <div class="step-cards">
+          <details class="step-card" style="display:block;">
+            <summary style="cursor:pointer; font-weight:600;">✅ Sim: abriu uma janela dizendo “Olá, eu sou o Jarvis”</summary>
+            <p style="margin: var(--space-3) 0 0; color: var(--color-text-secondary);">Ótimo! É o assistente da primeira vez (Passo 1 de 6). Clique em <strong>Começar</strong> e siga para a Parte 3.</p>
+          </details>
+          <details class="step-card" style="display:block;">
+            <summary style="cursor:pointer; font-weight:600;">🤔 Ainda não: o instalador não abriu</summary>
+            <p style="margin: var(--space-3) 0 0; color: var(--color-text-secondary);">Dê dois cliques de novo no arquivo, na pasta Downloads. Se aparecer o aviso azul, clique em “Mais informações” e depois em “Executar assim mesmo”.</p>
+          </details>
+          <details class="step-card" style="display:block;">
+            <summary style="cursor:pointer; font-weight:600;">🤔 Instalou, mas a janela do Jarvis não abre</summary>
+            <p style="margin: var(--space-3) 0 0; color: var(--color-text-secondary);">Em alguns Windows 10 mais antigos falta um componente chamado <span class="term" data-definition="Uma peça do Windows que mostra páginas dentro de programas. O Jarvis usa ela para desenhar a janela. Já vem no Windows 11; no Windows 10 antigo pode faltar.">WebView2</span>. A Parte 6 mostra o que fazer.</p>
+          </details>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">👉</div>
+          <div class="callout-content">
+            <strong class="callout-title">Próximo passo</strong>
+            <p>O Jarvis está instalado. No passo 2 do assistente, ele pede uma chave do Google. Na Parte 3 você cria a sua, de graça, em um minuto.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>

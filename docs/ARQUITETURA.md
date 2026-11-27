@@ -123,7 +123,7 @@ a aba **Chave do Google** usa isso para avisar que trocar a chave ali não muda 
  orb.html (JavaScript)                       Python
  ---------------------                       ------
  window.pywebview.api.<método>(...)  ---->   PonteJs (ponte_js)  ---->  ApiJs (api_config.py)
-                                             só os 15 métodos           |-- verificacao.py (testa chaves)
+                                             só os 17 métodos           |-- verificacao.py (testa chaves)
                                                                         |-- armazenamento.py (.env do usuário)
                                                                         |-- preferencias.py (preferencias.json)
                                                                         |-- vozes.py (amostras)
@@ -137,10 +137,10 @@ a aba **Chave do Google** usa isso para avisar que trocar a chave ali não muda 
   isso a janela não recebe a `ApiJs`, e sim `ponte_js(api)`: uma classe `PonteJs` sem
   atributos (`__slots__ = ()`) que só tem as funções de `METODOS_PUBLICOS` e guarda a `ApiJs`
   na closure. Um teste garante que esses são os únicos métodos públicos.
-- Os 15 métodos: `abrir_link`, `amostra_voz`, `aplicar_configuracao`, `concluir_configuracao`,
+- Os 17 métodos: `abrir_link`, `amostra_voz`, `aplicar_configuracao`, `concluir_configuracao`,
   `elevenlabs_desligar`, `elevenlabs_listar_vozes`, `elevenlabs_salvar`, `elevenlabs_testar`,
-  `estado_config`, `microfone_iniciar`, `microfone_parar`, `salvar_chave`,
-  `salvar_preferencias`, `salvar_visual`, `testar_chave`.
+  `estado_config`, `microfone_iniciar`, `microfone_parar`, `permissoes_estado`, `salvar_chave`,
+  `salvar_permissoes`, `salvar_preferencias`, `salvar_visual`, `testar_chave`.
 - Todo método é embrulhado por `_seguro`: nenhum levanta exceção para o JavaScript; erro vira
   `{"ok": False, "mensagem": ...}` (ou `False`). Nenhum devolve ou registra uma chave: só
   `chave_final` (`…abcd`, os 4 últimos caracteres).
@@ -149,7 +149,7 @@ a aba **Chave do Google** usa isso para avisar que trocar a chave ali não muda 
 - Chamadas de Python para a página (nível do microfone no teste, aviso de chave inválida) vão
   pela fila da `OrbWindow`, nunca direto da `ApiJs`.
 
-### Assistente da primeira vez (5 passos)
+### Assistente da primeira vez (6 passos)
 
 `montar_config()` põe `precisaConfigurar: true` no `JARVIS_CONFIG` quando **nenhuma fonte**
 tem chave. A página então abre o assistente:
@@ -163,15 +163,18 @@ tem chave. A página então abre o assistente:
    Caixinha "Estou usando fone de ouvido".
 4. **Personalizar**: nome (até 40 caracteres, numa linha), voz (cartões com **Ouvir**, que chama
    `amostra_voz(id)` e recebe o WAV como `data:audio/wav;base64,...`) e visual.
-5. **Tudo pronto**: "Começar a usar" chama `salvar_chave`, `salvar_preferencias` e
+5. **Permissões**: tudo começa desligado; `salvar_permissoes(dados)` grava o que a pessoa
+   ligar. "Pular" mantém tudo desligado.
+6. **Tudo pronto**: "Começar a usar" chama `salvar_chave`, `salvar_preferencias` e
    `concluir_configuracao()`, que marca `configurado: true` e pede ao `Controlador` para iniciar
    o assistente de voz. O assistente de configuração fecha e a janela continua aberta, já ouvindo.
 
-### Engrenagem (4 abas)
+### Engrenagem (5 abas)
 
 | Aba | Métodos usados |
 |---|---|
 | Geral | `salvar_preferencias({nome, voz, fone, fonte_voz})`, `amostra_voz`, `salvar_visual` |
+| Permissões | `permissoes_estado`, `salvar_permissoes` (vale na hora, sem reiniciar) |
 | Chave do Google | `testar_chave` (campo vazio testa a chave salva), `salvar_chave` |
 | Voz personalizada (ElevenLabs) | `elevenlabs_listar_vozes`, `elevenlabs_testar` (gasta créditos; a página pede confirmação), `elevenlabs_salvar`, `elevenlabs_desligar` |
 | Sobre | `abrir_link("repositorio" / "instagram" / "pasta_config" / "pasta_logs")` |
@@ -254,7 +257,7 @@ orb.html ----------------------------------------------------------------> monta
 4. Cada `visuais/<id>.js` chama `JarvisVisuais.registrar({id, nome, descricao, paleta, hud,
    criar()})`. A lista oficial de ids é `preferencias.VISUAIS`, e um teste garante que cada id
    tem o seu `.js` e vice-versa.
-5. Quando a pessoa escolhe um visual, a página chama `salvar_visual(id)` (um dos 15 métodos da
+5. Quando a pessoa escolhe um visual, a página chama `salvar_visual(id)` (um dos 17 métodos da
    ponte): ele valida o id e grava de forma atômica, sem apagar outras chaves. Nunca levanta
    erro: devolve `False`.
 
@@ -341,7 +344,7 @@ lógica de voz.
 
 - **Lista fechada.** A IA só enxerga as ferramentas registradas no `ToolRegistry`. Ação nova =
   método novo + nome em `TOOL_NAMES` + teste. A página da janela também tem a sua lista
-  fechada: os 15 métodos da `PonteJs`.
+  fechada: os 17 métodos da `PonteJs`.
 - **Configuração sem arquivo.** Quem não é programador nunca precisa abrir um `.env`: a janela
   testa e grava as chaves em `%APPDATA%\Jarvis\.env` e as escolhas em `preferencias.json`,
   fora da pasta do programa (sobrevivem a atualizações e reinstalações).

@@ -1,0 +1,405 @@
+<section class="module" id="module-3" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">03</span>
+      <h1 class="module-title">Como as peças conversam</h1>
+      <p class="module-subtitle">A janela e o Python falam línguas diferentes. E, lá dentro, cinco trabalhos rodam ao mesmo tempo sem se atropelar.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- TELA 1: duas línguas -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Um aeroporto com duas línguas</h2>
+        <p>Num aeroporto, piloto e torre de controle não batem papo: usam o rádio, com frases padronizadas. No Jarvis, a janela é o avião e o Python é a torre. Eles falam línguas diferentes e só se entendem pelo rádio.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🖥️</div>
+            <h4 class="pattern-title">A janela fala JavaScript</h4>
+            <p class="pattern-desc"><code>ui/orb.html</code> é uma página de internet, em <span class="term" data-definition="HTML é a linguagem que monta uma página (textos, botões, caixas). É o “esqueleto” do que aparece na tela.">HTML</span> e <span class="term" data-definition="JavaScript é a linguagem que dá vida a uma página: anima, reage a cliques, chama funções. É a língua da janela do Jarvis.">JavaScript</span>, aberta dentro de uma janela do Windows pelo <span class="term" data-definition="pywebview é uma biblioteca que abre uma janela do Windows com uma página de internet dentro (usando o WebView2, o motor do Edge) e deixa essa página conversar com o Python.">pywebview</span>.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🐍</div>
+            <h4 class="pattern-title">O cérebro fala Python</h4>
+            <p class="pattern-desc">Chaves, permissões, microfone, Gemini e ferramentas: tudo isso está em arquivos <code>.py</code>, em <span class="term" data-definition="Python é a linguagem em que está escrito quase todo o Jarvis: os arquivos .py.">Python</span>.</p>
+          </div>
+        </div>
+
+        <div class="flow-steps">
+          <div class="flow-step"><div class="flow-step-num">↗</div><p><strong>Janela → Python</strong><br>pela ponte: <code>window.pywebview.api</code></p></div>
+          <div class="flow-arrow">⇄</div>
+          <div class="flow-step"><div class="flow-step-num">↙</div><p><strong>Python → janela</strong><br>pelo painel: <code>window.jarvis</code></p></div>
+        </div>
+        <p>São dois canais, um para cada sentido. Saber qual é qual resolve metade dos bugs do tipo “cliquei e nada aconteceu”.</p>
+      </section>
+
+      <!-- TELA 2: janela -> Python -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Janela → Python: o rádio com frases fixas</h2>
+        <p>Quando você clica em “Testar” a chave, a página chama o Python. Ela sempre passa por uma única <span class="term" data-definition="Uma função é um bloco de código com nome que faz uma tarefa. Aqui, “api” é a função que a página usa para chamar o Python.">função</span>, a <code>api()</code>.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/jarvis/ui/orb.html</span>
+            <pre><code><span class="code-line"><span class="code-keyword">function</span> <span class="code-function">api</span>(nome, ...args) {</span>
+<span class="code-line">  <span class="code-keyword">const</span> pv = window.pywebview;</span>
+<span class="code-line">  <span class="code-keyword">const</span> f = pv &amp;&amp; pv.api &amp;&amp; pv.api[nome];</span>
+<span class="code-line">  <span class="code-keyword">if</span> (<span class="code-keyword">typeof</span> f !== <span class="code-string">"function"</span>) <span class="code-keyword">return</span> Promise.<span class="code-function">resolve</span>({ <span class="code-property">ok</span>: <span class="code-keyword">false</span>, <span class="code-property">mensagem</span>: FORA_DO_APP });</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Para chamar o Python, diga o nome do pedido e os dados (ex.: “testar_chave”, a chave).</p>
+              <p class="tl">Pegue o rádio que o pywebview instalou na página.</p>
+              <p class="tl">Procure, no rádio, um botão com exatamente esse nome.</p>
+              <p class="tl">Não existe? Responda “indisponível fora do app”, em vez de quebrar.</p>
+            </div>
+          </div>
+        </div>
+
+        <p>Do lado do Python, o rádio tem <strong>só 17 botões</strong>. Eles vêm de uma lista fixa, <code>METODOS_PUBLICOS</code>, e a <code>ponte_js</code> monta um objeto que não tem mais nada.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/jarvis/ui/api_config.py</span>
+            <pre><code><span class="code-line">classe = <span class="code-function">type</span>(<span class="code-string">"PonteJs"</span>, (), {<span class="code-string">"__slots__"</span>: METODOS_PUBLICOS, <span class="code-string">"__module__"</span>: <span class="code-string">"jarvis.ponte"</span>})</span>
+<span class="code-line">ponte = <span class="code-function">classe</span>()</span>
+<span class="code-line"><span class="code-keyword">for</span> nome <span class="code-keyword">in</span> METODOS_PUBLICOS:</span>
+<span class="code-line">    object.<span class="code-function">__setattr__</span>(ponte, nome, <span class="code-function">_criar_chamada</span>(<span class="code-function">getattr</span>(api, nome), nome))</span>
+<span class="code-line"><span class="code-keyword">return</span> ponte</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Crie na hora um tipo de objeto vazio chamado PonteJs, com espaço só para os nomes da lista.</p>
+              <p class="tl">Fabrique um rádio desse tipo.</p>
+              <p class="tl">Para cada nome da lista fechada:</p>
+              <p class="tl">ligue esse botão ao <span class="term" data-definition="Método é uma função que pertence a um objeto. A ApiJs tem 17 métodos que a janela pode chamar, como testar_chave e salvar_visual.">método</span> de mesmo nome da ApiJs (que fica escondida).</p>
+              <p class="tl">Entregue esse rádio ao pywebview. A ApiJs em si nunca vai para a página.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-wrap:wrap; gap: var(--space-2); margin: var(--space-6) 0;">
+          <code class="badge-code">abrir_link</code><code class="badge-code">amostra_voz</code><code class="badge-code">aplicar_configuracao</code><code class="badge-code">concluir_configuracao</code><code class="badge-code">elevenlabs_desligar</code><code class="badge-code">elevenlabs_listar_vozes</code><code class="badge-code">elevenlabs_salvar</code><code class="badge-code">elevenlabs_testar</code><code class="badge-code">estado_config</code><code class="badge-code">microfone_iniciar</code><code class="badge-code">microfone_parar</code><code class="badge-code">permissoes_estado</code><code class="badge-code">salvar_chave</code><code class="badge-code">salvar_permissoes</code><code class="badge-code">salvar_preferencias</code><code class="badge-code">salvar_visual</code><code class="badge-code">testar_chave</code>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🔒</div>
+          <div class="callout-content">
+            <strong class="callout-title">Por que tanto cuidado?</strong>
+            <p>O pywebview executa <em>qualquer</em> nome que a página mandar, até partes internas do Python. Com a fachada, a página só alcança os 17 botões. Nenhum deles devolve a chave: no máximo os 4 últimos caracteres (“…abcd”).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 3: Python -> janela -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Python → janela: o painel de embarque</h2>
+        <p>No sentido contrário, a torre não pergunta nada: ela só atualiza o painel de embarque. A página deixa pronto um objeto, <code>window.jarvis</code>, com funções que o Python pode mandar rodar.</p>
+
+        <div style="display:flex; flex-wrap:wrap; gap: var(--space-2); margin: var(--space-4) 0;">
+          <code class="badge-code">setState</code><code class="badge-code">setLevel</code><code class="badge-code">addLine</code><code class="badge-code">addTool</code><code class="badge-code">setLatency</code><code class="badge-code">setMicTeste</code><code class="badge-code">avisoChave</code><code class="badge-code">abrirConfiguracao</code>
+        </div>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/jarvis/ui/orb_window.py</span>
+            <pre><code><span class="code-line"><span class="code-keyword">def</span> <span class="code-function">on_state</span>(self, state: State) -&gt; <span class="code-keyword">None</span>:</span>
+<span class="code-line">    <span class="code-string">"""Muda a animacao do orb (em espera, ouvindo, pensando, falando, sem conexao)."""</span></span>
+<span class="code-line">    <span class="code-keyword">with</span> self._lock:</span>
+<span class="code-line">        <span class="code-keyword">if</span> state == self._state:</span>
+<span class="code-line">            <span class="code-keyword">return</span></span>
+<span class="code-line">        self._state = state</span>
+<span class="code-line">    self.<span class="code-function">_enqueue</span>(<span class="code-string">f"window.jarvis.setState({json.dumps(state)})"</span>)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Quando o assistente avisar “mudei de estado”:</p>
+              <p class="tl">(muda a animação: em espera, ouvindo, pensando, falando, sem conexão)</p>
+              <p class="tl">segure uma <span class="term" data-definition="Uma trava (lock) garante que só uma thread mexe numa informação por vez, como a chave do banheiro de um posto: quem está com ela entra, os outros esperam.">trava</span> rápida, para duas threads não mexerem ao mesmo tempo.</p>
+              <p class="tl">Se o estado é o mesmo de antes…</p>
+              <p class="tl">…não faça nada (o painel já mostra isso).</p>
+              <p class="tl">Senão, anote o estado novo.</p>
+              <p class="tl">Escreva o comando em JavaScript e deixe na fila de recados. Não espera a janela responder.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-steps">
+          <div class="flow-step"><div class="flow-step-num">⏸️</div><p>em espera</p></div>
+          <div class="flow-step"><div class="flow-step-num">👂</div><p><code>listening</code><br>ouvindo</p></div>
+          <div class="flow-step"><div class="flow-step-num">💭</div><p><code>thinking</code><br>pensando</p></div>
+          <div class="flow-step"><div class="flow-step-num">🗣️</div><p><code>speaking</code><br>falando</p></div>
+          <div class="flow-step"><div class="flow-step-num">📵</div><p><code>offline</code><br>sem conexão</p></div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Quem fala rápido não espera quem é lento</strong>
+            <p>Mandar JavaScript para a janela (<span class="term" data-definition="evaluate_js é a função do pywebview que manda um pedaço de JavaScript rodar dentro da página. Ela espera a página responder, por isso o Jarvis nunca a chama direto do laço de voz.">evaluate_js</span>) espera a página responder. Por isso a OrbWindow só deixa o recado numa fila, e uma thread própria entrega depois. A voz nunca fica esperando a animação. Do volume, só o recado mais recente importa.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 4: a torre de controle -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Dentro do assistente: a torre de controle</h2>
+        <p>Ouvir, receber, tocar, falar com o ElevenLabs e vigiar o silêncio precisam acontecer <em>ao mesmo tempo</em>. Quem coordena é o <span class="term" data-definition="asyncio é a parte do Python que deixa várias tarefas andarem juntas numa linha só. Enquanto uma espera (o microfone, a internet), outra trabalha. É como um controlador de tráfego aéreo cuidando de vários aviões.">asyncio</span>, como um controlador de voo cuidando de várias pistas.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/jarvis/assistants/live_assistant.py</span>
+            <pre><code><span class="code-line"><span class="code-keyword">async def</span> <span class="code-function">_run_tasks</span>(self, session: Any) -&gt; <span class="code-keyword">None</span>:</span>
+<span class="code-line">    <span class="code-string">"""Roda ouvir, receber, falar e a voz em paralelo ate a sessao cair."""</span></span>
+<span class="code-line">    <span class="code-keyword">async with</span> asyncio.<span class="code-function">TaskGroup</span>() <span class="code-keyword">as</span> tasks:</span>
+<span class="code-line">        tasks.<span class="code-function">create_task</span>(self.<span class="code-function">_listen</span>(session))</span>
+<span class="code-line">        tasks.<span class="code-function">create_task</span>(self.<span class="code-function">_receive</span>(session))</span>
+<span class="code-line">        tasks.<span class="code-function">create_task</span>(self.<span class="code-function">_speak</span>())</span>
+<span class="code-line">        tasks.<span class="code-function">create_task</span>(self.voice.<span class="code-function">run</span>())</span>
+<span class="code-line">        tasks.<span class="code-function">create_task</span>(self.<span class="code-function">_watch_reply</span>())</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Para uma conversa aberta com o Google (uma <span class="term" data-definition="Sessão é a conexão aberta com o Gemini Live. Enquanto ela dura, o áudio vai e volta. Se cair, o Jarvis abre outra.">sessão</span>):</p>
+              <p class="tl">(roda tudo em paralelo até a sessão cair)</p>
+              <p class="tl">Abra um <span class="term" data-definition="TaskGroup é um “grupo de tarefas” do asyncio: elas começam juntas e, se uma quebrar, o grupo inteiro para. Aqui isso derruba a sessão, e o Jarvis reconecta.">grupo de tarefas</span>. Se uma cair, o grupo todo para e o Jarvis reconecta.</p>
+              <p class="tl">Pista 1: ouvir o microfone e mandar.</p>
+              <p class="tl">Pista 2: receber o que o Google responde.</p>
+              <p class="tl">Pista 3: tocar o áudio da fila no alto-falante.</p>
+              <p class="tl">Pista 4: a voz do ElevenLabs (se estiver ligada).</p>
+              <p class="tl">Pista 5: o vigia, que derruba a sessão se o Google ficar mudo 12 s depois da sua fala.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="icon-rows">
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🛫</div>
+            <div>
+              <strong>Pedido de ferramenta? Pista extra.</strong>
+              <p>O <code>_receive</code> cria uma tarefa à parte para cada pedido e volta a receber. A ação em si roda numa thread, com tempo máximo (20 s; 120 s para apagar, porque espera o seu clique).</p>
+            </div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-1)">🔇</div>
+            <div>
+              <strong>Anti-eco</strong>
+              <p>Enquanto o <code>_speak</code> está tocando, o <code>_listen</code> manda silêncio no lugar da sua voz, a menos que você use fone.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 5: as esteiras (flow) -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">As esteiras: filas entre as pistas</h2>
+        <p>Uma tarefa não entrega nada na mão da outra. Ela deixa na <span class="term" data-definition="Uma fila (queue) é uma esteira: quem chega primeiro sai primeiro. Uma tarefa coloca itens, outra tira, cada uma no seu ritmo. No código: asyncio.Queue e queue.Queue.">fila</span>, como mala na esteira, e volta ao trabalho. Siga o áudio da resposta.</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-m3-listen","label":"_listen lê um pedacinho do microfone…","packet":true,"from":"m3-mic","to":"m3-listen"},
+          {"highlight":"flow-m3-gemini","label":"…manda para o Gemini e já volta a ler o próximo. Ele nunca espera resposta.","packet":true,"from":"m3-listen","to":"m3-gemini"},
+          {"highlight":"flow-m3-receive","label":"Na outra pista, _receive estava parado esperando. Chega o áudio da resposta.","packet":true,"from":"m3-gemini","to":"m3-receive"},
+          {"highlight":"flow-m3-fila","label":"_receive não toca nada: põe o áudio na fila (audio_queue) e volta a esperar mensagens.","packet":true,"from":"m3-receive","to":"m3-fila"},
+          {"highlight":"flow-m3-speak","label":"_speak tira da fila, na ordem em que chegou, e muda o estado para falando.","packet":true,"from":"m3-fila","to":"m3-speak"},
+          {"highlight":"flow-m3-som","label":"Ele toca em fatias de cerca de 42 ms. Cada fatia vira um número de volume.","packet":true,"from":"m3-speak","to":"m3-som"},
+          {"highlight":"flow-m3-recados","label":"O volume vai para a OrbWindow, que só anota no quadro de recados dela. Nada de esperar a janela.","packet":true,"from":"m3-speak","to":"m3-recados"},
+          {"highlight":"flow-m3-janela","label":"Uma thread da OrbWindow entrega o recado: window.jarvis.setLevel. A galáxia pulsa com a voz.","packet":true,"from":"m3-recados","to":"m3-janela"},
+          {"highlight":"flow-m3-speak","label":"Fila vazia? _speak espera 0,2 s para o eco sumir e avisa: ouvindo. O microfone volta a valer."}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-m3-mic">
+              <div class="flow-actor-icon">🎙️</div>
+              <span>Microfone</span>
+            </div>
+            <div class="flow-actor" id="flow-m3-listen">
+              <div class="flow-actor-icon">👂</div>
+              <span>_listen</span>
+            </div>
+            <div class="flow-actor" id="flow-m3-gemini">
+              <div class="flow-actor-icon">☁️</div>
+              <span>Gemini Live</span>
+            </div>
+            <div class="flow-actor" id="flow-m3-receive">
+              <div class="flow-actor-icon">📥</div>
+              <span>_receive</span>
+            </div>
+            <div class="flow-actor" id="flow-m3-fila">
+              <div class="flow-actor-icon">🧳</div>
+              <span>fila de áudio</span>
+            </div>
+            <div class="flow-actor" id="flow-m3-speak">
+              <div class="flow-actor-icon">▶️</div>
+              <span>_speak</span>
+            </div>
+            <div class="flow-actor" id="flow-m3-som">
+              <div class="flow-actor-icon">🔊</div>
+              <span>Alto-falante</span>
+            </div>
+            <div class="flow-actor" id="flow-m3-recados">
+              <div class="flow-actor-icon">📌</div>
+              <span>recados da OrbWindow</span>
+            </div>
+            <div class="flow-actor" id="flow-m3-janela">
+              <div class="flow-actor-icon">🖥️</div>
+              <span>orb.html</span>
+            </div>
+          </div>
+
+          <div class="flow-packet"></div>
+
+          <div class="flow-step-label">Clique em “Próximo passo” para começar</div>
+
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Próximo passo</button>
+            <button class="btn flow-reset-btn">Recomeçar</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🧳</div>
+          <div class="callout-content">
+            <strong class="callout-title">Vocabulário para pedir a uma IA</strong>
+            <p>Esse desenho se chama <span class="term" data-definition="Produtor/consumidor: um pedaço do programa produz itens e põe numa fila; outro consome no seu ritmo. Nenhum espera o outro. Diga à IA: “use uma fila entre o produtor e o consumidor”.">produtor e consumidor</span>. Quando algo lento trava algo rápido, peça: “coloque uma fila entre os dois”.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 6: quiz + transição -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Teste: qual canal, qual pista?</h2>
+
+        <div class="quiz-container" id="m3-quiz">
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Isso. A página só alcança os botões da lista METODOS_PUBLICOS. Um método novo na ApiJs fica invisível para a janela até entrar na lista (e um teste do projeto confere que a lista e os métodos batem)."
+               data-explanation-wrong="A fachada PonteJs só tem os nomes de METODOS_PUBLICOS. Se o nome não está lá, pv.api[nome] não existe, e a função api() responde “indisponível” em vez de chamar o Python.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Você pede a uma IA um botão “Abrir pasta Downloads” na engrenagem. Ela escreve <code>api("abrir_downloads")</code> no orb.html e o método <code>abrir_downloads</code> na ApiJs. O botão não faz nada.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">O que faltou?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Colocar o nome em window.jarvis, no orb.html.</span>
+              </button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Colocar “abrir_downloads” na lista METODOS_PUBLICOS, para a ponte ganhar esse botão.</span>
+              </button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Registrar o método no ToolRegistry, junto das ferramentas.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="c"
+               data-explanation-right="Boa. Se ele falou e o log mostra a ação concluída, o assistente fez a parte dele. O que ficou para trás foi o recado “mudei de estado” no caminho Python → janela."
+               data-explanation-wrong="A ponte (METODOS_PUBLICOS) é o canal janela → Python, para cliques. Mudança de estado é o sentido contrário: on_state → fila de recados → window.jarvis.setState.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>O Jarvis respondeu falando e o log mostra a ação concluída. Mas a animação ficou presa em “pensando”.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">Onde você investigaria?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Na conexão com o Gemini, que deve ter caído.</span>
+              </button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Na ponte janela → Python: faltou um método na lista fechada.</span>
+              </button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>No caminho Python → janela: on_state, a fila da OrbWindow e o window.jarvis.setState.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="a"
+               data-explanation-right="Exato. Cada pista corre sozinha, e a fila absorve a diferença de ritmo. O som novo se acumula na esteira até o alto-falante voltar."
+               data-explanation-wrong="As tarefas não esperam umas pelas outras: elas se falam por filas. Se o alto-falante empaca, só a pista de tocar fica parada; ouvir e receber seguem, e o áudio novo se acumula na fila.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>O driver do alto-falante engasga por 2 segundos no meio de uma resposta.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">O que continua funcionando durante esses 2 segundos?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Ouvir e receber: o áudio novo vai se acumulando na fila.</span>
+              </button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Nada: o programa todo espera o alto-falante.</span>
+              </button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Só a animação, porque a janela tem a própria thread.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Isso. Sem fone, enquanto o _speak toca, o _listen troca o seu som por silêncio para o Jarvis não ouvir a própria voz. Com fone, o microfone fica aberto e dá para interromper."
+               data-explanation-wrong="O motivo é o anti-eco: sem fone, enquanto o Jarvis fala, o _listen manda silêncio no lugar da sua voz. Marcar “Estou usando fone de ouvido” deixa o microfone aberto e você pode interromper.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Sem fone de ouvido, você tenta interromper o Jarvis no meio de uma resposta longa. Ele não para.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">Por quê?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>O Gemini não aceita interrupções na camada grátis.</span>
+              </button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Enquanto ele fala, o microfone manda silêncio para evitar eco. Com fone, daria para interromper.</span>
+              </button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>A fila de áudio está cheia e trava o microfone.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('m3-quiz')">Verificar respostas</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('m3-quiz')">Tentar de novo</button>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">✈️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Próximo destino: fora do aeroporto</strong>
+            <p>Quase tudo que você viu roda no seu PC. Uma peça não: o <strong>Gemini Live</strong>, no Google. No módulo 4, “O mundo lá fora”, vamos ver o que mora na internet: o Gemini e seus limites, o ElevenLabs opcional e a sua chave, onde ela fica e por que nunca vai para o GitHub.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>

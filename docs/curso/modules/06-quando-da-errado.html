@@ -1,0 +1,453 @@
+<section class="module" id="module-6" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">06</span>
+      <h1 class="module-title">Quando algo dá errado</h1>
+      <p class="module-subtitle">A caixa-preta do Jarvis, duas investigações de bugs reais desta semana e como pedir ajuda a uma IA sem entregar a sua chave.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- TELA 1 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A caixa-preta</h2>
+        <p>Todo avião tem uma caixa-preta que grava tudo o que aconteceu no voo. Quando algo dá errado, ninguém fica adivinhando: os investigadores abrem a caixa. No Jarvis, a caixa-preta é o <span class="term" data-definition="Log é um arquivo de diário onde o programa anota, com data e hora, o que fez e os erros que teve. Ler o log é o primeiro passo de qualquer investigação de bug.">log</span>, o arquivo <code>jarvis.log</code>.</p>
+
+        <div class="file-tree">
+          <div class="ft-folder"><span class="ft-name">Rodando pelo código (caminho 2)</span><span class="ft-desc">pasta do projeto</span>
+            <div class="ft-children">
+              <div class="ft-folder"><span class="ft-name">logs\</span>
+                <div class="ft-children"><div class="ft-file"><span class="ft-name">jarvis.log</span><span class="ft-desc">log detalhado ligado por padrão</span></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="ft-folder"><span class="ft-name">Programa instalado (caminho 1)</span><span class="ft-desc">%APPDATA%\Jarvis</span>
+            <div class="ft-children">
+              <div class="ft-folder"><span class="ft-name">logs\</span>
+                <div class="ft-children"><div class="ft-file"><span class="ft-name">jarvis.log</span><span class="ft-desc">engrenagem › Sobre › Logs › Abrir pasta</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="code-caption" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted);margin:var(--space-6) 0 calc(-1 * var(--space-6))">📄 src/jarvis/config.py · linhas 101–105</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CÓDIGO</span>
+            <pre><code><span class="code-line"><span class="code-keyword">def</span> <span class="code-function">pasta_logs</span>() <span class="code-operator">-&gt;</span> Path:</span><span class="code-line">    <span class="code-string">""</span><span class="code-string">"Pasta dos logs: ``%APPDATA%\\Jarvis\\logs`` congelado; ``logs`` do projeto em dev."</span><span class="code-string">""</span></span><span class="code-line">    <span class="code-keyword">if</span> <span class="code-function">congelado</span>():</span><span class="code-line">        <span class="code-keyword">return</span> <span class="code-function">pasta_usuario</span>() <span class="code-operator">/</span> <span class="code-string">"logs"</span></span><span class="code-line">    <span class="code-keyword">return</span> <span class="code-function">raiz_projeto</span>() <span class="code-operator">/</span> <span class="code-string">"logs"</span></span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Onde fica a pasta dos logs?</p>
+              <p class="tl">(Explicação: depende de como o Jarvis está rodando.)</p>
+              <p class="tl">Se é o programa instalado (<span class="term" data-definition="'Congelado' (frozen) é como se chama um programa Python empacotado num instalador .exe: o Python e as bibliotecas vão juntos, e a pessoa não precisa instalar nada.">congelado</span>)...</p>
+              <p class="tl">...fica em %APPDATA%\Jarvis\logs.</p>
+              <p class="tl">Senão (rodando pelo código), fica em logs, dentro da pasta do projeto.</p>
+            </div>
+          </div>
+        </div>
+
+        <p>O arquivo vira um novo a cada 1 MB e guarda os 3 anteriores, então ele nunca enche o seu disco.</p>
+      </section>
+
+      <!-- TELA 2 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O que a caixa-preta grava</h2>
+        <p>Rodando pelo código, o Jarvis grava o <strong>log detalhado</strong>: o que você disse, o que ele respondeu e cada ação com os dados e o tempo. Um pedido de calculadora fica mais ou menos assim (o formato é o real; horários e valores são de exemplo):</p>
+
+        <div class="translation-code" style="border-radius: var(--radius-md); margin: var(--space-6) 0">
+          <span class="translation-label">EXEMPLO DE LOG</span>
+          <pre><code><span class="code-line"><span class="code-comment">2026-11-26 10:14:02,118</span> <span class="code-keyword">INFO</span> jarvis.assistants.live_assistant: acao pedida: open_app {'nome': 'calculadora'}</span><span class="code-line"><span class="code-comment">2026-11-26 10:14:02,503</span> <span class="code-keyword">INFO</span> jarvis.assistants.live_assistant: acao open_app terminou em 0.38 s: <span class="code-string">'calculadora aberto.'</span></span><span class="code-line"><span class="code-comment">2026-11-26 10:14:03,240</span> <span class="code-keyword">INFO</span> jarvis.assistants.live_assistant: atraso ate a resposta: 1.21 s (voz: Google Charon)</span><span class="code-line"><span class="code-comment">2026-11-26 10:14:05,977</span> <span class="code-keyword">INFO</span> jarvis.assistants.live_assistant: turno completo (fila de audio: 0)</span><span class="code-line"><span class="code-comment">2026-11-26 10:14:05,978</span> <span class="code-keyword">INFO</span> jarvis.assistants.live_assistant: voce disse: <span class="code-string">'Jarvis, abre a calculadora.'</span></span><span class="code-line"><span class="code-comment">2026-11-26 10:14:05,978</span> <span class="code-keyword">INFO</span> jarvis.assistants.live_assistant: jarvis disse: <span class="code-string">'Pronto, senhor. A calculadora está aberta.'</span></span></code></pre>
+        </div>
+
+        <p>Essas linhas nascem de trechos como estes:</p>
+
+        <p class="code-caption" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted);margin:var(--space-6) 0 calc(-1 * var(--space-6))">📄 src/jarvis/assistants/live_assistant.py · linhas 441–445</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CÓDIGO</span>
+            <pre><code><span class="code-line">                <span class="code-keyword">if</span> content.turn_complete:</span><span class="code-line">                    logger.<span class="code-function">info</span>(<span class="code-string">"turno completo (fila de audio: %d)"</span>, self.audio_queue.<span class="code-function">qsize</span>())</span><span class="code-line">                    <span class="code-keyword">if</span> self._detalhado:</span><span class="code-line">                        logger.<span class="code-function">info</span>(<span class="code-string">"voce disse: %r"</span>, <span class="code-function">_curto</span>(user_text))</span><span class="code-line">                        logger.<span class="code-function">info</span>(<span class="code-string">"jarvis disse: %r"</span>, <span class="code-function">_curto</span>(jarvis_text))</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Quando o Google avisa que a resposta terminou (fim do <span class="term" data-definition="Turno é uma rodada da conversa: você fala, ele responde. 'Turno completo' quer dizer que a resposta dele acabou.">turno</span>)...</p>
+              <p class="tl">...anota "turno completo" e quanto áudio ainda falta tocar.</p>
+              <p class="tl">Se o log detalhado está ligado...</p>
+              <p class="tl">...anota o que você disse...</p>
+              <p class="tl">...e o que ele disse.</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="code-caption" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted);margin:var(--space-6) 0 calc(-1 * var(--space-6))">📄 src/jarvis/assistants/live_assistant.py · linhas 580–586</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CÓDIGO</span>
+            <pre><code><span class="code-line">        <span class="code-keyword">if</span> self._detalhado:</span><span class="code-line">            logger.<span class="code-function">info</span>(</span><span class="code-line">                <span class="code-string">"acao %s terminou em %.2f s: %r"</span>,</span><span class="code-line">                name,</span><span class="code-line">                time.<span class="code-function">monotonic</span>() <span class="code-operator">-</span> inicio,</span><span class="code-line">                <span class="code-function">_curto</span>(<span class="code-function">str</span>(result)),</span><span class="code-line">            )</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Se o log detalhado está ligado...</p>
+              <p class="tl">...anota uma linha...</p>
+              <p class="tl">..."ação X terminou em N s: resultado"...</p>
+              <p class="tl">...com o nome da ação...</p>
+              <p class="tl">...quanto tempo ela levou desde o início...</p>
+              <p class="tl">...e o começo do resultado (textos enormes são cortados).</p>
+              <p class="tl">Fim da anotação.</p>
+            </div>
+          </div>
+        </div>
+
+        <p>No programa instalado o detalhado vem desligado (menos coisa pessoal no disco). Quem decide é esta linha:</p>
+
+        <p class="code-caption" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted);margin:var(--space-6) 0 calc(-1 * var(--space-6))">📄 src/jarvis/config.py · linhas 307–308</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CÓDIGO</span>
+            <pre><code><span class="code-line">            log_detalhado<span class="code-operator">=</span>fontes.<span class="code-function">valor</span>(<span class="code-string">"JARVIS_LOG_DETALHADO"</span>, <span class="code-string">""</span> <span class="code-keyword">if</span> <span class="code-function">congelado</span>() <span class="code-keyword">else</span> <span class="code-string">"1"</span>)</span><span class="code-line">            <span class="code-keyword">in</span> (<span class="code-string">"1"</span>, <span class="code-string">"true"</span>, <span class="code-string">"sim"</span>, <span class="code-string">"on"</span>),</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Log detalhado = o valor de JARVIS_LOG_DETALHADO. Se ninguém definiu: instalado vale "desligado", pelo código vale "1"...</p>
+              <p class="tl">...e só conta como ligado se for "1", "true", "sim" ou "on".</p>
+            </div>
+          </div>
+        </div>
+
+        <p>E a caixa-preta apaga as chaves antes de gravar, até se uma biblioteca colocar a chave num erro:</p>
+
+        <p class="code-caption" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted);margin:var(--space-6) 0 calc(-1 * var(--space-6))">📄 src/jarvis/logging_setup.py · linhas 21–27</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CÓDIGO</span>
+            <pre><code><span class="code-line">_PADROES_SEGREDO: tuple[tuple[re.Pattern[str], str], ...] <span class="code-operator">=</span> (</span><span class="code-line">    (re.<span class="code-function">compile</span>(<span class="code-string">r"AIza[0-9A-Za-z_\-]{10,}"</span>), <span class="code-string">"AIza…"</span>),  <span class="code-comment"># chave do Google</span></span><span class="code-line">    (re.<span class="code-function">compile</span>(<span class="code-string">r"\bAQ\.[0-9A-Za-z_\-.]{10,}"</span>), <span class="code-string">"AQ.…"</span>),  <span class="code-comment"># chave do Google (formato novo)</span></span><span class="code-line">    (re.<span class="code-function">compile</span>(<span class="code-string">r"\bsk_[0-9A-Za-z]{10,}"</span>), <span class="code-string">"sk_…"</span>),  <span class="code-comment"># chave do ElevenLabs</span></span><span class="code-line">    (re.<span class="code-function">compile</span>(<span class="code-string">r"([?&amp;](?:key|api_key|access_token)=)[^&amp;\s'\"]+"</span>, re.IGNORECASE), <span class="code-string">r"\1…"</span>),</span><span class="code-line">    (re.<span class="code-function">compile</span>(<span class="code-string">r"((?:xi-api-key|x-goog-api-key)['\"]?\s*[:=]\s*['\"]?)[^'\"\s,}]+"</span>, re.I), <span class="code-string">r"\1…"</span>),</span><span class="code-line">)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Uma lista de "cara de chave" para apagar (cada item: o padrão e o que vai no lugar).</p>
+              <p class="tl">Começa com "AIza" e segue com letras? É chave antiga do Google: vira "AIza…".</p>
+              <p class="tl">Começa com "AQ."? Chave nova do Google: vira "AQ.…".</p>
+              <p class="tl">Começa com "sk_"? Chave do ElevenLabs: vira "sk_…".</p>
+              <p class="tl">Tem "?key=" ou "&amp;api_key=" num endereço? Apaga o valor.</p>
+              <p class="tl">Tem "xi-api-key:" ou "x-goog-api-key:"? Apaga o valor também.</p>
+              <p class="tl">Fim da lista. (Além disso, o valor exato das chaves em uso também é apagado.)</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 3 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Treino: leia a caixa-preta</h2>
+        <p>Cada linha abaixo é uma mensagem real que o Jarvis grava no log. Arraste cada uma para o que ela quer dizer.</p>
+
+        <div class="dnd-container" id="m6-dnd">
+          <div class="dnd-chips">
+            <div class="dnd-chip" draggable="true" data-answer="perm">ferramenta bloqueada pelas permissoes: open_app</div>
+            <div class="dnd-chip" draggable="true" data-answer="cota">sessao caiu (cota): ...</div>
+            <div class="dnd-chip" draggable="true" data-answer="mudo">o modelo nao respondeu em 12.0 s: reconectando</div>
+            <div class="dnd-chip" draggable="true" data-answer="chave">o Google recusou a chave; nao vou reconectar</div>
+            <div class="dnd-chip" draggable="true" data-answer="guard">caminho protegido bloqueado: C:\Windows\...</div>
+          </div>
+          <div class="dnd-zones">
+            <div class="dnd-zone" data-correct="perm"><p class="dnd-zone-label">🔒 Você ainda não ligou essa permissão na engrenagem.</p><div class="dnd-zone-target">Solte aqui</div></div>
+            <div class="dnd-zone" data-correct="cota"><p class="dnd-zone-label">⏳ A franquia da camada grátis acabou por agora (429). Esperar resolve.</p><div class="dnd-zone-target">Solte aqui</div></div>
+            <div class="dnd-zone" data-correct="mudo"><p class="dnd-zone-label">📶 O Google ficou mudo depois da sua fala: internet ruim ou serviço lento.</p><div class="dnd-zone-target">Solte aqui</div></div>
+            <div class="dnd-zone" data-correct="chave"><p class="dnd-zone-label">🔑 A chave está errada, apagada ou bloqueada. Precisa trocar.</p><div class="dnd-zone-target">Solte aqui</div></div>
+            <div class="dnd-zone" data-correct="guard"><p class="dnd-zone-label">🛡️ O segurança barrou uma pasta proibida, de propósito.</p><div class="dnd-zone-target">Solte aqui</div></div>
+          </div>
+          <button class="btn" onclick="checkDnD('m6-dnd')">Verificar</button>
+          <button class="btn" onclick="resetDnD('m6-dnd')">Recomeçar</button>
+        </div>
+      </section>
+
+      <!-- TELA 4 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Investigação 1: a chave "incompleta"</h2>
+        <p>Esta semana, gente criando chave nova no Google AI Studio colava na janela e ouvia um não. O detalhe: a chave estava certinha.</p>
+
+        <div class="step-cards">
+          <div class="step-card"><div class="step-num">1</div><div class="step-body"><strong>O sintoma</strong><p>A janela dizia: "Essa chave não parece completa. Copie de novo a chave inteira e cole aqui." Copiar de novo não adiantava.</p></div></div>
+          <div class="step-card"><div class="step-num">2</div><div class="step-body"><strong>A pista</strong><p>O Google nem foi consultado: essa frase sai <em>antes</em> do teste, quando o formato da chave não passa na conferência local.</p></div></div>
+          <div class="step-card"><div class="step-num">3</div><div class="step-body"><strong>A causa</strong><p>As chaves antigas eram <code>AIza</code> + 35 caracteres. As novas (2026) começam diferente e têm um <strong>ponto no meio</strong>. A conferência só conhecia o formato antigo.</p></div></div>
+          <div class="step-card"><div class="step-num">4</div><div class="step-body"><strong>O conserto</strong><p>Aceitar os dois formatos e ensinar a caixa-preta a apagar o novo também.</p></div></div>
+        </div>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <h4 class="pattern-title">Formato antigo (exemplo falso)</h4>
+            <p class="pattern-desc"><code>AIzaSyEXEMPLO_falso_000000000000000</code></p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <h4 class="pattern-title">Formato novo (exemplo falso)</h4>
+            <p class="pattern-desc"><code>AQ.EXEMPLO-falso_0000000000000000000</code> (repare no ponto)</p>
+          </div>
+        </div>
+
+        <p class="code-caption" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted);margin:var(--space-6) 0 calc(-1 * var(--space-6))">📄 src/jarvis/verificacao.py · linhas 34–37</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CÓDIGO</span>
+            <pre><code><span class="code-line"><span class="code-comment"># Formatos plausiveis. A chave antiga do Google e "AIza" + 35 caracteres; a nova (2026) tem</span></span><span class="code-line"><span class="code-comment"># um ponto no meio (ex.: "AQ.Ab8..."). Aceitamos texto longo com letras, numeros, "_", "-"</span></span><span class="code-line"><span class="code-comment"># e ".", sem comecar nem terminar com ponto.</span></span><span class="code-line">_FORMATO_CHAVE_GOOGLE <span class="code-operator">=</span> re.<span class="code-function">compile</span>(<span class="code-string">r"[A-Za-z0-9_\-][A-Za-z0-9_\-.]{18,198}[A-Za-z0-9_\-]"</span>)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Nota para quem ler depois: a chave antiga é "AIza" + 35 caracteres; a nova tem um ponto...</p>
+              <p class="tl">...no meio (ex.: "AQ.Ab8...").</p>
+              <p class="tl">Por isso aceitamos texto longo com letras, números, "_", "-" e "."...</p>
+              <p class="tl">A regra (uma <span class="term" data-definition="Expressão regular (regex) é uma 'máscara' de texto que diz que formato um texto deve ter, como 'começa com letra, depois de 19 a 199 caracteres permitidos'. Muito usada para conferir senhas, e-mails e chaves.">expressão regular</span>): começa com letra, número, _ ou -; no meio pode ter ponto; termina sem ponto; total de 21 a 201 caracteres.</p>
+            </div>
+          </div>
+        </div>
+
+        <p>Lição para conversar com IA: quando o erro aparece <em>antes</em> de falar com o serviço, o problema está na conferência do seu lado, não no serviço. Peça para a IA "mostrar onde essa mensagem é gerada" antes de qualquer outra coisa.</p>
+      </section>
+
+      <!-- TELA 5 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Investigação 2: a Calculadora invisível</h2>
+        <p>O Jarvis abria a Calculadora numa boa. Mas, ao pedir "fecha a calculadora", respondia que ela não estava aberta. Ela estava ali, na sua cara. Veja a conversa das peças <strong>antes</strong> do conserto:</p>
+
+        <div class="chat-window" id="m6-chat">
+          <div class="chat-messages">
+            <div class="chat-message" data-msg="0" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-5)">🙋</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-5)">Você</span><p>Jarvis, fecha a calculadora.</p></div>
+            </div>
+            <div class="chat-message" data-msg="1" data-sender="close" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">C</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">close_app</span><p>list_windows, me passa as janelas abertas. E já tira da lista os processos protegidos.</p></div>
+            </div>
+            <div class="chat-message" data-msg="2" data-sender="lista" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">L</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-3)">list_windows</span><p>Achei uma janela "Calculadora"... mas o processo dela é ApplicationFrameHost.exe. Esse está na lista de protegidos. Descartei.</p></div>
+            </div>
+            <div class="chat-message" data-msg="3" data-sender="close" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">C</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">close_app</span><p>Então não tem calculadora. Respondo: "Nao achei 'calculadora' aberto."</p></div>
+            </div>
+            <div class="chat-message" data-msg="4" data-sender="windows" style="display:none">
+              <div class="chat-avatar" style="background: #6B6560">🪟</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: #6B6560">Windows</span><p>Detalhe: os apps modernos (Calculadora, Configurações, Fotos...) rodam dentro de uma moldura, o ApplicationFrameHost.exe. O processo de verdade é o da janela de dentro.</p></div>
+            </div>
+          </div>
+          <div class="chat-typing" id="m6-chat-typing" style="display:none">
+            <div class="chat-avatar" id="m6-chat-typing-avatar">?</div>
+            <div class="chat-typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>
+          </div>
+          <div class="chat-controls">
+            <button class="btn chat-next-btn">Próxima mensagem</button>
+            <button class="btn chat-all-btn">Mostrar tudo</button>
+            <button class="btn chat-reset-btn">Recomeçar</button>
+            <span class="chat-progress"></span>
+          </div>
+        </div>
+
+        <div class="bug-challenge" id="m6-bug">
+          <h3>Ache o bug: qual linha da lista de processos protegidos fazia a Calculadora sumir?</h3>
+          <p style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted)">📄 src/jarvis/tools/security.py · linhas 44–51 (parte da lista PROTECTED_PROCESSES)</p>
+          <div class="bug-code">
+<div class="bug-line" data-line="44" data-hint="Esse também é um processo do Windows, mas não tem a ver com a janela da Calculadora. Procure o nome de uma “moldura” de apps." onclick="checkBugLine(this, false)"><span class="line-num">44</span><code style="white-space:pre-wrap">        <span class="code-string">"searchhost.exe"</span>,</code></div>
+<div class="bug-line" data-line="45" data-hint="Esse também é um processo do Windows, mas não tem a ver com a janela da Calculadora. Procure o nome de uma “moldura” de apps." onclick="checkBugLine(this, false)"><span class="line-num">45</span><code style="white-space:pre-wrap">        <span class="code-string">"searchapp.exe"</span>,</code></div>
+<div class="bug-line" data-line="46" data-hint="Esse também é um processo do Windows, mas não tem a ver com a janela da Calculadora. Procure o nome de uma “moldura” de apps." onclick="checkBugLine(this, false)"><span class="line-num">46</span><code style="white-space:pre-wrap">        <span class="code-string">"searchui.exe"</span>,</code></div>
+<div class="bug-line" data-line="47" data-hint="Esse também é um processo do Windows, mas não tem a ver com a janela da Calculadora. Procure o nome de uma “moldura” de apps." onclick="checkBugLine(this, false)"><span class="line-num">47</span><code style="white-space:pre-wrap">        <span class="code-string">"textinputhost.exe"</span>,</code></div>
+<div class="bug-line" data-line="48" data-hint="Esse também é um processo do Windows, mas não tem a ver com a janela da Calculadora. Procure o nome de uma “moldura” de apps." onclick="checkBugLine(this, false)"><span class="line-num">48</span><code style="white-space:pre-wrap">        <span class="code-string">"runtimebroker.exe"</span>,</code></div>
+<div class="bug-line bug-target" data-line="49" data-explanation="Os apps modernos moram dentro da moldura ApplicationFrameHost.exe, e ela está nesta lista. O list_windows descartava a janela da Calculadora antes de o close_app procurar. Mas repare: o conserto NÃO foi apagar esta linha. Fechar a moldura à força derrubaria todos os apps modernos de uma vez, por isso ela continua protegida. O conserto foi olhar DENTRO da moldura e achar o processo real (CalculatorApp.exe)." onclick="checkBugLine(this, true)"><span class="line-num">49</span><code style="white-space:pre-wrap">        <span class="code-string">"applicationframehost.exe"</span>,</code></div>
+<div class="bug-line" data-line="50" data-hint="Esse também é um processo do Windows, mas não tem a ver com a janela da Calculadora. Procure o nome de uma “moldura” de apps." onclick="checkBugLine(this, false)"><span class="line-num">50</span><code style="white-space:pre-wrap">        <span class="code-string">"lockapp.exe"</span>,</code></div>
+<div class="bug-line" data-line="51" data-hint="Esse também é um processo do Windows, mas não tem a ver com a janela da Calculadora. Procure o nome de uma “moldura” de apps." onclick="checkBugLine(this, false)"><span class="line-num">51</span><code style="white-space:pre-wrap">        <span class="code-string">"securityhealthsystray.exe"</span>,</code></div>
+</div>
+          <div class="bug-feedback" id="m6-bug-feedback"></div>
+        </div>
+
+        <p class="code-caption" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted);margin:var(--space-6) 0 calc(-1 * var(--space-6))">📄 src/jarvis/os_integration/windows.py · linhas 106–114</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CÓDIGO</span>
+            <pre><code><span class="code-line">        pid <span class="code-operator">=</span> wintypes.<span class="code-function">DWORD</span>()</span><span class="code-line">        user32.<span class="code-function">GetWindowThreadProcessId</span>(hwnd, ctypes.<span class="code-function">byref</span>(pid))</span><span class="code-line">        process <span class="code-operator">=</span> names.<span class="code-function">get</span>(pid.value, <span class="code-string">"?"</span>)</span><span class="code-line">        <span class="code-keyword">if</span> process.<span class="code-function">lower</span>() <span class="code-operator">==</span> _MOLDURA_UWP:</span><span class="code-line">            <span class="code-comment"># Apps modernos (Calculadora, Configuracoes, Fotos...) moram dentro da moldura</span></span><span class="code-line">            <span class="code-comment"># ApplicationFrameHost: o processo de verdade e o da janela filha.</span></span><span class="code-line">            process <span class="code-operator">=</span> <span class="code-function">_processo_do_app_moderno</span>(user32, hwnd, pid.value, names)</span><span class="code-line">        <span class="code-keyword">if</span> process.<span class="code-function">lower</span>() <span class="code-keyword">not</span> <span class="code-keyword">in</span> excluded <span class="code-keyword">and</span> buffer.value <span class="code-operator">!=</span> <span class="code-string">"Program Manager"</span>:</span><span class="code-line">            windows.<span class="code-function">append</span>(<span class="code-function">Window</span>(process<span class="code-operator">=</span>process, title<span class="code-operator">=</span>buffer.value, hwnd<span class="code-operator">=</span><span class="code-function">int</span>(hwnd)))</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Prepara um espaço para o número do processo.</p>
+              <p class="tl">Pergunta ao Windows: de qual processo é esta janela?</p>
+              <p class="tl">Traduz o número no nome (ex.: ApplicationFrameHost.exe).</p>
+              <p class="tl">É a moldura dos apps modernos?</p>
+              <p class="tl">(Comentário: Calculadora, Configurações, Fotos moram aí dentro...)</p>
+              <p class="tl">(...o processo de verdade é o da janela filha.)</p>
+              <p class="tl"><strong>O conserto:</strong> troca a moldura pelo processo real lá de dentro (CalculatorApp.exe), ou por "app do Windows" se não der para ver.</p>
+              <p class="tl">Só agora confere a lista de protegidos (e ignora o "Program Manager", que é a área de trabalho)...</p>
+              <p class="tl">...e guarda a janela na lista com o nome certo.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">O conserto óbvio era o errado</strong>
+            <p>Uma IA de código, com pressa, provavelmente sugeriria "tire o ApplicationFrameHost da lista de protegidos". Funcionaria para a Calculadora e abriria um buraco: fechar à força a moldura derruba todos os apps modernos. Quando a IA propuser afrouxar uma regra de segurança, pergunte: "existe um jeito de resolver sem mexer nessa proteção?"</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 6 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Como pedir ajuda a uma IA com o log</h2>
+        <p>A IA não vê o seu computador. Quanto melhor a "caixa-preta" que você entrega, menos ela chuta.</p>
+
+        <div class="step-cards">
+          <div class="step-card"><div class="step-num">1</div><div class="step-body"><strong>Repita o problema e anote a hora</strong><p>Assim você acha o trecho certo do log.</p></div></div>
+          <div class="step-card"><div class="step-num">2</div><div class="step-body"><strong>Abra o log</strong><p>Engrenagem › Sobre › Logs › Abrir pasta. Copie só as linhas perto daquele horário.</p></div></div>
+          <div class="step-card"><div class="step-num">3</div><div class="step-body"><strong>Confira se não tem chave</strong><p>O log já apaga, mas olhe: procure "AIza", "AQ." ou "sk_" seguidos de um monte de letras. <strong>Nunca cole o arquivo .env</strong> nem a chave.</p></div></div>
+          <div class="step-card"><div class="step-num">4</div><div class="step-body"><strong>Diga a versão</strong><p>Rode <code>jarvis --versao</code> (ou veja na aba Sobre).</p></div></div>
+          <div class="step-card"><div class="step-num">5</div><div class="step-body"><strong>Conte o que fez, o que esperava e o que aconteceu</strong><p>Três frases. Depois o trecho do log.</p></div></div>
+        </div>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <h4 class="pattern-title">❌ Pedido fraco</h4>
+            <p class="pattern-desc">"O Jarvis não fecha a calculadora, conserta aí." (A IA vai chutar e talvez afrouxar uma proteção.)</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-success)">
+            <h4 class="pattern-title">✅ Pedido forte</h4>
+            <p class="pattern-desc">"Jarvis 0.9.0, Windows 11. Falei 'fecha a calculadora' com a calculadora aberta; esperava que fechasse; ele disse que não estava aberta. Log: <code>close_app: 'calculadora' nao encontrado entre 3 janelas</code>. Onde as janelas são filtradas? Não quero mexer na lista de processos protegidos."</p>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🔑</div>
+          <div class="callout-content">
+            <strong class="callout-title">Chave colada num chat = chave vazada</strong>
+            <p>Se você colar a chave numa conversa, num print ou numa issue do GitHub por engano, trate como vazada: apague no Google AI Studio, crie outra e cole pela engrenagem (aba Chave do Google).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUIZ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Teste: você é o investigador</h2>
+        <div class="quiz-container" id="m6-quiz">
+
+          <div class="quiz-question-block" data-correct="b"
+               data-explanation-right="A linha diz que a busca rodou e não achou entre as janelas. Então a ação foi permitida e executada: o problema está em como as janelas são listadas ou filtradas, igualzinho à Calculadora."
+               data-explanation-wrong="Se fosse permissão, o log diria 'ferramenta bloqueada pelas permissoes'. Se a IA não tivesse entendido, close_app nem teria rodado. A linha mostra que a busca aconteceu e não achou: suspeite do filtro das janelas.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Um usuário conta que o app Fotos abre, mas não fecha pelo Jarvis. No log dele aparece: <code>close_app: 'fotos' nao encontrado entre 4 janelas</code>.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">Qual é a melhor primeira suspeita?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>A permissão "Abrir e fechar programas" está desligada.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>A janela do Fotos está sendo descartada ou listada com outro nome antes da busca.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O Gemini não entendeu a palavra "fotos".</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block" data-correct="c"
+               data-explanation-right="Isso é a melhor caixa-preta que você pode entregar: o que fez, o que esperava, o que aconteceu, a versão e o trecho do log. Sem chave, sem .env."
+               data-explanation-wrong="O .env tem a sua chave: colar ele é entregar a senha da sua conta. E 'não funciona, conserta' obriga a IA a chutar. O que ajuda é o trecho do log com o contexto.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Você vai pedir ajuda a uma IA de código sobre um erro do Jarvis.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">O que você cola na conversa?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O arquivo .env inteiro, para ela conferir se a chave está certa.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Só "o Jarvis não funciona, conserta".</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O que fez, o que esperava, o que aconteceu, a versão e as linhas do log daquele horário.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block" data-correct="a"
+               data-explanation-right="A mensagem vem da conferência de formato, que roda no seu PC antes de falar com o Google. Uma chave nova do mesmo jeito daria o mesmo 'não'. A versão nova do Jarvis aceita o formato novo."
+               data-explanation-wrong="Criar outra chave não adianta: ela viria no mesmo formato novo, com ponto. A recusa é do Jarvis antigo, na conferência local. Atualizar o Jarvis resolve.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Sua tia instalou uma versão antiga do Jarvis. Ela cria a chave no Google AI Studio, cola uma chave que começa com <code>AQ.</code> e vê "Essa chave não parece completa".</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">O que você recomenda?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Instalar a versão mais nova do Jarvis e colar a mesma chave de novo.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Criar outras chaves até vir uma começando com "AIza".</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Esperar: o Google ainda está ativando a chave.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block" data-correct="b"
+               data-explanation-right="No programa instalado o log detalhado vem desligado. JARVIS_LOG_DETALHADO=1 liga, e aí aparecem 'voce disse', 'acao pedida' e 'acao ... terminou em'. Depois de investigar, vale desligar de novo."
+               data-explanation-wrong="Não é defeito: no instalador o detalhado vem desligado de propósito (menos coisa pessoal gravada). Ele liga com JARVIS_LOG_DETALHADO=1.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Você usa o Jarvis instalado. Abre o log para investigar e não encontra nenhuma linha "voce disse" nem "acao pedida".</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">Por quê?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O log está corrompido; precisa reinstalar.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>No instalado o log detalhado vem desligado; liga com JARVIS_LOG_DETALHADO=1.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Essas linhas só existem quando dá erro.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('m6-quiz')">Verificar respostas</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('m6-quiz')">Tentar de novo</button>
+        </div>
+      </section>
+
+      <!-- TELA FINAL -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Próximos passos</h2>
+        <p>Você agora sabe o caminho de uma frase, as peças, como elas conversam, o que vem de fora, as travas de segurança e como investigar. Isso já basta para mandar numa IA de código com precisão.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">📖</div>
+            <h4 class="pattern-title">Leia o README</h4>
+            <p class="pattern-desc">Instalação, permissões, vozes, problemas comuns e limites conhecidos, tudo em português.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🧩</div>
+            <h4 class="pattern-title">Pegue uma ideia</h4>
+            <p class="pattern-desc">A seção "Ideias para contribuir" do README traz o modo local (Whisper + Ollama + Piper) e onde encaixar cada peça.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">🧪</div>
+            <h4 class="pattern-title">Rode os testes</h4>
+            <p class="pattern-desc"><code>pytest</code> e <code>ruff check .</code>. Os <span class="term" data-definition="Testes automáticos são pequenos programas que conferem se o código faz o que deveria. Rodam em segundos e avisam se uma mudança quebrou algo que funcionava.">testes</span> rodam sem internet e sem microfone. Toda contribuição precisa deles passando.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🚀</div>
+            <h4 class="pattern-title">Mande um pull request</h4>
+            <p class="pattern-desc">Um <span class="term" data-definition="Pull request (PR) é um pedido para o dono do projeto juntar a sua mudança ao código oficial no GitHub. Ele revisa, comenta e aprova (ou não).">pull request</span> com a sua mudança. Regras: nenhuma ação fora da lista fechada e nada de enfraquecer as permissões.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🤝</div>
+          <div class="callout-content">
+            <strong class="callout-title">Créditos</strong>
+            <p>O Jarvis foi criado por Mateus Miranda (@mateusmirandaia.ia). É código aberto, com licença MIT: pode usar, copiar, modificar, distribuir e até vender, desde que mantenha o aviso de copyright e a licença junto do código. Cobram pra te ensinar. Eu ensino de graça.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>

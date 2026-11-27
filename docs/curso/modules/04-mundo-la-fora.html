@@ -1,0 +1,440 @@
+<section class="module" id="module-4" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">04</span>
+      <h1 class="module-title">O mundo lá fora</h1>
+      <p class="module-subtitle">O que o Jarvis busca na internet, quanto isso custa, onde mora a sua chave e o que sai do seu computador.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- TELA 1 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Uma ligação internacional</h2>
+        <p>Nos módulos 1 a 3 você seguiu o "Jarvis, abre a calculadora" do microfone até a calculadora e viu as peças conversando <em>dentro</em> do seu computador. Agora a gente olha pela janela: quase tudo que é "inteligente" no Jarvis acontece <strong>do outro lado de uma ligação</strong>.</p>
+        <p>Pense numa ligação internacional para uma central de atendimento muito esperta. O seu computador disca, fala, escuta. A central entende e responde. Para a ligação funcionar você precisa de três coisas: a linha (internet), o número certo (o <span class="term" data-definition="Modelo é o 'cérebro' de IA específico que você usa, como uma versão de um produto. O Jarvis usa um modelo do Google chamado gemini-3.1-flash-live-preview. Para uma IA de código, você diria: 'troque o modelo para X'.">modelo</span>) e um cartão com a sua senha (a <span class="term" data-definition="Chave de API é uma senha longa que prova para um serviço (como o Google) quem está pedindo. Quem tem a sua chave usa a sua conta, por isso ela nunca deve ser mostrada nem enviada para ninguém.">chave de API</span>).</p>
+
+        <div class="arch-diagram">
+          <div class="arch-zone">
+            <h4 class="arch-zone-label">No seu computador</h4>
+            <div class="pattern-cards">
+              <div class="arch-component" data-desc="O próprio Jarvis (a pasta src/jarvis). Ele grava a sua voz, manda pela linha, recebe a resposta e executa as ações no Windows. Tudo que é ação acontece aqui, nunca lá fora.">
+                <div class="arch-icon">🖥️</div><span>Jarvis (Python)</span>
+              </div>
+              <div class="arch-component" data-desc="Microfone e alto-falante (assistants/audio.py). O áudio sai daqui em pedacinhos e a resposta falada volta para cá.">
+                <div class="arch-icon">🎙️</div><span>Microfone e alto-falante</span>
+              </div>
+              <div class="arch-component" data-desc="Os arquivos %APPDATA%\Jarvis\.env (sua chave) e preferencias.json (voz, visual, permissões). Ficam no seu disco e não vão para a internet.">
+                <div class="arch-icon">🔐</div><span>Chave e preferências</span>
+              </div>
+            </div>
+          </div>
+          <div class="arch-zone">
+            <h4 class="arch-zone-label">Na internet (serviços externos)</h4>
+            <div class="pattern-cards">
+              <div class="arch-component" data-desc="Gemini Live, do Google: ouve, entende, decide qual ferramenta chamar e responde falando, tudo numa conexão só. Obrigatório. Tem camada grátis com limite de uso.">
+                <div class="arch-icon">🧠</div><span>Gemini Live (Google)</span>
+              </div>
+              <div class="arch-component" data-desc="ElevenLabs: opcional e pago. Só troca a VOZ. O Gemini continua sendo o ouvido e o cérebro; o texto da resposta vai para o ElevenLabs e volta como áudio.">
+                <div class="arch-icon">🗣️</div><span>ElevenLabs (opcional)</span>
+              </div>
+              <div class="arch-component" data-desc="Google AI Studio: o site onde você cria a chave grátis. O Jarvis não conversa com ele durante o uso; você só passa lá uma vez para pegar a chave.">
+                <div class="arch-icon">🎫</div><span>Google AI Studio</span>
+              </div>
+            </div>
+          </div>
+          <div class="arch-description" id="m4-arch-desc">Clique em qualquer peça para ver o que ela faz.</div>
+        </div>
+      </section>
+
+      <!-- TELA 2 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O que passa pela linha</h2>
+        <p>Diferente de um chat que manda uma mensagem e espera, o Gemini Live é uma <span class="term" data-definition="Uma conexão em tempo real (tecnicamente um WebSocket) fica aberta o tempo todo, como uma ligação telefônica: os dois lados podem mandar dados a qualquer momento, sem 'desligar e ligar de novo' a cada frase.">conexão em tempo real</span>: a linha fica aberta e os dois lados falam quando quiserem. Clique para ver o que vai e o que volta.</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-m4-pc","label":"O Jarvis disca: abre a conexão com o modelo gemini-3.1-flash-live-preview, mostrando a sua chave. Se em 15 s ninguém atender, desiste e tenta de novo."},
+          {"highlight":"flow-m4-voce","label":"Você fala: Jarvis, abre a calculadora."},
+          {"highlight":"flow-m4-pc","label":"O microfone vira pedacinhos de áudio, que saem pela linha sem parar.","packet":true,"from":"m4-pc","to":"m4-google"},
+          {"highlight":"flow-m4-google","label":"O Google entende e responde com um pedido de ferramenta: open_app com nome calculadora.","packet":true,"from":"m4-google","to":"m4-pc"},
+          {"highlight":"flow-m4-pc","label":"A ação roda no SEU computador (com as permissões). Só o resultado, em texto, volta pela linha.","packet":true,"from":"m4-pc","to":"m4-google"},
+          {"highlight":"flow-m4-google","label":"O Google manda a resposta falada (áudio) e o texto dela.","packet":true,"from":"m4-google","to":"m4-pc"},
+          {"highlight":"flow-m4-eleven","label":"Só se você ligou o ElevenLabs: o TEXTO da resposta vai para lá, frase por frase, e volta como áudio na sua voz escolhida.","packet":true,"from":"m4-pc","to":"m4-eleven"},
+          {"highlight":"flow-m4-voce","label":"O alto-falante toca a resposta. A linha continua aberta, esperando a próxima frase."}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-m4-voce"><div class="flow-actor-icon">🙋</div><span>Você</span></div>
+            <div class="flow-actor" id="flow-m4-pc"><div class="flow-actor-icon">🖥️</div><span>Jarvis no seu PC</span></div>
+            <div class="flow-actor" id="flow-m4-google"><div class="flow-actor-icon">🧠</div><span>Gemini Live</span></div>
+            <div class="flow-actor" id="flow-m4-eleven"><div class="flow-actor-icon">🗣️</div><span>ElevenLabs</span></div>
+          </div>
+          <div class="flow-packet" id="m4-flow-packet"></div>
+          <div class="flow-step-label" id="m4-flow-label">Clique em "Próximo passo" para começar</div>
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Próximo passo</button>
+            <button class="btn flow-reset-btn">Recomeçar</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+
+        <p>É assim que o Jarvis "disca", no código:</p>
+        <p class="code-caption" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted);margin:var(--space-6) 0 calc(-1 * var(--space-6))">📄 src/jarvis/assistants/live_assistant.py · linhas 296–302</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CÓDIGO</span>
+            <pre><code><span class="code-line">        <span class="code-keyword">async</span> <span class="code-keyword">with</span> contextlib.<span class="code-function">AsyncExitStack</span>() as stack:</span><span class="code-line">            session <span class="code-operator">=</span> <span class="code-keyword">await</span> asyncio.<span class="code-function">wait_for</span>(</span><span class="code-line">                stack.<span class="code-function">enter_async_context</span>(</span><span class="code-line">                    self.client.aio.live.<span class="code-function">connect</span>(model<span class="code-operator">=</span>self.settings.live_model, config<span class="code-operator">=</span>self.config)</span><span class="code-line">                ),</span><span class="code-line">                timeout<span class="code-operator">=</span>CONNECT_TIMEOUT_S,</span><span class="code-line">            )</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Prepara uma "bandeja" que fecha tudo direitinho quando a ligação acabar.</p>
+              <p class="tl">Espera a ligação ser atendida...</p>
+              <p class="tl">...guardando a conexão na bandeja...</p>
+              <p class="tl">...discando para o modelo escolhido, com a configuração (voz, ferramentas, personalidade).</p>
+              <p class="tl">Fecha os parênteses da ligação.</p>
+              <p class="tl">Mas com um limite: se ninguém atender em 15 segundos (<code>CONNECT_TIMEOUT_S</code>), desiste.</p>
+              <p class="tl">Fim da espera.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 3 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O plano grátis tem franquia</h2>
+        <p>O Jarvis usa a <span class="term" data-definition="Camada grátis (free tier) é o plano gratuito de um serviço pago: funciona de verdade, mas com limite de uso por minuto e por dia. Passou do limite, o serviço recusa por um tempo.">camada grátis</span> do Gemini. É como um plano de celular com franquia: funciona bem, mas se você falar demais num dia, a operadora segura a linha por um tempo. Cada problema volta com um <span class="term" data-definition="Código HTTP é um número que o servidor devolve dizendo como foi o pedido. 200 = deu certo; 401/403 = chave recusada; 429 = muitos pedidos, espere; 500 a 599 = o problema é do lado do servidor.">código</span>, e o Jarvis traduz cada um numa frase simples.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">⏳</div>
+            <h4 class="pattern-title">429: limite atingido</h4>
+            <p class="pattern-desc">"Muitos pedidos." A franquia grátis acabou por agora. Não é defeito: é esperar alguns minutos.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🔑</div>
+            <h4 class="pattern-title">401 / 403: chave recusada</h4>
+            <p class="pattern-desc">Chave errada, apagada ou bloqueada. Reconectar não adianta: a janela mostra "Atualizar chave".</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">🌩️</div>
+            <h4 class="pattern-title">5xx: Google instável</h4>
+            <p class="pattern-desc">O problema é do lado de lá ("modelo sobrecarregado"). No modo voz ele reconecta sozinho.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🧪</div>
+            <h4 class="pattern-title">Modelo "preview"</h4>
+            <p class="pattern-desc">O modelo de voz é uma <span class="term" data-definition="Preview é uma versão de teste que o fornecedor libera antes da final. Funciona, mas o nome e o comportamento podem mudar sem aviso.">versão de teste</span>. Se o Google trocar o nome, basta ajustar <code>GEMINI_LIVE_MODEL</code>.</p>
+          </div>
+        </div>
+
+        <p class="code-caption" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted);margin:var(--space-6) 0 calc(-1 * var(--space-6))">📄 src/jarvis/verificacao.py · linhas 135–144</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CÓDIGO</span>
+            <pre><code><span class="code-line">    codigo <span class="code-operator">=</span> <span class="code-function">_codigo_api</span>(erro)</span><span class="code-line">    <span class="code-keyword">if</span> codigo <span class="code-operator">==</span> <span class="code-number">429</span>:</span><span class="code-line">        <span class="code-keyword">return</span> MSG_LIMITE</span><span class="code-line">    <span class="code-keyword">if</span> codigo <span class="code-keyword">is</span> <span class="code-keyword">not</span> <span class="code-keyword">None</span> <span class="code-keyword">and</span> <span class="code-number">500</span> <span class="code-operator">&lt;=</span> codigo <span class="code-operator">&lt;</span> <span class="code-number">600</span>:</span><span class="code-line">        <span class="code-keyword">return</span> MSG_GOOGLE_INSTAVEL</span><span class="code-line">    <span class="code-keyword">if</span> codigo <span class="code-operator">==</span> <span class="code-number">400</span>:</span><span class="code-line">        <span class="code-keyword">return</span> MSG_INVALIDA <span class="code-keyword">if</span> <span class="code-string">"key"</span> <span class="code-keyword">in</span> <span class="code-function">_texto</span>(erro) <span class="code-keyword">else</span> MSG_INESPERADO</span><span class="code-line">    <span class="code-keyword">if</span> <span class="code-function">_erro_de_rede</span>(erro):</span><span class="code-line">        <span class="code-keyword">return</span> MSG_SEM_INTERNET</span><span class="code-line">    <span class="code-keyword">return</span> MSG_INESPERADO</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Pega o número do erro que o Google devolveu.</p>
+              <p class="tl">Se for 429 (muitos pedidos)...</p>
+              <p class="tl">...diz: "Limite da conta grátis atingido. Espere alguns minutos."</p>
+              <p class="tl">Se for qualquer número de 500 a 599...</p>
+              <p class="tl">...diz: "O Google está instável agora."</p>
+              <p class="tl">Se for 400 (pedido mal feito)...</p>
+              <p class="tl">...e o texto fala de "key", é chave inválida; senão, erro inesperado.</p>
+              <p class="tl">Se quem falhou foi a rede (a ligação nem completou)...</p>
+              <p class="tl">...diz: "Sem internet (ou o Google não respondeu)."</p>
+              <p class="tl">Nada disso? "Erro inesperado... veja o log." Nunca um código cru na sua cara.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 4 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">ElevenLabs: o dublador contratado</h2>
+        <p>Na nossa ligação, o ElevenLabs é um dublador que você contrata à parte: a central continua pensando, ele só empresta a voz. É opcional, é pago (cada fala gasta <span class="term" data-definition="Créditos são o 'saldo' da sua conta no ElevenLabs. Cada caractere transformado em voz consome uma parte. Acabou o saldo, a voz para de funcionar até você recarregar ou o plano renovar.">créditos</span>) e precisa de uma chave própria com duas permissões.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🆓</div>
+            <h4 class="pattern-title">Voz do Google</h4>
+            <p class="pattern-desc">Grátis, padrão. 8 vozes prontas. Cerca de 1 s até a primeira palavra.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">💳</div>
+            <h4 class="pattern-title">Voz do ElevenLabs</h4>
+            <p class="pattern-desc">Paga, opcional. Sua voz ou uma criada. Cerca de 2 s, porque o texto passa por mais um serviço. Ele fala frase por frase para compensar.</p>
+          </div>
+        </div>
+
+        <div class="badge-list">
+          <div class="badge-item">
+            <code class="badge-code">Text to Speech</code>
+            <span class="badge-desc">Para falar com a voz escolhida. Sem ela, o Jarvis volta para a voz do Google.</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">Voices: read</code>
+            <span class="badge-desc">Para o botão "Buscar minhas vozes" listar as suas vozes. Sem ela, dá para colar o ID da voz à mão.</span>
+          </div>
+        </div>
+
+        <p class="code-caption" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted);margin:var(--space-6) 0 calc(-1 * var(--space-6))">📄 src/jarvis/verificacao.py · linhas 215–220</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CÓDIGO</span>
+            <pre><code><span class="code-line">    <span class="code-keyword">if</span> <span class="code-string">"missing_permissions"</span> <span class="code-keyword">in</span> junto <span class="code-keyword">or</span> <span class="code-string">"permission"</span> <span class="code-keyword">in</span> junto:</span><span class="code-line">        <span class="code-keyword">if</span> listando <span class="code-keyword">or</span> <span class="code-string">"voices_read"</span> <span class="code-keyword">in</span> junto:</span><span class="code-line">            <span class="code-keyword">return</span> EL_MSG_SEM_PERMISSAO_VOZES</span><span class="code-line">        <span class="code-keyword">return</span> EL_MSG_SEM_PERMISSAO_FALA</span><span class="code-line">    <span class="code-keyword">if</span> <span class="code-string">"quota"</span> <span class="code-keyword">in</span> junto <span class="code-keyword">or</span> <span class="code-string">"credit"</span> <span class="code-keyword">in</span> junto <span class="code-keyword">or</span> status <span class="code-operator">==</span> <span class="code-number">402</span>:</span><span class="code-line">        <span class="code-keyword">return</span> EL_MSG_SEM_CREDITOS</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Se a resposta do ElevenLabs fala de "permissão" faltando...</p>
+              <p class="tl">...e você estava tentando listar as vozes...</p>
+              <p class="tl">...avisa que falta "Voices: read".</p>
+              <p class="tl">Se não, o que falta é "Text to Speech".</p>
+              <p class="tl">Se fala de "quota", "credit" ou veio o código 402 (pagamento)...</p>
+              <p class="tl">...avisa que os créditos acabaram.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🛟</div>
+          <div class="callout-content">
+            <strong class="callout-title">Se o dublador faltar, o show continua</strong>
+            <p>Se o ElevenLabs falhar no meio da conversa (sem créditos, chave errada, internet), o Jarvis avisa uma vez com uma fala já gravada e segue com a voz do Google. Ele nunca fica mudo esperando um serviço pago.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 5 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Onde mora a sua chave</h2>
+        <p>A chave é o cartão com a senha da ligação. O Jarvis procura em três gavetas, nesta ordem, e <strong>a primeira que tiver a chave ganha</strong>:</p>
+
+        <div class="step-cards">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <strong><span class="term" data-definition="Variável de ambiente é um valor que o Windows (ou o terminal) entrega para todo programa que abre, como um bilhete colado na porta. Ex.: GEMINI_API_KEY. Quem configura é você, à mão.">Variáveis de ambiente</span></strong>
+              <p>Um valor definido no Windows ou no terminal. Coisa de desenvolvedor.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <strong>O <span class="term" data-definition="Um arquivo .env é um arquivo de texto simples com linhas NOME=valor, usado para guardar configurações e senhas fora do código. O nome começa com ponto, por isso às vezes fica escondido no Explorer.">.env</span> da pasta do projeto</strong>
+              <p>Só existe para quem roda pelo código. O programa instalado nem procura.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <strong><code>%APPDATA%\Jarvis\.env</code></strong>
+              <p>Onde a janela salva a chave quando você cola e clica em Testar. É a gaveta normal. (<span class="term" data-definition="%APPDATA% é um atalho do Windows para a pasta de dados dos programas do seu usuário, geralmente C:\Users\SeuNome\AppData\Roaming. Fica fora da pasta do programa, então nada se perde ao atualizar.">%APPDATA%</span> é a pasta de dados do seu usuário.)</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="code-caption" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted);margin:var(--space-6) 0 calc(-1 * var(--space-6))">📄 src/jarvis/config.py · linhas 156–166</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CÓDIGO</span>
+            <pre><code><span class="code-line">        <span class="code-keyword">for</span> fonte, camada <span class="code-keyword">in</span> self._camadas:</span><span class="code-line">            bruto <span class="code-operator">=</span> camada.<span class="code-function">get</span>(nome)</span><span class="code-line">            <span class="code-keyword">if</span> <span class="code-keyword">not</span> <span class="code-function">isinstance</span>(bruto, str):</span><span class="code-line">                <span class="code-keyword">continue</span></span><span class="code-line">            valor <span class="code-operator">=</span> bruto.<span class="code-function">strip</span>()</span><span class="code-line">            <span class="code-keyword">if</span> <span class="code-keyword">not</span> valor:</span><span class="code-line">                <span class="code-keyword">continue</span></span><span class="code-line">            <span class="code-keyword">if</span> nome <span class="code-keyword">in</span> _SEGREDOS <span class="code-keyword">and</span> <span class="code-function">_is_placeholder</span>(valor):</span><span class="code-line">                <span class="code-keyword">continue</span></span><span class="code-line">            <span class="code-keyword">return</span> valor, fonte</span><span class="code-line">        <span class="code-keyword">return</span> <span class="code-string">""</span>, <span class="code-string">""</span></span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Abre as gavetas na ordem: ambiente, projeto, usuário.</p>
+              <p class="tl">Procura a variável pedida (ex.: GEMINI_API_KEY) nessa gaveta.</p>
+              <p class="tl">Não é texto? Não está aqui...</p>
+              <p class="tl">...vai para a próxima gaveta.</p>
+              <p class="tl">Tira espaços sobrando das pontas.</p>
+              <p class="tl">Ficou vazio?</p>
+              <p class="tl">Próxima gaveta.</p>
+              <p class="tl">É uma chave, mas com texto de exemplo ("cole_sua_chave_aqui")?</p>
+              <p class="tl">Conta como "não tem": próxima gaveta.</p>
+              <p class="tl">Achou! Devolve o valor e de qual gaveta veio. As outras nem são abertas.</p>
+              <p class="tl">Nenhuma gaveta tinha: devolve vazio (e a janela pede a chave).</p>
+            </div>
+          </div>
+        </div>
+
+        <p>E para a chave nunca vazar para o <span class="term" data-definition="GitHub é o site onde o código do Jarvis fica guardado e compartilhado. Tudo que vai para lá num repositório público, qualquer pessoa do mundo pode ver.">GitHub</span>, o projeto tem um <span class="term" data-definition="O .gitignore é uma lista de arquivos que o Git (o programa que envia código ao GitHub) deve ignorar sempre. O que está nela nunca é enviado, nem por engano.">.gitignore</span>, e a janela só mostra o fim da chave:</p>
+
+        <p class="code-caption" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted);margin:var(--space-6) 0 calc(-1 * var(--space-6))">📄 .gitignore · linhas 1–4</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CÓDIGO</span>
+            <pre><code><span class="code-line"><span class="code-comment"># --- Segredos (NUNCA vao para o GitHub) ---</span></span><span class="code-line">.env</span><span class="code-line">.env.*</span><span class="code-line">!.env.example</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Um aviso para humanos: segredos nunca vão para o GitHub.</p>
+              <p class="tl">Ignore qualquer arquivo chamado .env...</p>
+              <p class="tl">...e qualquer variação, como .env.local.</p>
+              <p class="tl">Exceto o .env.example, que é só o modelo vazio (sem chave nenhuma).</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="code-caption" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-muted);margin:var(--space-6) 0 calc(-1 * var(--space-6))">📄 src/jarvis/armazenamento.py · linhas 72–76</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CÓDIGO</span>
+            <pre><code><span class="code-line">    <span class="code-keyword">if</span> <span class="code-keyword">not</span> chave:</span><span class="code-line">        <span class="code-keyword">return</span> <span class="code-string">""</span></span><span class="code-line">    <span class="code-keyword">if</span> <span class="code-function">len</span>(chave) <span class="code-operator">&lt;</span> <span class="code-number">12</span>:</span><span class="code-line">        <span class="code-keyword">return</span> <span class="code-string">"…"</span></span><span class="code-line">    <span class="code-keyword">return</span> <span class="code-string">"…"</span> <span class="code-operator">+</span> chave[<span class="code-operator">-</span><span class="code-number">4</span>:]</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Não tem chave?</p>
+              <p class="tl">Mostra nada.</p>
+              <p class="tl">Chave curtinha (menos de 12 letras)?</p>
+              <p class="tl">Mostra só "…", para não entregar quase tudo.</p>
+              <p class="tl">Senão, mostra "…" e as 4 últimas letras. Ex.: <code>AIzaSyEXEMPLO_falso_0000000000000000</code> aparece como <code>…0000</code>.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 6 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O que sai do seu computador</h2>
+        <p>Toda ligação tem um custo de privacidade. Vale saber exatamente o que atravessa a linha.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">📤</div>
+            <h4 class="pattern-title">Vai para o Google</h4>
+            <p class="pattern-desc">Sua voz enquanto ele ouve. O resultado de cada ação. E o <strong>texto de um arquivo que você pediu para ele ler</strong> (é assim que a IA entende o conteúdo).</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">📤</div>
+            <h4 class="pattern-title">Vai para o ElevenLabs</h4>
+            <p class="pattern-desc">Só se você ligou: o texto que o Jarvis vai falar.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🏠</div>
+            <h4 class="pattern-title">Fica em casa</h4>
+            <p class="pattern-desc">Os arquivos que ele não leu, suas preferências, as permissões e o log. A chave só vai para o próprio serviço dela.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Ler um arquivo = mandar o arquivo</strong>
+            <p>Com qualquer IA na <span class="term" data-definition="Nuvem é o computador de outra empresa, acessado pela internet. 'Roda na nuvem' quer dizer que o trabalho pesado acontece nos servidores dela, não no seu PC.">nuvem</span>, "resume esse PDF" significa enviar o texto do PDF para a empresa dona da IA. Não peça para ele ler um documento que você não mandaria por e-mail para o Google.</p>
+          </div>
+        </div>
+
+        <h3 class="screen-heading" style="font-size: var(--text-xl)">E por que não uma IA que roda no próprio PC?</h3>
+        <p>Dá para fazer, e está no README como ideia para quem quiser contribuir: um "modo local" com três peças abertas. O preço é outro:</p>
+
+        <div class="flow-steps">
+          <div class="flow-step"><div class="flow-step-num">👂</div><p><strong><span class="term" data-definition="Whisper é um programa aberto que transforma fala em texto, rodando no seu próprio computador.">Whisper</span></strong><br>ouve</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">🧠</div><p><strong><span class="term" data-definition="Ollama é um programa que roda modelos de IA abertos (como Qwen ou Llama) no seu computador, sem internet e sem chave.">Ollama</span> + Qwen</strong><br>pensa e escolhe a ferramenta</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">🗣️</div><p><strong><span class="term" data-definition="Piper é um programa aberto que transforma texto em voz no próprio computador. Funciona sem internet, mas as vozes em português ainda soam mais robóticas.">Piper</span></strong><br>fala</p></div>
+        </div>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+            <h4 class="pattern-title">✅ Ganha</h4>
+            <p class="pattern-desc">Grátis sem limite, funciona sem internet, nada sai do computador.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <h4 class="pattern-title">❌ Paga</h4>
+            <p class="pattern-desc">Precisa de <span class="term" data-definition="Placa de vídeo (GPU) é a peça do computador que faz contas em paralelo muito rápido. IAs locais precisam de uma boa, com bastante memória.">placa de vídeo</span> boa, downloads de vários gigas, responde mais devagar e a voz soa robótica. Por isso seria opcional, não o padrão.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUIZ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Teste: problemas na linha</h2>
+        <div class="quiz-container" id="m4-quiz">
+
+          <div class="quiz-question-block" data-correct="b"
+               data-explanation-right="O 429 é a franquia grátis dizendo 'chega por agora'. Seu PC e o código estão certos: esperar resolve. Trocar a chave ou reinstalar não muda a cota."
+               data-explanation-wrong="A frase fala de 'limite de uso': é o código 429, a cota da camada grátis. Não tem nada quebrado no seu computador; é só esperar alguns minutos.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Você usou o Jarvis a tarde toda gravando vídeos. De repente ele diz: "Senhor, o Google pediu para esperar um pouco (limite de uso)."</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">O que está acontecendo?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>A chave foi bloqueada; preciso criar outra agora.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>A franquia da camada grátis acabou por enquanto (erro 429); é esperar.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O microfone parou; é problema no meu computador.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block" data-correct="c"
+               data-explanation-right="A gaveta do projeto (.env) vem antes da gaveta do usuário (%APPDATA%\Jarvis\.env). Enquanto a linha GEMINI_API_KEY estiver lá, ela ganha. Apague a linha e a janela volta a mandar."
+               data-explanation-wrong="Lembre da ordem das gavetas: ambiente, depois .env do projeto, depois %APPDATA%. A primeira que tem a chave ganha, então a chave antiga do .env do projeto continua vencendo.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Um amigo dev colocou <code>GEMINI_API_KEY=AIzaSyEXEMPLO...</code> no <code>.env</code> da pasta do projeto. Semanas depois, ele cola uma chave nova pela engrenagem, mas o Jarvis continua usando a antiga.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">Por quê?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>A janela não salvou a chave nova.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O Google demora alguns dias para ativar chaves novas.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O .env do projeto vem antes do .env da pasta do usuário e ganha.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block" data-correct="a"
+               data-explanation-right="Ler um arquivo significa mandar o texto dele para o Google. Se o contrato não pode sair da empresa, não peça para uma IA na nuvem ler. Esse é o tipo de decisão que nenhuma permissão toma por você."
+               data-explanation-wrong="As permissões controlam O QUE ele pode fazer, não PARA ONDE vai o texto. Quando ele lê o arquivo, o conteúdo segue para o Google, porque é lá que a IA pensa.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Você quer pedir: "Jarvis, resume esse contrato confidencial do meu cliente." A permissão "Arquivos: Só ler" está ligada.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">O que pesa nessa decisão?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O texto do contrato vai para o Google para ser resumido.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Nada: com "Só ler" ligado, o arquivo nunca sai do PC.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Só o nome do arquivo vai para o Google.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block" data-correct="b"
+               data-explanation-right="O modelo de voz é 'preview'. Quando o Google troca o nome, o número antigo 'não existe mais'. A configuração GEMINI_LIVE_MODEL existe justamente para trocar sem mexer no código."
+               data-explanation-wrong="Chave, internet e microfone funcionavam até ontem e nada mudou neles. O que muda sozinho é o nome de um modelo 'preview': confira o nome atual no Google AI Studio e ajuste GEMINI_LIVE_MODEL.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Sem você mudar nada, o Jarvis para de conectar. No log aparece um erro dizendo que o modelo <code>gemini-3.1-flash-live-preview</code> não foi encontrado.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">Qual o palpite mais provável?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>A chave vazou e foi apagada.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O Google mudou o nome do modelo de teste; é ajustar GEMINI_LIVE_MODEL.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Preciso trocar para o ElevenLabs.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('m4-quiz')">Verificar respostas</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('m4-quiz')">Tentar de novo</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>

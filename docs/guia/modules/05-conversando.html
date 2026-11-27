@@ -1,0 +1,409 @@
+<section class="module" id="module-5" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">05</span>
+      <h1 class="module-title">Conversando com ele</h1>
+      <p class="module-subtitle">Como falar, o que pedir, o que ele responde quando uma permissão está desligada e como trocar voz e visual depois.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- TELA 1 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A janela aberta é o ouvido ligado</h2>
+        <p>Abriu o atalho <strong>Jarvis</strong>? Ele já está ouvindo. Não tem botão para apertar antes de falar: é só conversar. Para ele parar de ouvir, <strong>feche a janela</strong>.</p>
+        <p>No alto da janela tem uma plaquinha que mostra o que ele está fazendo agora:</p>
+
+        <div class="icon-rows">
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-border)">💤</div>
+            <div><strong>em espera</strong><p>Ligado e aguardando você falar.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-2)">👂</div>
+            <div><strong>ouvindo</strong><p>Está prestando atenção no que você diz.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-3)">💭</div>
+            <div><strong>pensando</strong><p>Entendeu e está preparando a resposta (ou fazendo o que você pediu).</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-4)">🗣️</div>
+            <div><strong>falando</strong><p>Está respondendo. A animação pulsa no ritmo da voz dele.</p></div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🎩</div>
+          <div class="callout-content">
+            <strong class="callout-title">O jeitão dele</strong>
+            <p>O Jarvis fala como um mordomo educado: chama você de "senhor", responde curto (uma ou duas frases) e, antes de fazer algo, avisa ("Abrindo, senhor."). Depois confirma o que já aconteceu ("Pronto, senhor, calculadora aberta.").</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 2 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Walkie-talkie ou telefone?</h2>
+        <p>Sabe o walkie-talkie, em que um fala de cada vez? Sem fone de ouvido, o Jarvis funciona assim: enquanto ele fala, ele "tapa os ouvidos" para não escutar a própria voz saindo da caixa de som. Com fone, vira um telefone: dá para falar por cima e interromper.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🎧</div>
+            <h4 class="pattern-title">Use fone, se puder</h4>
+            <p class="pattern-desc">É o jeito mais confortável. Marque "Estou usando fone de ouvido" na engrenagem, aba Geral. Assim dá até para interromper ele no meio da frase.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🎤</div>
+            <h4 class="pattern-title">Fale perto do microfone</h4>
+            <p class="pattern-desc">No notebook, o microfone costuma ficar perto da câmera ou do teclado. Fale de frente para o computador, num tom normal, sem gritar.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">⏱️</div>
+            <h4 class="pattern-title">Diga a frase inteira</h4>
+            <p class="pattern-desc">Uma pausa de meio segundo já vale como "terminei". Pense no pedido antes e diga tudo de uma vez: "Abre a calculadora."</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">🔊</div>
+            <h4 class="pattern-title">Sem fone? Espere a vez</h4>
+            <p class="pattern-desc">Deixe a caixinha do fone desmarcada e espere a plaquinha sair de "falando" para fazer o próximo pedido.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 3: FLUXO -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O caminho de um pedido</h2>
+        <p>O que acontece entre você dizer "abre a calculadora" e ouvir a resposta? Clique em <strong>Próximo passo</strong> para acompanhar.</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-g5-voce","label":"Você fala: Jarvis, abre a calculadora. A plaquinha muda para ouvindo."},
+          {"highlight":"flow-g5-pc","label":"O Jarvis escuta pelo microfone do seu computador.","packet":true,"from":"g5-voce","to":"g5-pc"},
+          {"highlight":"flow-g5-google","label":"A sua voz vai pela internet para o Google, que é o cérebro: ele entende o que você pediu. Plaquinha: pensando.","packet":true,"from":"g5-pc","to":"g5-google"},
+          {"highlight":"flow-g5-pc","label":"O Google responde: para isso, preciso abrir um programa.","packet":true,"from":"g5-google","to":"g5-pc"},
+          {"highlight":"flow-g5-porteiro","label":"Antes de mexer em qualquer coisa, o Jarvis confere as suas permissões, aí no seu computador.","packet":true,"from":"g5-pc","to":"g5-porteiro"},
+          {"highlight":"flow-g5-porteiro","label":"Abrir e fechar programas está desligado? Ele não abre nada e avisa que a ação está desligada nas permissões."},
+          {"highlight":"flow-g5-pc","label":"Está ligado? A calculadora abre no seu computador.","packet":true,"from":"g5-porteiro","to":"g5-pc"},
+          {"highlight":"flow-g5-google","label":"O resultado volta para o Google, que monta a resposta falada.","packet":true,"from":"g5-pc","to":"g5-google"},
+          {"highlight":"flow-g5-voce","label":"Plaquinha: falando. Você ouve: Pronto, senhor, calculadora aberta.","packet":true,"from":"g5-pc","to":"g5-voce"}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-g5-voce"><div class="flow-actor-icon">🙋</div><span>Você</span></div>
+            <div class="flow-actor" id="flow-g5-pc"><div class="flow-actor-icon">🖥️</div><span>Jarvis no seu PC</span></div>
+            <div class="flow-actor" id="flow-g5-google"><div class="flow-actor-icon">🧠</div><span>Google (a IA)</span></div>
+            <div class="flow-actor" id="flow-g5-porteiro"><div class="flow-actor-icon">🔑</div><span>Suas permissões</span></div>
+          </div>
+          <div class="flow-packet" id="g5-flow-packet"></div>
+          <div class="flow-step-label" id="g5-flow-label">Clique em "Próximo passo" para começar</div>
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Próximo passo</button>
+            <button class="btn flow-reset-btn">Recomeçar</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Quem manda nas chaves é você</strong>
+            <p>O Google decide <em>o que</em> fazer, mas quem confere se pode é o seu computador, na hora da ação. Se a permissão está desligada, a IA não tem como "dar um jeitinho".</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 4 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O que pedir, chave por chave</h2>
+        <p>Cada pedido só funciona com a permissão certa ligada. Exemplos de frases que você pode dizer:</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🕒</div>
+            <h4 class="pattern-title">Sempre liberado</h4>
+            <p class="pattern-desc">"Que horas são?" Conversar e fazer contas de cabeça também: "Quanto é 15% de 80?"</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🧮</div>
+            <h4 class="pattern-title">Abrir e fechar programas</h4>
+            <p class="pattern-desc">"Abre a calculadora." "Abre o Spotify." "Quais aplicativos estão abertos?" "Fecha o bloco de notas."</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🌐</div>
+            <h4 class="pattern-title">Abrir sites e pesquisar</h4>
+            <p class="pattern-desc">"Abre o youtube.com." "Pesquisa receita de bolo de cenoura."</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">📂</div>
+            <h4 class="pattern-title">Arquivos: Só ler</h4>
+            <p class="pattern-desc">"O que tem na pasta Downloads?" "Procura o arquivo orçamento nos documentos." "Resume esse PDF."</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">📝</div>
+            <h4 class="pattern-title">Arquivos: Ler e gravar</h4>
+            <p class="pattern-desc">"Cria uma pasta chamada Projetos na área de trabalho." "Cria um arquivo lista de compras com arroz, feijão e café." "Transcreve esse texto num documento do Word."</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">🗑️</div>
+            <h4 class="pattern-title">Ler, gravar e excluir</h4>
+            <p class="pattern-desc">"Manda o arquivo rascunho.txt para a Lixeira." Vai abrir uma janela pedindo o seu "Sim".</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-info)">
+            <div class="pattern-icon" style="background: var(--color-info)">✉️</div>
+            <h4 class="pattern-title">Preparar e-mails</h4>
+            <p class="pattern-desc">"Escreve um e-mail para joao@exemplo.com avisando que chego às 10h. Deixa pronto para enviar."</p>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🚧</div>
+          <div class="callout-content">
+            <strong class="callout-title">O que ele não faz</strong>
+            <p>Ele não digita dentro de outros programas (nem na calculadora: a conta, ele faz de cabeça). Só lê PDF que tem texto: PDF escaneado, que é uma foto da página, ele não consegue. Arquivo muito grande, ele lê só o começo e avisa.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 5: CHAT -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Uma conversa de exemplo</h2>
+        <p>Veja como fica no dia a dia, inclusive quando você pede algo que ainda está desligado. As palavras do Jarvis mudam um pouco a cada vez (é a IA que fala), mas o sentido é este.</p>
+
+        <div class="chat-window" id="g5-chat">
+          <div class="chat-messages">
+            <div class="chat-message" data-msg="0" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">V</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p>Jarvis, que horas são?</p></div>
+            </div>
+            <div class="chat-message" data-msg="1" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>São duas e meia da tarde, senhor.</p></div>
+            </div>
+            <div class="chat-message" data-msg="2" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">V</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p>Abre a calculadora.</p></div>
+            </div>
+            <div class="chat-message" data-msg="3" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Senhor, essa ação está desligada nas permissões: abrir programas. Dá para ligar na engrenagem, em Permissões.</p></div>
+            </div>
+            <div class="chat-message" data-msg="4" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">V</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p><em>(clica na engrenagem › Permissões › liga "Abrir e fechar programas" › Salvar e aplicar)</em></p></div>
+            </div>
+            <div class="chat-message" data-msg="5" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">V</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p>Agora sim: abre a calculadora.</p></div>
+            </div>
+            <div class="chat-message" data-msg="6" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Abrindo, senhor.</p></div>
+            </div>
+            <div class="chat-message" data-msg="7" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Pronto, senhor, calculadora aberta.</p></div>
+            </div>
+            <div class="chat-message" data-msg="8" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">V</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p>Manda o arquivo rascunho.txt da área de trabalho para a Lixeira.</p></div>
+            </div>
+            <div class="chat-message" data-msg="9" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Achei o rascunho.txt na Área de Trabalho. Confirme na janela, senhor.</p></div>
+            </div>
+            <div class="chat-message" data-msg="10" data-sender="windows" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">W</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-3)">Janela do Windows: "Jarvis - confirmacao manual"</span><p>Mandar o arquivo para a Lixeira? &nbsp;[ Sim ] &nbsp;[ Não ]</p></div>
+            </div>
+            <div class="chat-message" data-msg="11" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">V</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p><em>(clica em Sim)</em></p></div>
+            </div>
+            <div class="chat-message" data-msg="12" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Pronto, senhor, o rascunho.txt foi para a Lixeira.</p></div>
+            </div>
+            <div class="chat-message" data-msg="13" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">V</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Você</span><p>Escreve um e-mail para joao@exemplo.com avisando que chego às 10h. Deixa pronto para enviar.</p></div>
+            </div>
+            <div class="chat-message" data-msg="14" data-sender="jarvis" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">J</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">Jarvis</span><p>Deixei o e-mail pronto no seu programa de e-mail, senhor. É só revisar e clicar em Enviar.</p></div>
+            </div>
+          </div>
+
+          <div class="chat-typing" style="display:none">
+            <div class="chat-avatar" id="g5-chat-typing-avatar">?</div>
+            <div class="chat-typing-dots">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+            </div>
+          </div>
+
+          <div class="chat-controls">
+            <button class="btn chat-next-btn">Próxima mensagem</button>
+            <button class="btn chat-all-btn">Mostrar tudo</button>
+            <button class="btn chat-reset-btn">Recomeçar</button>
+            <span class="chat-progress"></span>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🛡️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Repare em duas coisas</strong>
+            <p>Para apagar, só o seu clique em "Sim" vale; se você não clicar, a janela fecha sozinha depois de um tempo e conta como "Não". E o e-mail nunca sai sozinho: quem clica em Enviar é você. (Nesta conversa, a pessoa já tinha ligado Arquivos em "Ler, gravar e excluir" e "Preparar e-mails".)</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 6 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A engrenagem: o painel de ajustes</h2>
+        <p>Tudo o que você escolheu na primeira configuração muda depois pelo botão de <strong>engrenagem</strong> ⚙️, no canto de cima, à direita. Ele abre as Configurações, em 5 abas:</p>
+
+        <div class="icon-rows">
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-1)">🙂</div>
+            <div><strong>Geral</strong><p>Como ele te chama, qual voz ele usa (com o botão Ouvir), a caixinha "Estou usando fone de ouvido" e o visual.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🔑</div>
+            <div><strong>Permissões</strong><p>As mesmas chaves do passo 5. A mudança vale na hora.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-3)">🎫</div>
+            <div><strong>Chave do Google</strong><p>Mostra só o finalzinho da chave salva (algo como "…abcd"), para criar e colar uma chave nova.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-4)">🎙️</div>
+            <div><strong>Voz personalizada (ElevenLabs)</strong><p>Opcional e paga. Pode ignorar se quer usar só o grátis.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-5)">ℹ️</div>
+            <div><strong>Sobre</strong><p>A versão do Jarvis e botões para abrir a pasta das configurações e a pasta dos logs (a parte 6 explica).</p></div>
+          </div>
+        </div>
+
+        <div class="step-cards">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body"><strong>Trocar a voz</strong><p>Engrenagem › <strong>Geral</strong> › clique em <strong>Ouvir</strong> para escutar › marque a voz nova › <strong>Salvar e aplicar</strong>.</p></div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body"><strong>Trocar o visual</strong><p>Clique em <strong>Trocar visual</strong>, no canto de cima, à direita (ou Engrenagem › Geral › <strong>Escolher visual</strong>). Clique no cartão que preferir: muda na hora e fica salvo.</p></div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body"><strong>Ligar uma permissão</strong><p>Engrenagem › <strong>Permissões</strong> › ligue o que quiser › <strong>Salvar e aplicar</strong>.</p></div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💾</div>
+          <div class="callout-content">
+            <strong class="callout-title">Não esqueça o "Salvar e aplicar"</strong>
+            <p>Embaixo das Configurações aparece: "Salvo. O Jarvis está reconectando com as configurações novas." Ele religa a voz com as escolhas novas sem fechar a janela.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 7: QUIZ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">E se fosse com você?</h2>
+
+        <div class="quiz-container" id="g5-quiz">
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Isso. A frase quer dizer exatamente isso: está desligado nas permissões. Ligue Abrir sites e pesquisar na engrenagem e clique em Salvar e aplicar."
+               data-explanation-wrong="Não é defeito: é a segurança funcionando. Tudo começa desligado. Ligue Abrir sites e pesquisar na engrenagem, aba Permissões.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você pede "Pesquisa a previsão do tempo" e ele responde que essa ação está desligada nas permissões. O que você faz?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Repito o pedido mais alto.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Engrenagem › Permissões › ligo "Abrir sites e pesquisar" › Salvar e aplicar.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Desinstalo, porque ele está com defeito.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="c"
+               data-explanation-right="Exato. Sem fone, enquanto ele fala ele não ouve (para não responder à própria voz). Espere terminar, ou use fone e marque a caixinha para poder interromper."
+               data-explanation-wrong="Pense no walkie-talkie: sem fone, um fala de cada vez. Enquanto ele fala, ele não escuta você. Espere ele terminar, ou use fone e marque a caixinha.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você está sem fone, com a caixinha do fone desmarcada. O Jarvis começou uma resposta longa e você tentou interromper, mas ele continuou falando. Por quê?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O microfone quebrou.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>A internet caiu.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Sem fone, ele não escuta enquanto está falando.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="a"
+               data-explanation-right="Isso mesmo. O Jarvis nunca envia e-mail: ele só deixa pronto. Confira o texto e o destinatário e clique em Enviar você mesmo."
+               data-explanation-wrong="O Jarvis nunca envia e-mail sozinho. Ele só deixa pronto no seu programa de e-mail; quem confere e clica em Enviar é você.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você pediu um e-mail para a sua filha e ele disse que deixou pronto. O e-mail já chegou para ela?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Ainda não: eu reviso e clico em Enviar.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Sim, ele já mandou.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Só se "Outros discos" estiver ligado.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Perfeito. Uma pausa de meio segundo já conta como fim da frase. Diga o pedido inteiro de uma vez, sem parar no meio."
+               data-explanation-wrong="Ele entende que você terminou quando você fica quieto por cerca de meio segundo. Diga o pedido inteiro de uma vez, sem pausas no meio.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você diz "Cria uma pasta..." e para para pensar no nome. O Jarvis já responde, perguntando o nome da pasta. Como evitar isso da próxima vez?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Falo mais devagar, com pausas entre as palavras.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Penso antes e digo tudo de uma vez: "Cria uma pasta chamada Receitas na área de trabalho."</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Ligo "Outros discos".</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('g5-quiz')">Verificar respostas</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('g5-quiz')">Tentar de novo</button>
+        </div>
+      </section>
+
+      <!-- TELA 8: CONSEGUIU? -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Conseguiu?</h2>
+        <p>Teste aí, em voz alta, e marque o que funcionou.</p>
+        <div class="step-cards" id="g5-checklist">
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g5-check-1" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Perguntei "que horas são?" e ele respondeu</strong><p>Funciona com tudo desligado.</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g5-check-2" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Vi a plaquinha mudar: ouvindo, pensando, falando</strong><p>Fica no alto da janela.</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g5-check-3" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Liguei uma permissão e o pedido funcionou</strong><p>Por exemplo, "Abrir e fechar programas" e depois "Abre a calculadora".</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g5-check-4" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Troquei a voz ou o visual e cliquei em Salvar e aplicar</strong><p>O visual muda na hora; a voz, depois que ele reconecta.</p></div></label>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>

@@ -1,0 +1,319 @@
+<section class="module" id="module-6" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">06</span>
+      <h1 class="module-title">Se algo der errado</h1>
+      <p class="module-subtitle">O que cada aviso quer dizer, o que fazer quando a internet falha, onde fica o "diário" do Jarvis, como desinstalar e onde pedir ajuda.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- TELA 1 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">As luzinhas do painel</h2>
+        <p>Quando acende uma luz no painel do carro, ninguém joga o carro fora: cada luz diz o que conferir. Com o Jarvis é igual. Ele nunca trava por causa de um erro: ele <strong>avisa numa frase simples</strong>. Veja os avisos mais comuns e o que fazer:</p>
+
+        <div class="icon-rows">
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🔑</div>
+            <div><strong>"Essa ação está desligada nas permissões"</strong><p>É de propósito: tudo começa desligado. Abra a engrenagem › <strong>Permissões</strong>, ligue o que quiser e clique em <strong>Salvar e aplicar</strong>.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-3)">💽</div>
+            <div><strong>"Acesso a outros discos (como D: ou pendrive) está desligado nas permissões."</strong><p>O arquivo está fora das suas pastas pessoais. Ligue <strong>Outros discos</strong> na aba Permissões.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-1)">⚠️</div>
+            <div><strong>"A chave do Google parou de funcionar" (faixa no alto da janela)</strong><p>Clique em <strong>Atualizar chave</strong> (ou engrenagem › <strong>Chave do Google</strong>), crie uma chave nova no Google, cole e clique em <strong>Testar</strong>.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-4)">✂️</div>
+            <div><strong>"Chave inválida" ou "Essa chave não parece completa"</strong><p>Copie a chave inteira de novo, sem espaços, e cole. As chaves novas do Google podem ter um ponto no meio: é normal. Se mesmo assim aparecer "não parece completa", instale a versão mais nova do Jarvis e cole de novo.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-5)">⏳</div>
+            <div><strong>"Limite da conta grátis atingido" ou "o Google pediu para esperar um pouco (limite de uso)"</strong><p>A conta grátis tem um limite de uso por minuto e por dia. Não precisa fazer nada: espere alguns minutos, que volta a funcionar sozinho.</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-info)">🛡️</div>
+            <div><strong>"O Windows protegeu o computador" (ao instalar)</strong><p>Clique em <strong>Mais informações</strong> e depois em <strong>Executar assim mesmo</strong>. A parte 2 explica por que isso aparece.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 2 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O aviso da internet</h2>
+        <p>O cérebro do Jarvis fica no Google, então ele precisa de internet para conversar. Se a conexão cai, ele não fica mudo: toca uma frase <strong>já gravada</strong>, que funciona até sem internet.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="font-family:var(--font-body)">
+            <span class="translation-label">O QUE VOCÊ OUVE</span>
+            <div style="font-size:2rem;margin-bottom:10px">🔊</div>
+            <div style="font-size:1.15rem;color:#F0EEE9;line-height:1.5">“Desculpe, estou tendo problemas com a sua internet. Aguarde um momento ou tente daqui a pouco.”</div>
+            <hr style="border:none;border-top:1px dashed rgba(255,255,255,.2);margin:18px 0">
+            <div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;opacity:.6;margin-bottom:6px">Na tela, às vezes</div>
+            <div style="opacity:.85">Senhor, perdi a conexão. Tento de novo em 2 s…</div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">O QUE ACONTECEU E O QUE FAZER</span>
+            <div class="translation-lines">
+              <p class="tl"><strong>Quando toca:</strong> a internet caiu, ou o Google ficou 12 segundos sem responder.</p>
+              <p class="tl"><strong>O que ele faz:</strong> reconecta sozinho. Você não precisa fechar nem abrir nada.</p>
+              <p class="tl"><strong>O que você faz:</strong> espere um pouquinho e fale de novo.</p>
+              <p class="tl"><strong>Repete toda hora?</strong> Confira a sua internet (o Wi-Fi está ligado? outros sites abrem?).</p>
+              <p class="tl">Para não ficar repetitivo, esse aviso toca no máximo uma vez a cada 30 segundos, na voz que você escolheu.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 3 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Quando o problema é o som (ou a janela)</h2>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🙉</div>
+            <h4 class="pattern-title">Ele não me ouve</h4>
+            <p class="pattern-desc">Confira o microfone em <strong>Configurações do Windows › Sistema › Som › Entrada</strong> e escolha o microfone certo. Depois veja <strong>Configurações › Privacidade › Microfone</strong> e deixe o acesso permitido.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🔁</div>
+            <h4 class="pattern-title">Ele responde a si mesmo ou se interrompe</h4>
+            <p class="pattern-desc">Ele está ouvindo a própria voz pela caixa de som. Use fone e marque <strong>"Estou usando fone de ouvido"</strong> (engrenagem › Geral). Sem fone, deixe a caixinha <strong>desmarcada</strong>.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">🪟</div>
+            <h4 class="pattern-title">A janela não abre</h4>
+            <p class="pattern-desc">Falta o <span class="term" data-definition="WebView2 é uma peça gratuita do Windows que deixa um programa mostrar uma tela feita como página da internet. O Jarvis desenha a janela dele com ela. No Windows 11 ela já vem instalada; em alguns Windows 10 mais antigos, falta.">WebView2</span>, uma peça do Windows que já vem no Windows 11. Em alguns Windows 10 antigos é preciso instalar.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">🎨</div>
+            <h4 class="pattern-title">Quero escolher o visual de novo</h4>
+            <p class="pattern-desc">Clique em <strong>Trocar visual</strong>, no canto de cima da janela. Se um visual der erro, a janela volta sozinha para o mais simples, o Globo.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🗺️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Lembrete: onde ele pode mexer</strong>
+            <p>Com "Outros discos" desligado, o Jarvis só mexe na sua pasta de usuário (Área de Trabalho, Documentos, Downloads...) e no <span class="term" data-definition="OneDrive é a pasta do Windows que guarda uma cópia dos seus arquivos na internet, para você acessar de outro computador ou celular.">OneDrive</span>. Se ele "não acha" um arquivo, talvez o arquivo esteja em outro disco ou num pendrive.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 4 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O diário de bordo</h2>
+        <p>Todo navio tem um diário de bordo onde o capitão anota o que aconteceu na viagem. O Jarvis também tem o dele: o <span class="term" data-definition="Log é um arquivo de anotações que o programa escreve sozinho, com data e hora: o que ele fez e os erros que teve. É o primeiro lugar para olhar quando algo dá errado.">log</span>. Para qualquer outro problema, o erro completo fica anotado lá.</p>
+
+        <div class="file-tree">
+          <div class="ft-folder"><span class="ft-name">Jarvis</span><span class="ft-desc">a pasta das suas configurações (fica fora da pasta do programa)</span>
+            <div class="ft-children">
+              <div class="ft-file"><span class="ft-name">.env</span><span class="ft-desc">a sua chave. Nunca mande este arquivo para ninguém.</span></div>
+              <div class="ft-file"><span class="ft-name">preferencias.json</span><span class="ft-desc">voz, nome, fone, visual e permissões</span></div>
+              <div class="ft-folder"><span class="ft-name">logs</span>
+                <div class="ft-children">
+                  <div class="ft-file"><span class="ft-name">jarvis.log</span><span class="ft-desc">o diário de bordo</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-cards">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body"><strong>Abra a engrenagem</strong><p>O botão ⚙️ no canto de cima, à direita.</p></div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body"><strong>Vá na aba Sobre</strong><p>Lá aparecem a versão do Jarvis e as pastas.</p></div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body"><strong>Em "Logs", clique em Abrir pasta</strong><p>Abre a pasta com o arquivo <strong>jarvis.log</strong>. Dá para abrir com o Bloco de Notas.</p></div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🧹</div>
+          <div class="callout-content">
+            <strong class="callout-title">O diário não guarda a sua chave</strong>
+            <p>O Jarvis apaga as chaves antes de escrever no log. Por isso dá para copiar um trecho do log quando for pedir ajuda. O arquivo <strong>.env</strong>, esse sim, nunca deve sair do seu computador.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 5 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Como desinstalar</h2>
+        <p>Quer tirar o Jarvis do computador? É como qualquer outro programa:</p>
+
+        <div class="flow-steps">
+          <div class="flow-step"><div class="flow-step-num">1</div><p>Configurações do Windows</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">2</div><p>Aplicativos</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">3</div><p>Jarvis</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">4</div><p>Desinstalar</p></div>
+        </div>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code" style="font-family:var(--font-body)">
+            <span class="translation-label">A PERGUNTA NO FIM</span>
+            <div style="opacity:.9;line-height:1.6">Deseja apagar também as suas configurações do Jarvis?<br><br>Isso inclui a sua chave do Google, as preferências (voz, nome, visual) e os logs, em:<br><span style="opacity:.7">…\Jarvis</span><br><br>Escolha "Não" para mantê-las (útil se for instalar de novo).</div>
+            <div style="text-align:right;margin-top:12px">
+              <span style="display:inline-block;padding:4px 14px;border:1px solid rgba(255,255,255,.3);border-radius:4px">Sim</span>
+              <span style="display:inline-block;padding:4px 14px;border-radius:4px;background:#5FC8BE;color:#1E1E2E;font-weight:600">Não</span>
+            </div>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">O QUE ESCOLHER</span>
+            <div class="translation-lines">
+              <p class="tl"><strong>Não</strong> (o botão já vem selecionado): o programa sai, mas a sua chave e as suas escolhas ficam guardadas. Se instalar de novo, ele já abre configurado.</p>
+              <p class="tl"><strong>Sim</strong>: apaga também a chave, as preferências e os logs.</p>
+              <p class="tl">Vai emprestar ou vender o computador? Escolha <strong>Sim</strong>.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 6 -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Onde pedir ajuda</h2>
+
+        <div class="step-cards">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body"><strong>Confira os avisos desta parte</strong><p>A maioria dos problemas é uma permissão desligada, a chave ou o microfone.</p></div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body"><strong>Abra um pedido na página do Jarvis no GitHub</strong><p>Na página do Jarvis no GitHub (o endereço aparece na engrenagem › Sobre, em "Repositório"), vá em <span class="term" data-definition="No GitHub, Issues é a área de pedidos e reclamações de um projeto. Cada pedido é uma issue: você escreve o problema e quem cuida do projeto responde ali mesmo. Precisa de uma conta grátis no GitHub.">Issues</span> e escolha <strong>Problema (bug)</strong>. O formulário pergunta: o que aconteceu, o que você esperava, o passo a passo, como instalou, a versão (engrenagem › Sobre) e se é Windows 10 ou 11.</p></div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body"><strong>Ou mande uma mensagem no Instagram</strong><p>@mateusmirandaia.ia. Na aba Sobre tem o botão <strong>Seguir no Instagram</strong>.</p></div>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🚫</div>
+          <div class="callout-content">
+            <strong class="callout-title">Nunca, em lugar nenhum</strong>
+            <p>Não cole a sua chave do Google, nem o conteúdo do arquivo .env, num pedido de ajuda, numa mensagem, num print ou num vídeo. Ninguém de verdade vai pedir a sua chave. Se ela vazou, apague essa chave no Google AI Studio, crie outra e cole na engrenagem › Chave do Google.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 7: QUIZ -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">E se fosse com você?</h2>
+
+        <div class="quiz-container" id="g6-quiz">
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Isso. Essa frase gravada toca quando a internet cai ou o Google demora mais de 12 segundos. Ele reconecta sozinho; espere e fale de novo."
+               data-explanation-wrong="Não precisa mexer em nada. Essa frase toca quando a internet cai ou o Google demora. Ele reconecta sozinho: espere um pouco e fale de novo. Se repetir sempre, confira a internet.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>No meio da conversa, ele diz: "Desculpe, estou tendo problemas com a sua internet. Aguarde um momento ou tente daqui a pouco." O que você faz?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Crio uma chave nova.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Espero um pouco e falo de novo; se repetir sempre, confiro a internet.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Desinstalo o Jarvis.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="c"
+               data-explanation-right="Certo. A barra que não mexe aponta para o microfone: confira qual está escolhido em Configurações › Sistema › Som › Entrada e se o acesso está permitido em Privacidade › Microfone."
+               data-explanation-wrong="Quando ele não reage à sua voz, o suspeito é o microfone. Confira em Configurações do Windows › Sistema › Som › Entrada e depois em Privacidade › Microfone.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você fala e fala, e a plaquinha nunca muda para "ouvindo". Onde você olha primeiro?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Na aba Permissões.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>No visual: troco por outro.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>No microfone, nas Configurações de som e de privacidade do Windows.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="a"
+               data-explanation-right="Exato. Conte o que aconteceu e mande, se quiser, um trecho do log (o log não guarda a chave). A chave e o .env nunca vão junto."
+               data-explanation-wrong="A chave e o arquivo .env nunca devem ser enviados para ninguém, nem para quem vai te ajudar. Mande a descrição do problema, a versão e, se quiser, um trecho do log.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você vai pedir ajuda no GitHub. O que pode ir junto na mensagem?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O que aconteceu, a versão do Jarvis, se é Windows 10 ou 11 e um trecho do log.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Um print da tela mostrando a minha chave, para provar que está certa.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>O arquivo .env inteiro.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Boa. Respondendo Não, a pasta das configurações fica guardada: ao instalar de novo, ele já abre com a sua chave e as suas escolhas."
+               data-explanation-wrong="Sim apaga a chave e as preferências. Como você vai reinstalar, o melhor é responder Não: tudo fica guardado e ele abre configurado.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Situação</span>
+                <p>Você vai desinstalar o Jarvis só para instalar a versão nova logo depois. Na pergunta "Deseja apagar também as suas configurações do Jarvis?", o que responde?</p>
+              </div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Sim.</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Não.</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Fecho a pergunta sem responder.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('g6-quiz')">Verificar respostas</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('g6-quiz')">Tentar de novo</button>
+        </div>
+      </section>
+
+      <!-- TELA 8: CONSEGUIU? + CRÉDITO -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Conseguiu?</h2>
+        <p>Se você marcou tudo, já sabe se virar sozinho com o Jarvis.</p>
+        <div class="step-cards" id="g6-checklist">
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g6-check-1" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Sei o que fazer quando ele diz que a ação está desligada</strong><p>Engrenagem › Permissões › Salvar e aplicar.</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g6-check-2" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Sei que o aviso da internet se resolve sozinho</strong><p>Espero e falo de novo.</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g6-check-3" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Achei a pasta dos logs</strong><p>Engrenagem › Sobre › Logs › Abrir pasta.</p></div></label>
+          <label class="step-card" style="cursor:pointer"><input type="checkbox" id="g6-check-4" style="width:20px;height:20px;margin-top:4px;accent-color:var(--color-accent)"><div class="step-body"><strong>Minha chave continua só comigo</strong><p>Nada de print, vídeo ou mensagem com ela.</p></div></label>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🤝</div>
+          <div class="callout-content">
+            <strong class="callout-title">Quem fez o Jarvis</strong>
+            <p>O Jarvis foi criado por <strong>Mateus Miranda</strong> (@mateusmirandaia.ia). É <strong>grátis</strong> e de <span class="term" data-definition="Código aberto quer dizer que a receita do programa fica à vista de todo mundo, na internet. Qualquer pessoa pode conferir o que ele faz, e ninguém precisa pagar para usar.">código aberto</span>: qualquer pessoa pode usar e conferir como ele funciona. Se ele te ajudou, conte para ele lá no Instagram.</p>
+          </div>
+        </div>
+
+        <p>Ficou curioso para saber o que acontece lá dentro quando você diz "Jarvis, abre a calculadora"? Tem um curso grátis, também sem precisar programar: <a href="../curso/index.html">Por dentro do Jarvis</a>.</p>
+      </section>
+
+    </div>
+  </div>
+</section>

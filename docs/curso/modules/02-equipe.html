@@ -1,0 +1,519 @@
+<section class="module" id="module-2" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">02</span>
+      <h1 class="module-title">Conheça a equipe</h1>
+      <p class="module-subtitle">Cada arquivo tem um trabalho só. Saber quem faz o quê é o que permite dizer a uma IA “mexa aqui, não ali”.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- TELA 1: a metáfora + diagrama -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Um teatro por trás da cortina</h2>
+        <p>Na plateia você só vê o palco. Por trás da cortina, tem gente na bilheteria, um diretor de palco, contrarregras, um segurança na coxia. O Jarvis é igual: a janela é o palco, e cada <span class="term" data-definition="Em Python, cada arquivo .py é chamado de módulo. Um módulo guarda um conjunto de funções sobre um mesmo assunto, como um capítulo de livro.">módulo</span> .py é alguém da equipe.</p>
+        <p><strong>Clique em cada peça</strong> para ver o papel dela no teatro.</p>
+
+        <div class="arch-diagram">
+          <div class="arch-zone">
+            <h4 class="arch-zone-label">O palco (o que você vê)</h4>
+            <div class="arch-component" data-desc="ui/orb_window.py + ui/orb.html — O PALCO E AS LUZES. orb_window.py abre a janela (1280x760) e monta a página. orb.html é a página: assistente de configuração, engrenagem, conversa e painel. Os 9 visuais ficam em ui/visuais/*.js, um arquivo por visual.">
+              <div class="arch-icon">🎭</div>
+              <span>orb_window.py + orb.html</span>
+            </div>
+            <div class="arch-component" data-desc="ui/visuais/*.js — O CENÁRIO. Galáxia, globo, córtex, reator, holograma, mapa, esfera, aura e cérebro. Cada um desenha a animação e reage aos 5 estados: em espera, ouvindo, pensando, falando e sem conexão.">
+              <div class="arch-icon">🌌</div>
+              <span>visuais/*.js</span>
+            </div>
+          </div>
+
+          <div class="arch-zone">
+            <h4 class="arch-zone-label">Os bastidores (Python no seu PC)</h4>
+            <div class="arch-component" data-desc="__main__.py — A BILHETERIA. É a porta de entrada: lê como você abriu o Jarvis (janela, só voz ou só texto) e chama o resto da equipe. Se o Jarvis já está aberto, avisa e não abre outro.">
+              <div class="arch-icon">🎟️</div>
+              <span>__main__.py</span>
+            </div>
+            <div class="arch-component" data-desc="controlador.py — O DIRETOR DE PALCO. Dá o “começa” e o “para” no assistente de voz, sem travar a janela. Quando você troca a voz ou a chave, ele para o espetáculo e começa de novo com a configuração nova.">
+              <div class="arch-icon">🎬</div>
+              <span>controlador.py</span>
+            </div>
+            <div class="arch-component" data-desc="assistants/live_assistant.py — O DIRETOR DE CENA, o maestro da conversa. Mantém a conexão com o Gemini Live, manda o áudio, recebe a resposta, dispara as ferramentas e reconecta sozinho se a internet cair.">
+              <div class="arch-icon">🎼</div>
+              <span>live_assistant.py</span>
+            </div>
+            <div class="arch-component" data-desc="assistants/voice_output.py + elevenlabs_voice.py — A VOZ. Decide quem fala: a voz do Google (padrão) ou a do ElevenLabs (opcional). Se o ElevenLabs falhar, volta para a voz do Google sem travar.">
+              <div class="arch-icon">🗣️</div>
+              <span>voice_output.py</span>
+            </div>
+            <div class="arch-component" data-desc="avisos.py — A GRAVAÇÃO DE EMERGÊNCIA. Falas já gravadas em arquivos .wav, que tocam até sem internet: “estou tendo problemas com a sua internet”. O aviso de internet toca no máximo 1 vez a cada 30 segundos.">
+              <div class="arch-icon">📼</div>
+              <span>avisos.py</span>
+            </div>
+            <div class="arch-component" data-desc="config.py + armazenamento.py — O CAMARIM COM COFRE. config.py junta todas as configurações (chave, voz, nome, tempos). armazenamento.py grava as chaves no .env da sua pasta de usuário, e só aceita 4 nomes de variável.">
+              <div class="arch-icon">🔐</div>
+              <span>config.py + armazenamento.py</span>
+            </div>
+          </div>
+
+          <div class="arch-zone">
+            <h4 class="arch-zone-label">As mãos e o segurança</h4>
+            <div class="arch-component" data-desc="tools/ — OS CONTRARREGRAS, as mãos do Jarvis. app_tools (abrir/fechar programas), file_tools (pastas e arquivos), web_tools (sites e pesquisa), office_tools (rascunho de e-mail) e system_tools (data e hora). tools/__init__.py junta todos na lista fechada.">
+              <div class="arch-icon">🛠️</div>
+              <span>tools/</span>
+            </div>
+            <div class="arch-component" data-desc="tools/permissoes.py + tools/security.py — O SEGURANÇA DA COXIA. permissoes.py diz o que você liberou (tudo começa desligado). security.py tem o PathGuard, que barra pastas protegidas, como a do próprio Jarvis e a das chaves.">
+              <div class="arch-icon">🛡️</div>
+              <span>permissoes.py + PathGuard</span>
+            </div>
+          </div>
+
+          <div class="arch-zone">
+            <h4 class="arch-zone-label">Fora do teatro (internet)</h4>
+            <div class="arch-component" data-desc="Gemini Live (Google) — O AUTOR AO TELEFONE. Não mora no seu PC. Ouve a conversa ao vivo, entende, decide o que fazer e dita as falas. Mais sobre ele no módulo 4.">
+              <div class="arch-icon">☁️</div>
+              <span>Gemini Live</span>
+            </div>
+            <div class="arch-component" data-desc="ElevenLabs (opcional e pago) — O DUBLADOR CONVIDADO. Se você configurar, ele fala as frases no lugar da voz do Google.">
+              <div class="arch-icon">🎤</div>
+              <span>ElevenLabs</span>
+            </div>
+          </div>
+
+          <div class="arch-description">Clique em uma peça para saber o que ela faz</div>
+        </div>
+      </section>
+
+      <!-- TELA 2: bilheteria + diretor de palco -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A bilheteria e o diretor de palco</h2>
+        <p>Você dá dois cliques no ícone. Quem atende é o <code>__main__.py</code>, a <span class="term" data-definition="Ponto de entrada (entry point) é o primeiro código que roda quando você abre um programa. É de lá que tudo começa.">porta de entrada</span>. Ele abre a janela e entrega ao <code>controlador.py</code> a tarefa de ligar a voz numa <span class="term" data-definition="Uma thread é uma “linha de trabalho” separada dentro do mesmo programa. Com ela, a janela continua respondendo enquanto o assistente trabalha em outra linha.">thread</span> separada.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/jarvis/__main__.py</span>
+            <pre><code><span class="code-line"><span class="code-keyword">def</span> <span class="code-function">worker</span>() -&gt; <span class="code-keyword">None</span>:</span>
+<span class="code-line">    <span class="code-keyword">if</span> settings.has_api_key:</span>
+<span class="code-line">        controlador.<span class="code-function">iniciar</span>()</span>
+<span class="code-line">    <span class="code-keyword">else</span>:</span>
+<span class="code-line">        logger.<span class="code-function">info</span>(<span class="code-string">"sem chave do Google: a janela vai pedir a configuracao"</span>)</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">try</span>:</span>
+<span class="code-line">    window.<span class="code-function">start</span>(worker)  <span class="code-comment"># bloqueia ate o senhor fechar a janela</span></span>
+<span class="code-line"><span class="code-keyword">finally</span>:</span>
+<span class="code-line">    controlador.<span class="code-function">parar</span>(<span class="code-property">espera_s</span>=<span class="code-number">3.0</span>)</span>
+<span class="code-line">    logger.<span class="code-function">info</span>(<span class="code-string">"janela do orb fechada"</span>)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Tarefa que vai rodar por trás da janela:</p>
+              <p class="tl">se já existe uma <span class="term" data-definition="A chave de API é uma senha comprida que o Google te dá para o Jarvis usar o Gemini. Quem tem a chave usa a sua conta, por isso ela nunca deve ser mostrada.">chave de API</span> do Google…</p>
+              <p class="tl">…peça ao diretor de palco para ligar o assistente de voz.</p>
+              <p class="tl">Se não existe chave:</p>
+              <p class="tl">só anote no log. A janela vai abrir o passo a passo de configuração.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Tente:</p>
+              <p class="tl">abrir a janela e rodar a tarefa acima. Fica aqui até você fechar a janela.</p>
+              <p class="tl">Aconteça o que acontecer no final:</p>
+              <p class="tl">mande o diretor parar o assistente (espera até 3 segundos)…</p>
+              <p class="tl">…e anote que a janela fechou.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🎬</div>
+          <div class="callout-content">
+            <strong class="callout-title">Por que um diretor separado?</strong>
+            <p>Trocar de voz na engrenagem exige desligar e religar a conversa. O <code>controlador.py</code> faz isso sem fechar a janela, e garante que nunca existam dois assistentes no mesmo microfone.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 3: as mãos -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">As mãos: a pasta tools/</h2>
+        <p>Cada arquivo em <code>tools/</code> é um contrarregra com uma especialidade. Juntos, eles formam a <span class="term" data-definition="Lista fechada (ou “allowlist”) é uma lista do que é permitido. O que não está nela, não existe. É o contrário de tentar listar tudo o que é proibido.">lista fechada</span>: a IA só pode pedir o que estiver ali.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🪟</div>
+            <h4 class="pattern-title">app_tools.py</h4>
+            <p class="pattern-desc">Lista, abre e fecha programas. Nunca abre terminal nem editor do registro.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">📁</div>
+            <h4 class="pattern-title">file_tools.py</h4>
+            <p class="pattern-desc">Cria pastas, procura, lê, copia, move, escreve Word e manda para a Lixeira (com o seu “Sim”).</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">🌐</div>
+            <h4 class="pattern-title">web_tools.py</h4>
+            <p class="pattern-desc">Abre sites e faz pesquisas no Google, no seu navegador.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">✉️</div>
+            <h4 class="pattern-title">office_tools.py</h4>
+            <p class="pattern-desc">Deixa um e-mail pronto para você revisar. Ele nunca envia sozinho.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🕒</div>
+            <h4 class="pattern-title">system_tools.py</h4>
+            <p class="pattern-desc">Diz a data e a hora. É a única ação sempre liberada.</p>
+          </div>
+        </div>
+
+        <p>Quem junta todos é o <code>ToolRegistry</code>, em <code>tools/__init__.py</code>. Repare: cada ferramenta ganha <strong>duas capas</strong> antes de entrar na lista.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/jarvis/tools/__init__.py</span>
+            <pre><code><span class="code-line">self._tools: dict[str, Callable[..., str]] = {}</span>
+<span class="code-line"><span class="code-keyword">for</span> provider <span class="code-keyword">in</span> providers:</span>
+<span class="code-line">    <span class="code-keyword">for</span> name <span class="code-keyword">in</span> provider.TOOL_NAMES:</span>
+<span class="code-line">        <span class="code-keyword">if</span> name <span class="code-keyword">in</span> self._tools:</span>
+<span class="code-line">            <span class="code-keyword">raise</span> <span class="code-function">ValueError</span>(<span class="code-string">f"ferramenta duplicada: {name}"</span>)</span>
+<span class="code-line">        self._tools[name] = <span class="code-function">_com_permissao</span>(</span>
+<span class="code-line">            name, <span class="code-function">safe_tool</span>(<span class="code-function">getattr</span>(provider, name)), self._permissoes_atuais</span>
+<span class="code-line">        )</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Comece com um <span class="term" data-definition="Um dicionário é uma tabela “nome → valor”. Aqui: nome da ferramenta → a função que executa ela.">dicionário</span> vazio: nome da ferramenta → função.</p>
+              <p class="tl">Para cada arquivo de ferramentas (apps, arquivos, web…):</p>
+              <p class="tl">para cada nome que ele declara na sua lista TOOL_NAMES:</p>
+              <p class="tl">se esse nome já foi registrado…</p>
+              <p class="tl">…pare tudo com erro. Dois contrarregras com o mesmo nome dariam confusão.</p>
+              <p class="tl">Guarde a ferramenta com duas capas: a de fora confere a permissão…</p>
+              <p class="tl">…a de dentro (<span class="term" data-definition="safe_tool é um “embrulho” (wrapper): uma função que envolve outra. Se a ferramenta der erro, o embrulho transforma o erro numa frase simples em vez de travar o Jarvis.">safe_tool</span>) transforma qualquer erro numa frase simples.</p>
+              <p class="tl">Pronto: ferramenta registrada.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 4: o segurança -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">O segurança da coxia</h2>
+        <p>A capa de fora é o segurança. Ele confere a credencial <strong>toda vez</strong> que alguém tenta passar, lendo as permissões salvas naquela hora.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/jarvis/tools/__init__.py</span>
+            <pre><code><span class="code-line">@functools.wraps(func)</span>
+<span class="code-line"><span class="code-keyword">def</span> <span class="code-function">checar</span>(*args: Any, **kwargs: Any) -&gt; str:</span>
+<span class="code-line">    <span class="code-keyword">if</span> <span class="code-keyword">not</span> permissoes.<span class="code-function">permitido</span>(nome, <span class="code-function">_ler_permissoes</span>(fonte)):</span>
+<span class="code-line">        logger.<span class="code-function">info</span>(<span class="code-string">"ferramenta bloqueada pelas permissoes: %s"</span>, nome)</span>
+<span class="code-line">        <span class="code-keyword">return</span> permissoes.<span class="code-function">mensagem_bloqueio</span>(nome)</span>
+<span class="code-line">    <span class="code-keyword">return</span> <span class="code-function">func</span>(*args, **kwargs)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">EM PORTUGUÊS</span>
+            <div class="translation-lines">
+              <p class="tl">Copie o nome e a descrição da ferramenta original (o Gemini lê isso para saber o que ela faz).</p>
+              <p class="tl">Quando alguém chamar a ferramenta:</p>
+              <p class="tl">leia as permissões de agora. Essa ação está liberada? Se não…</p>
+              <p class="tl">…anote no log que foi barrada…</p>
+              <p class="tl">…e devolva a frase “Essa ação está desligada nas permissões”, sem executar nada.</p>
+              <p class="tl">Liberada: chame a ferramenta de verdade.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="badge-list">
+          <div class="badge-item">
+            <code class="badge-code">arquivos</code>
+            <span class="badge-desc">4 níveis: nenhum → ler → ler e gravar → ler, gravar e excluir</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">apps</code>
+            <span class="badge-desc">Ver, abrir e fechar programas</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">internet</code>
+            <span class="badge-desc">Abrir sites e pesquisar</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">email</code>
+            <span class="badge-desc">Preparar rascunhos de e-mail</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">outros_drives</code>
+            <span class="badge-desc">Mexer fora das suas pastas pessoais (outros discos)</span>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Trava no código, não promessa no texto</strong>
+            <p>Dá para pedir à IA, no <span class="term" data-definition="Prompt de sistema são as instruções fixas que o programa manda para a IA no começo: personalidade, regras, o que pode e não pode. A IA costuma seguir, mas não é garantia.">prompt</span>, “não mexa nos meus arquivos”. Mas quem garante é o segurança: mesmo que a IA peça, a porta não abre. E o <span class="term" data-definition="PathGuard (em tools/security.py) é o guarda dos caminhos: traduz “área de trabalho” para a pasta real e recusa pastas protegidas, como a do Jarvis e a das chaves.">PathGuard</span> faz o mesmo com as pastas.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TELA 5: group chat -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A equipe em ação: o grupo do WhatsApp</h2>
+        <p>Imagine que a equipe conversa num grupo durante um pedido. Você liberou <strong>Arquivos: ler e gravar</strong> e diz: “Jarvis, cria uma pasta Fotos na área de trabalho”.</p>
+
+        <div class="chat-window" id="m2-chat">
+          <div class="chat-messages">
+            <div class="chat-message" data-msg="0" data-sender="voce" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-4)">V</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-4)">Você</span>
+                <p>Jarvis, cria uma pasta Fotos na área de trabalho.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="1" data-sender="live" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">L</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">live_assistant.py</span>
+                <p>Gemini, tô te mandando o áudio ao vivo, pedacinho por pedacinho. 🎙️</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="2" data-sender="gemini" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">G</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">Gemini Live</span>
+                <p>Entendi. Pedido de ferramenta: <code>create_folder</code>, caminho “area de trabalho\Fotos”.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="3" data-sender="live" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">L</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">live_assistant.py</span>
+                <p>Janela, muda para “pensando”. ToolRegistry, você tem <code>create_folder</code>?</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="4" data-sender="orb" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">O</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-3)">orb_window.py</span>
+                <p>Feito. A galáxia já está girando no modo pensando. 🌀</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="5" data-sender="registro" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-5)">R</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-5)">ToolRegistry</span>
+                <p>Tenho, está na lista fechada. Segurança, ele pode?</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="6" data-sender="perm" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-4)">P</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-4)">permissoes.py</span>
+                <p>Acabei de ler: Arquivos está em “ler e gravar”. Criar pasta precisa disso. Liberado. ✅</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="7" data-sender="files" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">F</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">file_tools.py</span>
+                <p>PathGuard, onde fica essa “area de trabalho”? E eu posso mexer lá?</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="8" data-sender="guard" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">S</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-3)">PathGuard</span>
+                <p>É a Área de Trabalho de verdade do usuário. Não é a pasta do Jarvis nem a das chaves. Pode criar. 🛡️</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="9" data-sender="files" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">F</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">file_tools.py</span>
+                <p>Pasta criada. Devolvendo o texto “Pasta criada: …\Fotos”.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="10" data-sender="live" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">L</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">live_assistant.py</span>
+                <p>Gemini, aqui está o resultado. Janela, marca a ação como ok na Atividade.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="11" data-sender="gemini" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">G</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">Gemini Live</span>
+                <p>Mandando o áudio: “Pasta criada na área de trabalho, senhor.”</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="12" data-sender="voz" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-5)">🔊</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-5)">voice_output.py</span>
+                <p>Sem ElevenLabs hoje, então toco a voz do Google direto. Microfone, segura o som enquanto eu falo, para ele não ouvir a si mesmo. 🤫</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-typing" style="display:none">
+            <div class="chat-avatar" id="m2-chat-typing-avatar">?</div>
+            <div class="chat-typing-dots">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+            </div>
+          </div>
+
+          <div class="chat-controls">
+            <button class="btn chat-next-btn">Próxima mensagem</button>
+            <button class="btn chat-all-btn">Mostrar tudo</button>
+            <button class="btn chat-reset-btn">Recomeçar</button>
+            <span class="chat-progress"></span>
+          </div>
+        </div>
+
+        <p>Repare: ninguém faz o trabalho do outro. O <code>file_tools.py</code> não sabe nada de áudio, e o <code>live_assistant.py</code> não sabe criar pasta.</p>
+      </section>
+
+      <!-- TELA 6: arrastar e soltar -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Quem você chamaria?</h2>
+        <p>Você vai pedir mudanças a uma IA. Arraste cada peça para o pedido em que ela é a responsável.</p>
+
+        <div class="dnd-container" id="m2-dnd">
+          <div class="dnd-chips">
+            <div class="dnd-chip" draggable="true" data-answer="main">__main__.py</div>
+            <div class="dnd-chip" draggable="true" data-answer="controlador">controlador.py</div>
+            <div class="dnd-chip" draggable="true" data-answer="tools">tools/</div>
+            <div class="dnd-chip" draggable="true" data-answer="guard">PathGuard</div>
+            <div class="dnd-chip" draggable="true" data-answer="armazenamento">armazenamento.py</div>
+            <div class="dnd-chip" draggable="true" data-answer="avisos">avisos.py</div>
+          </div>
+          <div class="dnd-zones">
+            <div class="dnd-zone" data-correct="tools">
+              <p class="dnd-zone-label">“Quero que o Jarvis consiga tirar um print da tela.”</p>
+              <div class="dnd-zone-target">Solte aqui</div>
+            </div>
+            <div class="dnd-zone" data-correct="guard">
+              <p class="dnd-zone-label">“Ele nunca pode mexer na minha pasta Contratos, mesmo que a IA peça.”</p>
+              <div class="dnd-zone-target">Solte aqui</div>
+            </div>
+            <div class="dnd-zone" data-correct="controlador">
+              <p class="dnd-zone-label">“Ao trocar a voz, a conversa demora para religar. Quero entender por quê.”</p>
+              <div class="dnd-zone-target">Solte aqui</div>
+            </div>
+            <div class="dnd-zone" data-correct="main">
+              <p class="dnd-zone-label">“Quero um jeito novo de abrir o programa pela linha de comando.”</p>
+              <div class="dnd-zone-target">Solte aqui</div>
+            </div>
+            <div class="dnd-zone" data-correct="armazenamento">
+              <p class="dnd-zone-label">“Preciso guardar uma chave nova de outro serviço no .env do usuário.”</p>
+              <div class="dnd-zone-target">Solte aqui</div>
+            </div>
+            <div class="dnd-zone" data-correct="avisos">
+              <p class="dnd-zone-label">“Sem internet, quero que ele toque uma frase gravada diferente.”</p>
+              <div class="dnd-zone-target">Solte aqui</div>
+            </div>
+          </div>
+          <button class="btn" onclick="checkDnD('m2-dnd')">Verificar</button>
+          <button class="btn" onclick="resetDnD('m2-dnd')">Recomeçar</button>
+        </div>
+      </section>
+
+      <!-- TELA 7: quiz -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Teste: dirigindo a equipe</h2>
+
+        <div class="quiz-container" id="m2-quiz">
+          <div class="quiz-question-block"
+               data-correct="c"
+               data-explanation-right="Isso. O Gemini só fica sabendo das ferramentas registradas no ToolRegistry, e o ToolRegistry só registra os nomes de TOOL_NAMES. E mesmo registrada, uma ferramenta sem linha em EXIGENCIAS (permissoes.py) fica sempre bloqueada."
+               data-explanation-wrong="Escrever a função não basta. A lista fechada é feita a partir de TOOL_NAMES: fora dela, o Gemini nem sabe que a ação existe. E sem uma linha em EXIGENCIAS, o segurança barra sempre.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Você pede a uma IA: “faça o Jarvis tocar uma playlist”. Ela escreve a função nova em <code>app_tools.py</code>, mas não coloca o nome em <code>TOOL_NAMES</code> nem em <code>EXIGENCIAS</code>.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">O que acontece quando você pede a playlist?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Funciona: a função está no arquivo certo, então o Jarvis acha.</span>
+              </button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>O Jarvis trava ao abrir, porque tem uma função sobrando.</span>
+              </button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Nada: a ação não entrou na lista fechada, e sem exigência ela ficaria bloqueada de qualquer jeito.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="a"
+               data-explanation-right="Exato. As permissões são lidas de novo a cada chamada de ferramenta. Mudou na engrenagem, vale na próxima ação, sem reiniciar."
+               data-explanation-wrong="O segurança não decora a lista na entrada do espetáculo: ele lê as permissões salvas toda vez que uma ferramenta é chamada. Por isso a mudança vale na hora.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Com o Jarvis aberto e conversando, você desliga a permissão <strong>Internet</strong>. Logo depois diz: “pesquisa o preço do dólar”.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">O que acontece?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Ele recusa: a permissão é conferida na hora de cada ação.</span>
+              </button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Ele pesquisa: a mudança só vale quando você fechar e abrir o Jarvis.</span>
+              </button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>A conversa cai, porque o controlador precisa reiniciar o assistente.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Boa leitura de equipe. Se a ação dá erro, o safe_tool transforma o erro numa frase e o detalhe vai para o log. O assistente continua de pé."
+               data-explanation-wrong="Lembra das duas capas? A de dentro, o safe_tool, pega qualquer erro da ferramenta e devolve uma frase simples. O Jarvis fala a frase e o detalhe técnico fica no log.">
+            <div class="scenario-block">
+              <div class="scenario-context">
+                <span class="scenario-label">Cenário</span>
+                <p>Você pede para ler um PDF que está corrompido. A biblioteca que lê PDF dá um erro feio no meio da leitura.</p>
+              </div>
+            </div>
+            <h3 class="quiz-question">O que você vê e ouve?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>A janela fecha com uma mensagem de erro em inglês.</span>
+              </button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Ele diz em uma frase simples que não conseguiu, e segue conversando.</span>
+              </button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Ele fica em silêncio para sempre no estado “pensando”.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('m2-quiz')">Verificar respostas</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('m2-quiz')">Tentar de novo</button>
+        </div>
+
+        <p>Você conhece a equipe. Mas como o palco (a janela) e os bastidores (o Python) trocam recados, se falam línguas diferentes? É o próximo módulo.</p>
+      </section>
+
+    </div>
+  </div>
+</section>
